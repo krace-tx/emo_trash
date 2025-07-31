@@ -1,129 +1,60 @@
-.PHONY: all api rpc list-api list-rpc help clean
+# 工具检查
+GO := go
+GOZERO := goctl
+MKDIR := mkdir -p
+RM := rm -rf
+TOUCH := touch
 
-# Project directory configuration
-API_DIR := cmd/api
-PB_DIR := cmd/pb
-APP_DIR := app
+# 目录配置
+API_SRC_DIR := cmd/api
+RPC_SRC_DIR := cmd/rpc
+API_DEST_DIR := app/api
+RPC_DEST_DIR := app/rpc
 
-all: help
+# 查找文件
+API_FILES := $(wildcard $(API_SRC_DIR)/*.api)
+PROTO_FILES := $(wildcard $(RPC_SRC_DIR)/*.proto)
 
-## Generate ALL API services
-api:
-	@echo Generating ALL API services...
-	@if exist "$(API_DIR)\*.api" ( \
-		for %%f in ("$(API_DIR)\*.api") do ( \
-			echo Generating API service: %%~nf && \
-			if not exist "$(APP_DIR)\%%~nf" mkdir "$(APP_DIR)\%%~nf" && \
-			goctl api go -api "%%f" -dir "$(APP_DIR)\%%~nf" && \
-			echo Success: Generated in $(APP_DIR)\%%~nf && \
-			echo. \
-		) \
-	) else ( \
-		echo No .api files found in $(API_DIR)/ \
-	)
+# 生成目标
+API_TARGETS := $(patsubst $(API_SRC_DIR)/%.api,$(API_DEST_DIR)/%/.,$(API_FILES))
+RPC_TARGETS := $(patsubst $(RPC_SRC_DIR)/%.proto,$(RPC_DEST_DIR)/%/.,$(PROTO_FILES))
 
-## Generate ALL RPC services
-rpc:
-	@echo Generating ALL RPC services...
-	@if exist "$(PB_DIR)\*.proto" ( \
-		for %%f in ("$(PB_DIR)\*.proto") do ( \
-			echo Generating RPC service: %%~nf && \
-			if not exist "$(APP_DIR)\%%~nf" mkdir "$(APP_DIR)\%%~nf" && \
-			pushd "$(PB_DIR)" && \
-			goctl rpc protoc "%%~nxf" --go_out="..\..\$(APP_DIR)\%%~nf" --go-grpc_out="..\..\$(APP_DIR)\%%~nf" --zrpc_out="..\..\$(APP_DIR)\%%~nf" -m && \
-			popd && \
-			echo Success: Generated in $(APP_DIR)\%%~nf && \
-			echo. \
-		) \
-	) else ( \
-		echo No .proto files found in $(PB_DIR)/ \
-	)
+.PHONY: all api rpc clean force
 
-## Generate specific API service
-api-%:
-	@echo Generating API service: $*
-	@if not exist "$(APP_DIR)\$*" mkdir "$(APP_DIR)\$*"
-	@if exist "$(API_DIR)\$*.api" ( \
-		goctl api go -api "$(API_DIR)\$*.api" -dir "$(APP_DIR)\$*" && \
-		echo Success: API service generated in $(APP_DIR)\$* \
-	) else ( \
-		echo Error: API definition file not found - $(API_DIR)\$*.api && \
-		echo Available API services: && \
-		$(MAKE) --no-print-directory list-api && \
-		exit 1 \
-	)
+all: api rpc
 
-## Generate specific RPC service
-rpc-%:
-	@echo Generating RPC service: $*
-	@if not exist "$(APP_DIR)\$*" mkdir "$(APP_DIR)\$*"
-	@if exist "$(PB_DIR)\$*.proto" ( \
-		pushd "$(PB_DIR)" && \
-		goctl rpc protoc "$*.proto" --go_out="..\..\$(APP_DIR)\$*" --go-grpc_out="..\..\$(APP_DIR)\$*" --zrpc_out="..\..\$(APP_DIR)\$*" -m && \
-		popd && \
-		echo Success: RPC service generated in $(APP_DIR)\$* \
-	) else ( \
-		echo Error: Proto file not found - $(PB_DIR)\$*.proto && \
-		echo Available RPC services: && \
-		$(MAKE) --no-print-directory list-rpc && \
-		exit 1 \
-	)
+# API代码生成 - 使用标记文件确保每次都会执行
+api: $(API_TARGETS)
 
-## List available API services
-list-api:
-	@echo Available API services (from $(API_DIR)/):
-	@if exist "$(API_DIR)\*.api" ( \
-		for %%f in ("$(API_DIR)\*.api") do ( \
-			echo   - %%~nf \
-		) \
-	) else ( \
-		echo   No .api files found in $(API_DIR)/ \
-	)
+$(API_DEST_DIR)/%/. : $(API_SRC_DIR)/%.api
+	@echo "Generating API code for $<..."
+	@$(MKDIR) $(API_DEST_DIR)/$(notdir $(basename $<))
+	@$(GOZERO) api go -api $< -dir $(API_DEST_DIR)/$(notdir $(basename $<))
+	@$(TOUCH) $(API_DEST_DIR)/$(notdir $(basename $<))/.
+	@echo "API code generated to $(API_DEST_DIR)/$(notdir $(basename $<))"
 
-## List available RPC services
-list-rpc:
-	@echo Available RPC services (from $(PB_DIR)/):
-	@if exist "$(PB_DIR)\*.proto" ( \
-		for %%f in ("$(PB_DIR)\*.proto") do ( \
-			echo   - %%~nf \
-		) \
-	) else ( \
-		echo   No .proto files found in $(PB_DIR)/ \
-	)
+# RPC代码生成 - 使用标记文件确保每次都会执行
+rpc: $(RPC_TARGETS)
 
-## Clean all generated files
+$(RPC_DEST_DIR)/%/. : $(RPC_SRC_DIR)/%.proto force
+	@echo "Generating RPC code for $<..."
+	@$(MKDIR) $(RPC_DEST_DIR)/$(notdir $(basename $<))
+	@cd $(RPC_SRC_DIR) && \
+	 $(GOZERO) rpc protoc $(notdir $<) \
+	 --go_out=../../$(RPC_DEST_DIR)/$(notdir $(basename $<)) \
+	 --go-grpc_out=../../$(RPC_DEST_DIR)/$(notdir $(basename $<)) \
+	 --zrpc_out=../../$(RPC_DEST_DIR)/$(notdir $(basename $<)) \
+	 -m
+	@$(TOUCH) $(RPC_DEST_DIR)/$(notdir $(basename $<))/.
+	@echo "RPC code generated to $(RPC_DEST_DIR)/$(notdir $(basename $<))"
+
+# 检查文件
+check:
+	@echo "API files found: $(API_FILES)"
+	@echo "Proto files found: $(PROTO_FILES)"
+
+# 清理生成代码
 clean:
-	@echo Cleaning all generated services...
-	@if exist "$(APP_DIR)" ( \
-		for /d %%d in ("$(APP_DIR)\*") do ( \
-			echo Deleting service: %%~nxd && \
-			rmdir /s /q "%%d" \
-		) \
-	)
-	@echo Clean complete.
-
-## Show help information
-help:
-	@echo Go-Zero Project Generator
-	@echo.
-	@echo Usage:
-	@echo   make api               Generate ALL API services
-	@echo   make rpc               Generate ALL RPC services
-	@echo   make api-^<name^>      Generate specific API service
-	@echo   make rpc-^<name^>      Generate specific RPC service
-	@echo   make list-api          List all API services
-	@echo   make list-rpc          List all RPC services
-	@echo   make clean             Remove all generated services
-	@echo.
-	@echo Examples:
-	@echo   make api               Generate all API services
-	@echo   make rpc-users         Generate specific RPC service
-	@echo   make clean             Remove all generated code
-	@echo.
-	@echo Directory Structure:
-	@echo   API definitions: cmd/api/*.api
-	@echo   Proto files:     cmd/pb/*.proto
-	@echo   Generated code:  app/^<service_name^>/
-
-%::
-	@rem
+	@echo "Cleaning generated code..."
+	@$(RM) $(API_DEST_DIR) $(RPC_DEST_DIR)
+	@echo "Clean complete"

@@ -1,0 +1,119 @@
+/*
+ goctl rpc protoc --go_out=. chat.proto --go-grpc_out=. --zrpc_out=. -m
+ */
+syntax = "proto3";
+
+package chat;
+
+option go_package = "./chat";
+
+// 聊天服务接口，用于点对点聊天、群聊和历史消息管理
+service Chat {
+  // 发送消息
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+
+  // 接收消息
+  rpc ReceiveMessage(ReceiveMessageRequest) returns (ReceiveMessageResponse);
+
+  // 查询聊天记录
+  rpc GetChatHistory(GetChatHistoryRequest) returns (GetChatHistoryResponse);
+
+  // 更新在线状态
+  rpc UpdateOnlineStatus(UpdateOnlineStatusRequest) returns (UpdateOnlineStatusResponse);
+
+  // 查询指定对话窗口的聊天记录
+  rpc GetChatWindow (GetChatWindowRequest) returns (GetChatWindowResponse);
+}
+
+// 消息定义
+message Message {
+  string id = 1;               // 消息ID
+  string sender_id = 3;         // 发送者
+  UserInfoBase receiver = 4;       // 接收者
+  string content = 5;           // 消息内容
+  string content_type = 6;      // 消息类型（如文本、图片、文件）
+  string create_at = 7;          // 消息时间戳
+  bool is_read = 8;             // 是否已读
+  string extra_data = 9;        // 扩展数据
+  int32 priority = 10;         // 消息优先级 (0, 1, 2)
+  bool requires_receipt = 11;   // 是否需要回执
+}
+
+message SendMessage {
+  string sender_id = 1;         // 发送者
+  string receiver_id = 2;
+  string content = 5;           // 消息内容
+  string content_type = 6;      // 消息类型（如文本、图片、文件）
+  string extra_data = 9;        // 扩展数据
+  int32 priority = 10;         // 消息优先级 (0, 1, 2)
+}
+
+// 发送消息
+message SendMessageRequest {
+  SendMessage message = 1;          // 要发送的消息
+}
+
+message SendMessageResponse {
+  bool success = 1;             // 是否发送成功
+  string message_id = 2;        // 发送的消息ID
+}
+
+// 接收消息
+message ReceiveMessageRequest {
+  string user_id = 1;           // 接收消息的用户ID
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ReceiveMessageResponse {
+  repeated Message messages = 1; // 接收的消息列表
+  int32 total_count = 2;        // 总消息数
+  repeated int32 unread_count = 3;  // 对应的每组未读的数量
+}
+
+
+message GetChatHistoryRequest {
+  string user_id = 1;           // 当前用户ID
+  string target_id = 2;         // 聊天对象ID
+  int32 page = 3;               // 页码
+  int32 page_size = 4;          // 每页消息数
+  string message_type = 5;      // 消息类型（文本、图片、文件）
+  string start_time = 6;         // 查询开始时间（时间戳）
+  string end_time = 7;           // 查询结束时间（时间戳）
+  bool sort_order = 8;        // 排序方式（ASC、DESC）
+}
+
+message GetChatHistoryResponse {
+  repeated Message messages = 1; // 聊天记录
+  int32 total_count = 2;        // 总消息数
+}
+
+
+// 更新在线状态
+message UpdateOnlineStatusRequest {
+  string user_id = 1;           // 用户ID
+  bool is_online = 2;           // 是否在线
+}
+
+message UpdateOnlineStatusResponse {
+  bool success = 1;             // 是否更新成功
+}
+
+message GetChatWindowRequest {
+  string user_id = 1;           // 当前用户ID
+  string target_id = 2;         // 聊天对象ID
+  int32 page = 3;               // 页码
+  int32 page_size = 4;          // 每页消息数
+}
+
+message GetChatWindowResponse {
+  repeated Message messages = 1; // 聊天记录
+  int32 total_count = 2;        // 总消息数
+}
+
+message UserInfoBase {
+  string user_id = 1;           // 用户id
+  string nickname = 2;          // 昵称
+  string avatar = 3;            // 头像
+  string gender = 4;            // 性别
+}
