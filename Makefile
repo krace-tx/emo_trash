@@ -19,7 +19,7 @@ PROTO_FILES := $(wildcard $(RPC_SRC_DIR)/*.proto)
 API_TARGETS := $(patsubst $(API_SRC_DIR)/%.api,$(API_DEST_DIR)/%/.,$(API_FILES))
 RPC_TARGETS := $(patsubst $(RPC_SRC_DIR)/%.proto,$(RPC_DEST_DIR)/%/.,$(PROTO_FILES))
 
-.PHONY: all api rpc clean force
+.PHONY: all api rpc help
 
 all: api rpc
 
@@ -53,8 +53,10 @@ check:
 	@echo "API files found: $(API_FILES)"
 	@echo "Proto files found: $(PROTO_FILES)"
 
-# 清理生成代码
-clean:
-	@echo "Cleaning generated code..."
-	@$(RM) $(API_DEST_DIR) $(RPC_DEST_DIR)
-	@echo "Clean complete"
+help:
+	@echo "Available targets:"
+	@echo "  all      - Generate all API and RPC code"
+	@echo "  api      - Generate API code"
+	@echo "  rpc      - Generate RPC code"
+	@echo "  check    - Check for API and Proto files"
+	@echo "  help     - Show this help message"
