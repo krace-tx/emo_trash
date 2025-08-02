@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package sso;
+
+option go_package = "./sso";
+
+// 登录请求
+message LoginReq {
+  optional string mobile = 1;          // 手机号(可选)
+  optional string sms_code = 2;        // 短信验证码(异地登录时需要)
+  optional string platform = 3;         // 第三方平台: wechat/qq
+  optional string open_id = 4;          // 第三方openId
+  optional string account = 5;          // 账号
+  optional string password = 6;         // 密码
+  string device_type = 7;      // 设备类型: app/pc
+  string device_id = 8;        // 设备唯一标识
+  string login_ip = 9;         // 登录IP
+  bool is_quick = 10;           // 是否快捷登录
+}
+
+// 登录响应
+message LoginResp {
+  string token = 1;            // JWT Token
+  string refresh_token = 2;    // 刷新Token
+}
+
+// 二维码生成请求
+message QrcodeReq {
+  string device_id = 1;        // PC设备ID
+  string login_ip = 2;         // 登录IP
+}
+
+// 二维码生成响应
+message QrcodeResp {
+  string qid = 1;              // 二维码唯一ID
+  string image_url = 2;        // 二维码图片URL
+}
+
+// 二维码状态请求
+message QrcodeStatusReq {
+  string qid = 1;              // 二维码ID
+}
+
+// 二维码状态响应
+message QrcodeStatusResp {
+  enum Status {
+    WAITING = 0;               // 等待扫描
+    SCANNED = 1;               // 已扫描
+    CONFIRMED = 2;             // 已确认
+    EXPIRED = 3;               // 已过期
+  }
+  Status status = 1;
+  string token = 2;            // 登录成功的Token(当状态为CONFIRMED时返回)
+}
+
+// 二维码确认请求
+message QrcodeConfirmReq {
+  string qid = 1;              // 二维码ID
+  string app_token = 2;        // 手机端Token
+}
+
+// 会话验证请求
+message VerifyReq {
+  string token = 1;            // 待验证的Token
+  string device_type = 2;      // 设备类型
+}
+
+// 会话验证响应
+message VerifyResp {
+  int64 user_id = 1;           // 用户ID
+  string device_type = 2;      // 设备类型
+  string device_id = 3;        // 设备ID
+}
+
+// 登出请求
+message LogoutReq {
+  string token = 1;            // 当前Token
+  string device_type = 2;      // 设备类型
+}
+
+service Auth {
+  // 用户登录
+  rpc Login(LoginReq) returns (LoginResp);
+
+  // 生成登录二维码
+  rpc GenerateQrcode(QrcodeReq) returns (QrcodeResp);
+
+  // 检查二维码状态
+  rpc CheckQrcodeStatus(QrcodeStatusReq) returns (QrcodeStatusResp);
+
+  // 手机端确认登录
+  rpc ConfirmQrcodeLogin(QrcodeConfirmReq) returns (LoginResp);
+
+  // 验证会话
+  rpc VerifyToken(VerifyReq) returns (VerifyResp);
+
+  // 用户登出
+  rpc Logout(LogoutReq) returns (VerifyResp);
+}
