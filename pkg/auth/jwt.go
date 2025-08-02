@@ -7,7 +7,7 @@ import (
 	consts "github.com/krace-tx/emo_trash/pkg/constant"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type User struct {
