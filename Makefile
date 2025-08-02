@@ -11,7 +11,7 @@ SED := sed
 RED := \033[0;31m
 GREEN := \033[0;32m
 YELLOW := \033[1;33m
-NC := \033[0m # 无颜色
+NC := \033[0m
 
 # 目录配置
 API_SRC_DIR := cmd/api
@@ -30,7 +30,7 @@ RPC_TARGETS := $(patsubst $(RPC_SRC_DIR)/%.proto,$(RPC_DEST_DIR)/%/.,$(PROTO_FIL
 # 默认目标
 .DEFAULT_GOAL := help
 
-.PHONY: all init api rpc clean check help
+.PHONY: all init api rpc check help
 
 all: api rpc
 	@$(ECHO) "$(GREEN)All code generated successfully!$(NC)"
@@ -101,12 +101,6 @@ $(RPC_DEST_DIR)/%/. : $(RPC_SRC_DIR)/%.proto
 	@echo "Injecting custom tags to remove omitempty..."
 	@find $(RPC_DEST_DIR) -name "*.pb.go" -exec protoc-go-inject-tag -input={} \;
 
-# 清理生成的文件
-clean:
-	@$(ECHO) "$(YELLOW)Cleaning generated files...$(NC)"
-	@$(RM) $(API_DEST_DIR)/* $(RPC_DEST_DIR)/*
-	@$(ECHO) "$(GREEN)Clean completed.$(NC)"
-
 # 检查文件
 check:
 	@$(ECHO) "$(YELLOW)API files found:$(NC) $(API_FILES)"
@@ -118,14 +112,12 @@ help:
 	@$(ECHO) "  $(YELLOW)all$(NC)        - Generate all API and RPC code (default)"
 	@$(ECHO) "  $(YELLOW)api$(NC)        - Generate API code"
 	@$(ECHO) "  $(YELLOW)rpc$(NC)        - Generate RPC code"
-	@$(ECHO) "  $(YELLOW)clean$(NC)      - Clean all generated files"
 	@$(ECHO) "  $(YELLOW)check$(NC)      - Check for API and Proto files"
-	@$(ECHO) "  $(YELLOW)init$(NC)       - Initialize project environment (install tools, create dirs)"  # 添加init说明
+	@$(ECHO) "  $(YELLOW)init$(NC)       - Initialize project environment (install tools, create dirs)"
 	@$(ECHO) "  $(YELLOW)help$(NC)       - Show this help message"
 	@$(ECHO) ""
 	@$(ECHO) "$(GREEN)Examples:$(NC)"
-	@$(ECHO) "  make init           # Initialize project environment"  # 添加init示例
+	@$(ECHO) "  make init           # Initialize project environment"
 	@$(ECHO) "  make                # Generate all code"
 	@$(ECHO) "  make rpc            # Generate only RPC code"
-	@$(ECHO) "  make clean && make  # Clean and regenerate all code"
 	@$(ECHO) "  make check          # Check for API and Proto files"
