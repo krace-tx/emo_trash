@@ -7,6 +7,10 @@ TOUCH := touch
 ECHO := echo
 SED := sed
 
+# 项目配置
+PROJECT_NAME := emo_trash
+PROJECT_PATH := github.com/krace-tx/emo_trash
+
 # 颜色定义
 RED := \033[0;31m
 GREEN := \033[0;32m
@@ -30,7 +34,7 @@ RPC_TARGETS := $(patsubst $(RPC_SRC_DIR)/%.proto,$(RPC_DEST_DIR)/%/.,$(PROTO_FIL
 # 默认目标
 .DEFAULT_GOAL := help
 
-.PHONY: all init api rpc check help
+.PHONY: all init api rpc check mod clean help
 
 all: api rpc
 	@$(ECHO) "$(GREEN)All code generated successfully!$(NC)"
@@ -106,6 +110,14 @@ check:
 	@$(ECHO) "$(YELLOW)API files found:$(NC) $(API_FILES)"
 	@$(ECHO) "$(YELLOW)Proto files found:$(NC) $(PROTO_FILES)"
 
+mod:
+	rm go.mod go.sum
+	go mod init $(PROJECT_PATH) && go mod tidy
+
+clean:
+	@git update-index --assume-unchanged go.mod
+	@git update-index --assume-unchanged go.sum
+
 # 帮助信息
 help:
 	@$(ECHO) "$(GREEN)Available targets:$(NC)"
@@ -114,6 +126,8 @@ help:
 	@$(ECHO) "  $(YELLOW)rpc$(NC)        - Generate RPC code"
 	@$(ECHO) "  $(YELLOW)check$(NC)      - Check for API and Proto files"
 	@$(ECHO) "  $(YELLOW)init$(NC)       - Initialize project environment (install tools, create dirs)"
+	@$(ECHO) "  $(YELLOW)mod$(NC)        - Initialize project environment (mod init)"
+	@$(ECHO) "  $(YELLOW)clean$(NC)      - Remove git gitignore files"
 	@$(ECHO) "  $(YELLOW)help$(NC)       - Show this help message"
 	@$(ECHO) ""
 	@$(ECHO) "$(GREEN)Examples:$(NC)"
@@ -121,3 +135,5 @@ help:
 	@$(ECHO) "  make                # Generate all code"
 	@$(ECHO) "  make rpc            # Generate only RPC code"
 	@$(ECHO) "  make check          # Check for API and Proto files"
+
+
