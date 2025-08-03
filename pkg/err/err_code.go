@@ -1,4 +1,4 @@
-package err
+package errx
 
 // 定义业务状态码常量
 var (

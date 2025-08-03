@@ -14,6 +14,8 @@ import (
 )
 
 type (
+	AIChatRequest              = chat.AIChatRequest
+	AIChatResponse             = chat.AIChatResponse
 	GetChatHistoryRequest      = chat.GetChatHistoryRequest
 	GetChatHistoryResponse     = chat.GetChatHistoryResponse
 	GetChatWindowRequest       = chat.GetChatWindowRequest
@@ -24,6 +26,7 @@ type (
 	SendMessage                = chat.SendMessage
 	SendMessageRequest         = chat.SendMessageRequest
 	SendMessageResponse        = chat.SendMessageResponse
+	SentimentResult            = chat.SentimentResult
 	UpdateOnlineStatusRequest  = chat.UpdateOnlineStatusRequest
 	UpdateOnlineStatusResponse = chat.UpdateOnlineStatusResponse
 	UserInfoBase               = chat.UserInfoBase
@@ -39,6 +42,8 @@ type (
 		UpdateOnlineStatus(ctx context.Context, in *UpdateOnlineStatusRequest, opts ...grpc.CallOption) (*UpdateOnlineStatusResponse, error)
 		// 查询指定对话窗口的聊天记录
 		GetChatWindow(ctx context.Context, in *GetChatWindowRequest, opts ...grpc.CallOption) (*GetChatWindowResponse, error)
+		// AI 聊天接口（新增）
+		AIChat(ctx context.Context, in *AIChatRequest, opts ...grpc.CallOption) (*AIChatResponse, error)
 	}
 
 	defaultChat struct {
@@ -80,4 +85,10 @@ func (m *defaultChat) UpdateOnlineStatus(ctx context.Context, in *UpdateOnlineSt
 func (m *defaultChat) GetChatWindow(ctx context.Context, in *GetChatWindowRequest, opts ...grpc.CallOption) (*GetChatWindowResponse, error) {
 	client := chat.NewChatClient(m.cli.Conn())
 	return client.GetChatWindow(ctx, in, opts...)
+}
+
+// AI 聊天接口（新增）
+func (m *defaultChat) AIChat(ctx context.Context, in *AIChatRequest, opts ...grpc.CallOption) (*AIChatResponse, error) {
+	client := chat.NewChatClient(m.cli.Conn())
+	return client.AIChat(ctx, in, opts...)
 }

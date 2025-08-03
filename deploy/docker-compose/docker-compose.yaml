@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # Redis 缓存服务
+  redis:
+    image: redis:7.2-alpine
+    container_name: emo-trash-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    environment:
+      - REDIS_PASSWORD=emoTrashRedis123!
+      - REDIS_MAXMEMORY=512mb
+      - REDIS_MAXMEMORY_POLICY=allkeys-lru
+    networks:
+      - emo-trash-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "emoTrashRedis123!", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # MySQL 关系型数据库
+  mysql:
+    image: mysql:8.0
+    container_name: emo-trash-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=emoTrashMysql123!
+      - MYSQL_DATABASE=emo_trash
+      - MYSQL_USER=emo_user
+      - MYSQL_PASSWORD=emoUser123!
+      - TZ=Asia/Shanghai
+    networks:
+      - emo-trash-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uemo_user", "-pemoUser123!"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # MongoDB 文档数据库
+  mongodb:
+    image: mongo:6.0
+    container_name: emo-trash-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./mongodb/init:/docker-entrypoint-initdb.d
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=emoTrashMongo123!
+      - MONGO_INITDB_DATABASE=emo_trash
+    networks:
+      - emo-trash-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "-u", "root", "-p", "emoTrashMongo123!"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # etcd 分布式配置存储
+  etcd:
+    image: bitnami/etcd:3.5
+    container_name: emo-trash-etcd
+    restart: always
+    ports:
+      - "2379:2379"  # 客户端端口
+      - "2380:2380"  # 对等节点通信端口
+    volumes:
+      - etcd-data:/bitnami/etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes  # 开发环境关闭认证
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_INITIAL_CLUSTER=etcd=http://etcd:2380
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-token
+      - ETCD_INITIAL_CLUSTER_STATE=new
+    networks:
+      - emo-trash-network
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+# 持久化数据卷
+volumes:
+  redis-data:
+  mysql-data:
+  mongo-data:
+  etcd-data:
+
+# 自定义网络
+networks:
+  emo-trash-network:
+    driver: bridge
+    name: emo-trash-network

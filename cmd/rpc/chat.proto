@@ -23,6 +23,9 @@ service Chat {
 
   // 查询指定对话窗口的聊天记录
   rpc GetChatWindow (GetChatWindowRequest) returns (GetChatWindowResponse);
+
+  // AI 聊天接口（新增）
+  rpc AiChat(AIChatRequest) returns (AIChatResponse);
 }
 
 // 消息定义
@@ -116,4 +119,31 @@ message UserInfoBase {
   string nickname = 2;          // 昵称
   string avatar = 3;            // 头像
   string gender = 4;            // 性别
+}
+
+// AI 聊天请求（新增）
+message AIChatRequest {
+  string user_id = 1;               // 用户ID
+  string input_text = 2;            // 用户输入文本
+  string conversation_id = 3;       // 对话ID（用于上下文关联）
+  repeated Message history = 4;     // 历史对话记录（可选）
+  bool use_emotion = 5;             // 是否启用情感识别
+  map<string, string> params = 6;   // 额外参数（如temperature、top_p等）
+}
+
+// AI 聊天响应（新增）
+message AIChatResponse {
+  string reply_text = 1;            // AI 回复文本
+  string conversation_id = 2;       // 对话ID（与请求对应）
+  SentimentResult sentiment = 3;    // 情感分析结果（如启用）
+  int64 timestamp = 4;              // 响应时间戳
+  string request_id = 5;            // 请求ID（用于追踪）
+  map<string, string> debug_info = 6; // 调试信息（可选）
+}
+
+// 情感分析结果（新增）
+message SentimentResult {
+  string emotion = 1;               // 情感类型（happy/sad/angry/neutral等）
+  float score = 2;                  // 情感得分（-1.0 ~ 1.0）
+  string description = 3;           // 情感描述（可选）
 }

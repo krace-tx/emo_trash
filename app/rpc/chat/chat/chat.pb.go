@@ -880,6 +880,237 @@ func (x *UserInfoBase) GetGender() string {
 	return ""
 }
 
+// AI 聊天请求（新增）
+type AIChatRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UserId         string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                                             // 用户ID
+	InputText      string                 `protobuf:"bytes,2,opt,name=input_text,json=inputText,proto3" json:"input_text,omitempty"`                                                    // 用户输入文本
+	ConversationId string                 `protobuf:"bytes,3,opt,name=conversation_id,json=conversationId,proto3" json:"conversation_id,omitempty"`                                     // 对话ID（用于上下文关联）
+	History        []*Message             `protobuf:"bytes,4,rep,name=history,proto3" json:"history,omitempty"`                                                                         // 历史对话记录（可选）
+	UseEmotion     bool                   `protobuf:"varint,5,opt,name=use_emotion,json=useEmotion,proto3" json:"use_emotion,omitempty"`                                                // 是否启用情感识别
+	Params         map[string]string      `protobuf:"bytes,6,rep,name=params,proto3" json:"params,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 额外参数（如temperature、top_p等）
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *AIChatRequest) Reset() {
+	*x = AIChatRequest{}
+	mi := &file_chat_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AIChatRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AIChatRequest) ProtoMessage() {}
+
+func (x *AIChatRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AIChatRequest.ProtoReflect.Descriptor instead.
+func (*AIChatRequest) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *AIChatRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *AIChatRequest) GetInputText() string {
+	if x != nil {
+		return x.InputText
+	}
+	return ""
+}
+
+func (x *AIChatRequest) GetConversationId() string {
+	if x != nil {
+		return x.ConversationId
+	}
+	return ""
+}
+
+func (x *AIChatRequest) GetHistory() []*Message {
+	if x != nil {
+		return x.History
+	}
+	return nil
+}
+
+func (x *AIChatRequest) GetUseEmotion() bool {
+	if x != nil {
+		return x.UseEmotion
+	}
+	return false
+}
+
+func (x *AIChatRequest) GetParams() map[string]string {
+	if x != nil {
+		return x.Params
+	}
+	return nil
+}
+
+// AI 聊天响应（新增）
+type AIChatResponse struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	ReplyText      string                 `protobuf:"bytes,1,opt,name=reply_text,json=replyText,proto3" json:"reply_text,omitempty"`                                                                           // AI 回复文本
+	ConversationId string                 `protobuf:"bytes,2,opt,name=conversation_id,json=conversationId,proto3" json:"conversation_id,omitempty"`                                                            // 对话ID（与请求对应）
+	Sentiment      *SentimentResult       `protobuf:"bytes,3,opt,name=sentiment,proto3" json:"sentiment,omitempty"`                                                                                            // 情感分析结果（如启用）
+	Timestamp      int64                  `protobuf:"varint,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"`                                                                                           // 响应时间戳
+	RequestId      string                 `protobuf:"bytes,5,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`                                                                           // 请求ID（用于追踪）
+	DebugInfo      map[string]string      `protobuf:"bytes,6,rep,name=debug_info,json=debugInfo,proto3" json:"debug_info,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 调试信息（可选）
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *AIChatResponse) Reset() {
+	*x = AIChatResponse{}
+	mi := &file_chat_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AIChatResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AIChatResponse) ProtoMessage() {}
+
+func (x *AIChatResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AIChatResponse.ProtoReflect.Descriptor instead.
+func (*AIChatResponse) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *AIChatResponse) GetReplyText() string {
+	if x != nil {
+		return x.ReplyText
+	}
+	return ""
+}
+
+func (x *AIChatResponse) GetConversationId() string {
+	if x != nil {
+		return x.ConversationId
+	}
+	return ""
+}
+
+func (x *AIChatResponse) GetSentiment() *SentimentResult {
+	if x != nil {
+		return x.Sentiment
+	}
+	return nil
+}
+
+func (x *AIChatResponse) GetTimestamp() int64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *AIChatResponse) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *AIChatResponse) GetDebugInfo() map[string]string {
+	if x != nil {
+		return x.DebugInfo
+	}
+	return nil
+}
+
+// 情感分析结果（新增）
+type SentimentResult struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Emotion       string                 `protobuf:"bytes,1,opt,name=emotion,proto3" json:"emotion,omitempty"`         // 情感类型（happy/sad/angry/neutral等）
+	Score         float32                `protobuf:"fixed32,2,opt,name=score,proto3" json:"score,omitempty"`           // 情感得分（-1.0 ~ 1.0）
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"` // 情感描述（可选）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SentimentResult) Reset() {
+	*x = SentimentResult{}
+	mi := &file_chat_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SentimentResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SentimentResult) ProtoMessage() {}
+
+func (x *SentimentResult) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SentimentResult.ProtoReflect.Descriptor instead.
+func (*SentimentResult) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *SentimentResult) GetEmotion() string {
+	if x != nil {
+		return x.Emotion
+	}
+	return ""
+}
+
+func (x *SentimentResult) GetScore() float32 {
+	if x != nil {
+		return x.Score
+	}
+	return 0
+}
+
+func (x *SentimentResult) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
 var File_chat_proto protoreflect.FileDescriptor
 
 const file_chat_proto_rawDesc = "" +
@@ -957,13 +1188,43 @@ const file_chat_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
 	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x16\n" +
 	"\x06avatar\x18\x03 \x01(\tR\x06avatar\x12\x16\n" +
-	"\x06gender\x18\x04 \x01(\tR\x06gender2\x87\x03\n" +
+	"\x06gender\x18\x04 \x01(\tR\x06gender\"\xae\x02\n" +
+	"\rAIChatRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1d\n" +
+	"\n" +
+	"input_text\x18\x02 \x01(\tR\tinputText\x12'\n" +
+	"\x0fconversation_id\x18\x03 \x01(\tR\x0econversationId\x12'\n" +
+	"\ahistory\x18\x04 \x03(\v2\r.chat.MessageR\ahistory\x12\x1f\n" +
+	"\vuse_emotion\x18\x05 \x01(\bR\n" +
+	"useEmotion\x127\n" +
+	"\x06params\x18\x06 \x03(\v2\x1f.chat.AIChatRequest.ParamsEntryR\x06params\x1a9\n" +
+	"\vParamsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xcc\x02\n" +
+	"\x0eAIChatResponse\x12\x1d\n" +
+	"\n" +
+	"reply_text\x18\x01 \x01(\tR\treplyText\x12'\n" +
+	"\x0fconversation_id\x18\x02 \x01(\tR\x0econversationId\x123\n" +
+	"\tsentiment\x18\x03 \x01(\v2\x15.chat.SentimentResultR\tsentiment\x12\x1c\n" +
+	"\ttimestamp\x18\x04 \x01(\x03R\ttimestamp\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x05 \x01(\tR\trequestId\x12B\n" +
+	"\n" +
+	"debug_info\x18\x06 \x03(\v2#.chat.AIChatResponse.DebugInfoEntryR\tdebugInfo\x1a<\n" +
+	"\x0eDebugInfoEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"c\n" +
+	"\x0fSentimentResult\x12\x18\n" +
+	"\aemotion\x18\x01 \x01(\tR\aemotion\x12\x14\n" +
+	"\x05score\x18\x02 \x01(\x02R\x05score\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription2\xbc\x03\n" +
 	"\x04Chat\x12B\n" +
 	"\vSendMessage\x12\x18.chat.SendMessageRequest\x1a\x19.chat.SendMessageResponse\x12K\n" +
 	"\x0eReceiveMessage\x12\x1b.chat.ReceiveMessageRequest\x1a\x1c.chat.ReceiveMessageResponse\x12K\n" +
 	"\x0eGetChatHistory\x12\x1b.chat.GetChatHistoryRequest\x1a\x1c.chat.GetChatHistoryResponse\x12W\n" +
 	"\x12UpdateOnlineStatus\x12\x1f.chat.UpdateOnlineStatusRequest\x1a .chat.UpdateOnlineStatusResponse\x12H\n" +
-	"\rGetChatWindow\x12\x1a.chat.GetChatWindowRequest\x1a\x1b.chat.GetChatWindowResponseB\bZ\x06./chatb\x06proto3"
+	"\rGetChatWindow\x12\x1a.chat.GetChatWindowRequest\x1a\x1b.chat.GetChatWindowResponse\x123\n" +
+	"\x06AIChat\x12\x13.chat.AIChatRequest\x1a\x14.chat.AIChatResponseB\bZ\x06./chatb\x06proto3"
 
 var (
 	file_chat_proto_rawDescOnce sync.Once
@@ -977,7 +1238,7 @@ func file_chat_proto_rawDescGZIP() []byte {
 	return file_chat_proto_rawDescData
 }
 
-var file_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_chat_proto_goTypes = []any{
 	(*Message)(nil),                    // 0: chat.Message
 	(*SendMessage)(nil),                // 1: chat.SendMessage
@@ -992,6 +1253,11 @@ var file_chat_proto_goTypes = []any{
 	(*GetChatWindowRequest)(nil),       // 10: chat.GetChatWindowRequest
 	(*GetChatWindowResponse)(nil),      // 11: chat.GetChatWindowResponse
 	(*UserInfoBase)(nil),               // 12: chat.UserInfoBase
+	(*AIChatRequest)(nil),              // 13: chat.AIChatRequest
+	(*AIChatResponse)(nil),             // 14: chat.AIChatResponse
+	(*SentimentResult)(nil),            // 15: chat.SentimentResult
+	nil,                                // 16: chat.AIChatRequest.ParamsEntry
+	nil,                                // 17: chat.AIChatResponse.DebugInfoEntry
 }
 var file_chat_proto_depIdxs = []int32{
 	12, // 0: chat.Message.receiver:type_name -> chat.UserInfoBase
@@ -999,21 +1265,27 @@ var file_chat_proto_depIdxs = []int32{
 	0,  // 2: chat.ReceiveMessageResponse.messages:type_name -> chat.Message
 	0,  // 3: chat.GetChatHistoryResponse.messages:type_name -> chat.Message
 	0,  // 4: chat.GetChatWindowResponse.messages:type_name -> chat.Message
-	2,  // 5: chat.Chat.SendMessage:input_type -> chat.SendMessageRequest
-	4,  // 6: chat.Chat.ReceiveMessage:input_type -> chat.ReceiveMessageRequest
-	6,  // 7: chat.Chat.GetChatHistory:input_type -> chat.GetChatHistoryRequest
-	8,  // 8: chat.Chat.UpdateOnlineStatus:input_type -> chat.UpdateOnlineStatusRequest
-	10, // 9: chat.Chat.GetChatWindow:input_type -> chat.GetChatWindowRequest
-	3,  // 10: chat.Chat.SendMessage:output_type -> chat.SendMessageResponse
-	5,  // 11: chat.Chat.ReceiveMessage:output_type -> chat.ReceiveMessageResponse
-	7,  // 12: chat.Chat.GetChatHistory:output_type -> chat.GetChatHistoryResponse
-	9,  // 13: chat.Chat.UpdateOnlineStatus:output_type -> chat.UpdateOnlineStatusResponse
-	11, // 14: chat.Chat.GetChatWindow:output_type -> chat.GetChatWindowResponse
-	10, // [10:15] is the sub-list for method output_type
-	5,  // [5:10] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	0,  // 5: chat.AIChatRequest.history:type_name -> chat.Message
+	16, // 6: chat.AIChatRequest.params:type_name -> chat.AIChatRequest.ParamsEntry
+	15, // 7: chat.AIChatResponse.sentiment:type_name -> chat.SentimentResult
+	17, // 8: chat.AIChatResponse.debug_info:type_name -> chat.AIChatResponse.DebugInfoEntry
+	2,  // 9: chat.Chat.SendMessage:input_type -> chat.SendMessageRequest
+	4,  // 10: chat.Chat.ReceiveMessage:input_type -> chat.ReceiveMessageRequest
+	6,  // 11: chat.Chat.GetChatHistory:input_type -> chat.GetChatHistoryRequest
+	8,  // 12: chat.Chat.UpdateOnlineStatus:input_type -> chat.UpdateOnlineStatusRequest
+	10, // 13: chat.Chat.GetChatWindow:input_type -> chat.GetChatWindowRequest
+	13, // 14: chat.Chat.AIChat:input_type -> chat.AIChatRequest
+	3,  // 15: chat.Chat.SendMessage:output_type -> chat.SendMessageResponse
+	5,  // 16: chat.Chat.ReceiveMessage:output_type -> chat.ReceiveMessageResponse
+	7,  // 17: chat.Chat.GetChatHistory:output_type -> chat.GetChatHistoryResponse
+	9,  // 18: chat.Chat.UpdateOnlineStatus:output_type -> chat.UpdateOnlineStatusResponse
+	11, // 19: chat.Chat.GetChatWindow:output_type -> chat.GetChatWindowResponse
+	14, // 20: chat.Chat.AIChat:output_type -> chat.AIChatResponse
+	15, // [15:21] is the sub-list for method output_type
+	9,  // [9:15] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_chat_proto_init() }
@@ -1027,7 +1299,7 @@ func file_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_chat_proto_rawDesc), len(file_chat_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
