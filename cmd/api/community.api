@@ -57,7 +57,7 @@ type (
 @server (
 	group:      users
 	prefix:     /users
-	middleware: Filter
+	middleware: Filter,Cors
 )
 service community {
 	@doc "注册账号信息"
@@ -97,6 +97,9 @@ type (
 	SendMessageReq {
 		Message
 	}
+	SendMessageResp {
+		Reply string `json:"reply"`
+	}
 	ReceiveMessageReq {
 		Page     int32 `form:"page,default=1"` // 页码，默认值为 1
 		PageSize int32 `form:"page_size,default=10"` // 每页大小，默认值为 10
@@ -120,6 +123,7 @@ type (
 @server (
 	group:      chat
 	prefix:     /chat
+	timeout:    100s
 	middleware: Filter
 )
 service community {
@@ -138,6 +142,10 @@ service community {
 	@doc "查询指定对话窗口的聊天记录"
 	@handler GetChatWindow
 	get /window (GetChatWindowReq) returns (Response)
+
+	@doc "AI 聊天机器人"
+	@handler ChatBot
+	post /bot (SendMessageReq) returns (SendMessageResp)
 }
 
 type (

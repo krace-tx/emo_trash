@@ -5,6 +5,7 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	article "github.com/krace-tx/emo_trash/app/api/community/internal/handler/article"
 	chat "github.com/krace-tx/emo_trash/app/api/community/internal/handler/chat"
@@ -146,6 +147,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.Filter},
 			[]rest.Route{
 				{
+					// AI 聊天机器人
+					Method:  http.MethodPost,
+					Path:    "/bot",
+					Handler: chat.ChatBotHandler(serverCtx),
+				},
+				{
 					// 查询聊天记录
 					Method:  http.MethodPost,
 					Path:    "/history",
@@ -172,6 +179,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithPrefix("/chat"),
+		rest.WithTimeout(100000*time.Millisecond),
 	)
 
 	server.AddRoutes(

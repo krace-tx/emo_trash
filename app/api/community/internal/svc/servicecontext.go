@@ -9,11 +9,13 @@ import (
 type ServiceContext struct {
 	Config config.Config
 	Filter rest.Middleware
+	Cors   rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 		Filter: middleware.NewFilterMiddleware().Handle,
+		Cors:   middleware.NewCorsMiddleware().Handle,
 	}
 }

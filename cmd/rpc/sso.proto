@@ -6,6 +6,7 @@ option go_package = "./sso";
 
 // 登录请求
 message LoginReq {
+  // @inject_tag json:"mobile"
   optional string mobile = 1;          // 手机号(可选)
   optional string sms_code = 2;        // 短信验证码(异地登录时需要)
   optional string platform = 3;         // 第三方平台: wechat/qq

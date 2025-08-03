@@ -2,16 +2,16 @@ package chat
 
 import (
 	"github.com/krace-tx/emo_trash/pkg/result"
-	"github.com/zeromicro/go-zero/rest/httpx"
 	"net/http"
 
 	"github.com/krace-tx/emo_trash/app/api/community/internal/logic/chat"
 	"github.com/krace-tx/emo_trash/app/api/community/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/community/internal/types"
+	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-// 发送消息
-func SendMessageHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// AI 聊天机器人
+func ChatBotHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.SendMessageReq
 		if err := httpx.Parse(r, &req); err != nil {
@@ -19,8 +19,8 @@ func SendMessageHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := chat.NewSendMessageLogic(r.Context(), svcCtx)
-		resp, err := l.SendMessage(&req)
+		l := chat.NewChatBotLogic(r.Context(), svcCtx)
+		resp, err := l.ChatBot(&req)
 		if err != nil {
 			result.ErrorCtx(r.Context(), w, err)
 		} else {

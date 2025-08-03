@@ -22,6 +22,7 @@ API_SRC_DIR := cmd/api
 RPC_SRC_DIR := cmd/rpc
 API_DEST_DIR := app/api
 RPC_DEST_DIR := app/rpc
+SWAGGER_DEST_DIR := swagger
 
 # 查找文件
 API_FILES := $(wildcard $(API_SRC_DIR)/*.api)
@@ -34,7 +35,7 @@ RPC_TARGETS := $(patsubst $(RPC_SRC_DIR)/%.proto,$(RPC_DEST_DIR)/%/.,$(PROTO_FIL
 # 默认目标
 .DEFAULT_GOAL := help
 
-.PHONY: all init api rpc check mod clean help
+.PHONY: all init api rpc check mod clean swagger help
 
 all: api rpc
 	@$(ECHO) "$(GREEN)All code generated successfully!$(NC)"
@@ -117,6 +118,10 @@ mod:
 clean:
 	@git update-index --assume-unchanged go.mod
 	@git update-index --assume-unchanged go.sum
+
+swagger:
+	@$(ECHO) "$(YELLOW)Generating Swagger documentation...$(NC)"
+	@$(GOZERO) api swagger -api $(API_FILES) -dir $(SWAGGER_DEST_DIR)
 
 # 帮助信息
 help:

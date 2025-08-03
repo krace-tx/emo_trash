@@ -233,6 +233,10 @@ type SendMessageReq struct {
 	Message
 }
 
+type SendMessageResp struct {
+	Reply string `json:"reply"`
+}
+
 type ShareArticleReq struct {
 	ArticleId string `json:"article_id"`
 }

@@ -684,71 +684,77 @@
         addMessageToLog('user', text);
         messageInput.value = '';
 
-        // 模拟后端处理延迟
-        status.textContent = "思考中...";
-        setTimeout(() => {
-            // 模拟情感分析
-            const emotionsList = ['happy', 'sad', 'angry', 'surprised', 'neutral'];
-            const randomEmotion = emotionsList[Math.floor(Math.random() * emotionsList.length)];
+        // 显示加载状态
+        status.textContent = "正在连接情感机器人...";
+        waveContainer.style.display = 'flex';
 
-            // 设置情感
-            setEmotion(randomEmotion);
+        // === 替换模拟数据为实际API调用 ===
+        // 创建请求头
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
 
-            // 生成回复（根据情感）
-            const reply = generateReply(text, randomEmotion);
+        // 请求体
+        const raw = JSON.stringify({
+            "content": text
+        });
 
-            // 添加机器人消息
-            addMessageToLog('bot', reply, randomEmotion);
-
-            // 语音合成
-            if (autoSpeakCheckbox.checked) {
-                speakText(reply, randomEmotion);
-            } else {
-                status.textContent = "就绪";
-            }
-        }, 1500);
-    }
-
-    // 生成回复（模拟）
-    function generateReply(text, emotion) {
-        const replies = {
-            happy: [
-                "太棒了！听到你这么说真让我开心！",
-                "哇，这真是个好消息！让我们一起庆祝吧！",
-                "你的快乐感染了我，我也觉得好开心！"
-            ],
-            sad: [
-                "我能感受到你的难过，如果你想聊聊，我在这里。",
-                "有时候感到悲伤是很正常的，我会陪着你。",
-                "虽然现在很难过，但事情总会好起来的。"
-            ],
-            angry: [
-                "我理解你现在很生气，深呼吸一下，慢慢来。",
-                "愤怒是正常的情绪，但别让它控制你。",
-                "冷静下来，我们可以一起解决这个问题。"
-            ],
-            surprised: [
-                "真的吗？这太令人惊讶了！",
-                "哇！这完全出乎我的意料！",
-                "天啊，这消息太让人震惊了！"
-            ],
-            neutral: [
-                "我明白了，这很有意思。",
-                "感谢你分享这个信息。",
-                "这是个值得思考的观点。"
-            ]
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
 
-        const defaultReplies = [
-            "我理解你的意思。",
-            "这很有趣，请告诉我更多。",
-            "我明白了，继续说吧。",
-            "这是一个很好的观点。",
-            "感谢你和我分享这个。"
-        ];
+        // 调用后端API
+        fetch("http://127.0.0.1:9000/chat/bot", requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                waveContainer.style.display = 'none';
 
-        const emotionReplies = replies[emotion] || defaultReplies;
-        return emotionReplies[Math.floor(Math.random() * emotionReplies.length)];
+                // 从API响应中获取机器人回复
+                const botReply = result.data.reply;
+
+                // 简单情感分析（可根据实际需求增强）
+                const emotion = analyzeEmotion(botReply);
+                setEmotion(emotion);
+
+                // 添加机器人消息
+                addMessageToLog('bot', botReply, emotion);
+
+                // 语音合成
+                if (autoSpeakCheckbox.checked) {
+                    speakText(botReply, emotion);
+                } else {
+                    status.textContent = "就绪";
+                }
+            })
+            .catch(error => {
+                waveContainer.style.display = 'none';
+                status.textContent = `请求失败: ${error.message}`;
+                addMessageToLog('bot', `抱歉，连接情感机器人失败: ${error.message}`, 'neutral');
+            });
+    }
+
+    // === 添加简单情感分析函数 ===
+    function analyzeEmotion(text) {
+        text = text.toLowerCase();
+
+        if (text.includes("开心") || text.includes("高兴") || text.includes("棒") || text.includes("好")) {
+            return "happy";
+        } else if (text.includes("难过") || text.includes("伤心") || text.includes("遗憾") || text.includes("失望")) {
+            return "sad";
+        } else if (text.includes("生气") || text.includes("愤怒") || text.includes("讨厌") || text.includes("烦")) {
+            return "angry";
+        } else if (text.includes("惊讶") || text.includes("哇") || text.includes("哦") || text.includes("竟然")) {
+            return "surprised";
+        } else {
+            return "neutral";
+        }
     }
 
     // 情感语音合成
