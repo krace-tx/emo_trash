@@ -54,7 +54,7 @@ func (s *ChatServer) GetChatWindow(ctx context.Context, in *chat.GetChatWindowRe
 }
 
 // AI 聊天接口（新增）
-func (s *ChatServer) AIChat(ctx context.Context, in *chat.AIChatRequest) (*chat.AIChatResponse, error) {
-	l := chatlogic.NewAIChatLogic(ctx, s.svcCtx)
-	return l.AIChat(in)
+func (s *ChatServer) AiChat(ctx context.Context, in *chat.AIChatRequest) (*chat.AIChatResponse, error) {
+	l := chatlogic.NewAiChatLogic(ctx, s.svcCtx)
+	return l.AiChat(in)
 }

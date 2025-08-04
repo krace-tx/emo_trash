@@ -25,6 +25,19 @@ message LoginResp {
   string refresh_token = 2;    // 刷新Token
 }
 
+
+message RegisterReq {
+  string password = 1;
+  string mobile = 2;          // 手机号
+  string sms_code = 3;        // 短信验证码
+}
+
+message RegisterResp {
+  string userId = 1;
+  string token = 2;            // JWT Token
+  string refresh_token = 3;    // 刷新Token
+}
+
 // 二维码生成请求
 message QrcodeReq {
   string device_id = 1;        // PC设备ID
@@ -82,6 +95,9 @@ message LogoutReq {
 service Auth {
   // 用户登录
   rpc Login(LoginReq) returns (LoginResp);
+
+  // 手机号注册
+  rpc Register(RegisterReq) returns (RegisterResp);
 
   // 生成登录二维码
   rpc GenerateQrcode(QrcodeReq) returns (QrcodeResp);

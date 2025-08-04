@@ -22,12 +22,16 @@ type (
 	QrcodeResp       = sso.QrcodeResp
 	QrcodeStatusReq  = sso.QrcodeStatusReq
 	QrcodeStatusResp = sso.QrcodeStatusResp
+	RegisterReq      = sso.RegisterReq
+	RegisterResp     = sso.RegisterResp
 	VerifyReq        = sso.VerifyReq
 	VerifyResp       = sso.VerifyResp
 
 	Auth interface {
 		// 用户登录
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
+		// 手机号注册
+		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 		// 生成登录二维码
 		GenerateQrcode(ctx context.Context, in *QrcodeReq, opts ...grpc.CallOption) (*QrcodeResp, error)
 		// 检查二维码状态
@@ -55,6 +59,12 @@ func NewAuth(cli zrpc.Client) Auth {
 func (m *defaultAuth) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
 	client := sso.NewAuthClient(m.cli.Conn())
 	return client.Login(ctx, in, opts...)
+}
+
+// 手机号注册
+func (m *defaultAuth) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	client := sso.NewAuthClient(m.cli.Conn())
+	return client.Register(ctx, in, opts...)
 }
 
 // 生成登录二维码

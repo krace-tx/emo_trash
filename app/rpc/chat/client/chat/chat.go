@@ -43,7 +43,7 @@ type (
 		// 查询指定对话窗口的聊天记录
 		GetChatWindow(ctx context.Context, in *GetChatWindowRequest, opts ...grpc.CallOption) (*GetChatWindowResponse, error)
 		// AI 聊天接口（新增）
-		AIChat(ctx context.Context, in *AIChatRequest, opts ...grpc.CallOption) (*AIChatResponse, error)
+		AiChat(ctx context.Context, in *AIChatRequest, opts ...grpc.CallOption) (*AIChatResponse, error)
 	}
 
 	defaultChat struct {
@@ -88,7 +88,7 @@ func (m *defaultChat) GetChatWindow(ctx context.Context, in *GetChatWindowReques
 }
 
 // AI 聊天接口（新增）
-func (m *defaultChat) AIChat(ctx context.Context, in *AIChatRequest, opts ...grpc.CallOption) (*AIChatResponse, error) {
+func (m *defaultChat) AiChat(ctx context.Context, in *AIChatRequest, opts ...grpc.CallOption) (*AIChatResponse, error) {
 	client := chat.NewChatClient(m.cli.Conn())
-	return client.AIChat(ctx, in, opts...)
+	return client.AiChat(ctx, in, opts...)
 }

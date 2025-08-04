@@ -29,6 +29,12 @@ func (s *AuthServer) Login(ctx context.Context, in *sso.LoginReq) (*sso.LoginRes
 	return l.Login(in)
 }
 
+// 手机号注册
+func (s *AuthServer) Register(ctx context.Context, in *sso.RegisterReq) (*sso.RegisterResp, error) {
+	l := authlogic.NewRegisterLogic(ctx, s.svcCtx)
+	return l.Register(in)
+}
+
 // 生成登录二维码
 func (s *AuthServer) GenerateQrcode(ctx context.Context, in *sso.QrcodeReq) (*sso.QrcodeResp, error) {
 	l := authlogic.NewGenerateQrcodeLogic(ctx, s.svcCtx)
