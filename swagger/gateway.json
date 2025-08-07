@@ -1,0 +1,1138 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "Gateway Service API",
+    "version": "v1"
+  },
+  "basePath": "/",
+  "paths": {
+    "/v1/auth/auth/bind/email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "BindEmail",
+        "operationId": "ssoBindEmail",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "email_code"
+              ],
+              "properties": {
+                "email": {
+                  "description": "邮箱(必填)",
+                  "type": "string"
+                },
+                "email_code": {
+                  "description": "邮箱验证码(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "操作结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/bind/mobile": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "BindMobile",
+        "operationId": "ssoBindMobile",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "mobile",
+                "sms_code"
+              ],
+              "properties": {
+                "mobile": {
+                  "description": "手机号(必填)",
+                  "type": "string"
+                },
+                "sms_code": {
+                  "description": "短信验证码(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "操作结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/bind/thirdparty": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "BindThirdParty",
+        "operationId": "ssoBindThirdParty",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "platform",
+                "open_id"
+              ],
+              "properties": {
+                "open_id": {
+                  "description": "OpenID(必填)",
+                  "type": "string"
+                },
+                "platform": {
+                  "description": "平台(必填)",
+                  "type": "string",
+                  "enum": [
+                    "wechat",
+                    "qq",
+                    "alipay"
+                  ]
+                },
+                "union_id": {
+                  "description": "UnionID(可选)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "操作结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/email/code": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "SendEmailCode",
+        "operationId": "ssoSendEmailCode",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "scene"
+              ],
+              "properties": {
+                "email": {
+                  "description": "邮箱(必填)",
+                  "type": "string"
+                },
+                "scene": {
+                  "description": "场景(必填)",
+                  "type": "string",
+                  "enum": [
+                    "register",
+                    "reset_pwd"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "操作结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/login": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "Login",
+        "operationId": "ssoLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "account": {
+                  "description": "账号(可选)",
+                  "type": "string"
+                },
+                "device_id": {
+                  "description": "设备ID(可选)",
+                  "type": "string"
+                },
+                "device_type": {
+                  "description": "设备类型(可选)",
+                  "type": "string",
+                  "enum": [
+                    "app",
+                    "pc",
+                    "h5"
+                  ]
+                },
+                "is_quick": {
+                  "description": "是否快捷登录(可选)",
+                  "type": "boolean"
+                },
+                "login_ip": {
+                  "description": "IP地址(可选)",
+                  "type": "string"
+                },
+                "mobile": {
+                  "description": "手机号(可选)",
+                  "type": "string"
+                },
+                "open_id": {
+                  "description": "第三方OpenID(可选)",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "密码(可选)",
+                  "type": "string"
+                },
+                "platform": {
+                  "description": "第三方平台(可选)",
+                  "type": "string",
+                  "enum": [
+                    "wechat",
+                    "qq",
+                    "alipay"
+                  ]
+                },
+                "sms_code": {
+                  "description": "短信验证码(可选)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "refresh_token": {
+                  "description": "刷新令牌",
+                  "type": "string"
+                },
+                "token": {
+                  "description": "JWT访问令牌",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/logout": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "Logout",
+        "operationId": "ssoLogout",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "token",
+                "device_type"
+              ],
+              "properties": {
+                "device_type": {
+                  "description": "设备类型(必填)",
+                  "type": "string",
+                  "enum": [
+                    "app",
+                    "pc",
+                    "h5"
+                  ]
+                },
+                "token": {
+                  "description": "当前Token(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "操作结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/password/reset": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "ResetPassword",
+        "operationId": "ssoResetPassword",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "mobile",
+                "sms_code",
+                "new_password"
+              ],
+              "properties": {
+                "mobile": {
+                  "description": "手机号(必填)",
+                  "type": "string"
+                },
+                "new_password": {
+                  "description": "新密码(必填)",
+                  "type": "string"
+                },
+                "sms_code": {
+                  "description": "短信验证码(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "操作结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/password/reset/email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "ResetPasswordByEmail",
+        "operationId": "ssoResetPasswordByEmail",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "email_code",
+                "new_password"
+              ],
+              "properties": {
+                "email": {
+                  "description": "邮箱(必填)",
+                  "type": "string"
+                },
+                "email_code": {
+                  "description": "邮箱验证码(必填)",
+                  "type": "string"
+                },
+                "new_password": {
+                  "description": "新密码(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "操作结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/qrcode/confirm": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "ConfirmQrcodeLogin",
+        "operationId": "ssoConfirmQrcodeLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "qid",
+                "app_token"
+              ],
+              "properties": {
+                "app_token": {
+                  "description": "手机端Token(必填)",
+                  "type": "string"
+                },
+                "qid": {
+                  "description": "二维码ID(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "refresh_token": {
+                  "description": "刷新令牌",
+                  "type": "string"
+                },
+                "token": {
+                  "description": "JWT访问令牌",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/qrcode/generate": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "GenerateQrcode",
+        "operationId": "ssoGenerateQrcode",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "device_id",
+                "login_ip"
+              ],
+              "properties": {
+                "device_id": {
+                  "description": "设备ID(必填)",
+                  "type": "string"
+                },
+                "login_ip": {
+                  "description": "登录IP(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image_url": {
+                  "description": "二维码图片URL",
+                  "type": "string"
+                },
+                "qid": {
+                  "description": "二维码唯一ID",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/qrcode/status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "CheckQrcodeStatus",
+        "operationId": "ssoCheckQrcodeStatus",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "qid"
+              ],
+              "properties": {
+                "qid": {
+                  "description": "二维码ID(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "description": "状态(0:等待扫描,1:已扫描,2:已确认,3:已过期)",
+                  "type": "integer"
+                },
+                "token": {
+                  "description": "登录Token(状态为2时返回)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/register": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "Register",
+        "operationId": "ssoRegister",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "mobile",
+                "password",
+                "sms_code"
+              ],
+              "properties": {
+                "mobile": {
+                  "description": "手机号(必填)",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "密码(必填)",
+                  "type": "string"
+                },
+                "sms_code": {
+                  "description": "短信验证码(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "refresh_token": {
+                  "description": "刷新令牌",
+                  "type": "string"
+                },
+                "token": {
+                  "description": "JWT访问令牌",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/sms/code": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "SendSmsCode",
+        "operationId": "ssoSendSmsCode",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "mobile",
+                "scene"
+              ],
+              "properties": {
+                "mobile": {
+                  "description": "手机号(必填)",
+                  "type": "string"
+                },
+                "scene": {
+                  "description": "场景(必填)",
+                  "type": "string",
+                  "enum": [
+                    "register",
+                    "login",
+                    "reset_pwd"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "expire_seconds": {
+                  "description": "验证码有效期(秒)",
+                  "type": "integer"
+                },
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "发送结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/token/refresh": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "RefreshToken",
+        "operationId": "ssoRefreshToken",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "refresh_token"
+              ],
+              "properties": {
+                "refresh_token": {
+                  "description": "刷新Token(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "refresh_token": {
+                  "description": "新刷新Token",
+                  "type": "string"
+                },
+                "token": {
+                  "description": "新访问Token",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/token/verify": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "VerifyToken",
+        "operationId": "ssoVerifyToken",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "token",
+                "device_type"
+              ],
+              "properties": {
+                "device_type": {
+                  "description": "设备类型(必填)",
+                  "type": "string",
+                  "enum": [
+                    "app",
+                    "pc",
+                    "h5"
+                  ]
+                },
+                "token": {
+                  "description": "待验证Token(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "device_id": {
+                  "description": "设备ID",
+                  "type": "string"
+                },
+                "device_type": {
+                  "description": "设备类型",
+                  "type": "string"
+                },
+                "user_id": {
+                  "description": "用户ID",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/unbind/email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "UnbindEmail",
+        "operationId": "ssoUnbindEmail",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "email_code"
+              ],
+              "properties": {
+                "email": {
+                  "description": "邮箱(必填)",
+                  "type": "string"
+                },
+                "email_code": {
+                  "description": "邮箱验证码(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "操作结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/unbind/mobile": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "UnbindMobile",
+        "operationId": "ssoUnbindMobile",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "mobile",
+                "sms_code"
+              ],
+              "properties": {
+                "mobile": {
+                  "description": "手机号(必填)",
+                  "type": "string"
+                },
+                "sms_code": {
+                  "description": "短信验证码(必填)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "操作结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/auth/unbind/thirdparty": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "UnbindThirdParty",
+        "operationId": "ssoUnbindThirdParty",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "platform",
+                "open_id"
+              ],
+              "properties": {
+                "open_id": {
+                  "description": "OpenID(必填)",
+                  "type": "string"
+                },
+                "platform": {
+                  "description": "平台(必填)",
+                  "type": "string",
+                  "enum": [
+                    "wechat",
+                    "qq",
+                    "alipay"
+                  ]
+                },
+                "union_id": {
+                  "description": "UnionID(可选)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "description": "提示信息",
+                  "type": "string"
+                },
+                "success": {
+                  "description": "操作结果",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-date": "2025-08-07 23:44:30",
+  "x-description": "This is a goctl generated swagger file.",
+  "x-github": "https://github.com/zeromicro/go-zero",
+  "x-go-zero-doc": "https://go-zero.dev/",
+  "x-goctl-version": "1.8.5"
+}
