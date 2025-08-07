@@ -2,7 +2,6 @@ package authlogic
 
 import (
 	"context"
-
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 
