@@ -73,12 +73,16 @@ api: $(API_TARGETS)
 
 $(API_DEST_DIR)/%/. : $(API_SRC_DIR)/%.api
 	@$(ECHO) "$(YELLOW)Generating API code for $<...$(NC)"
-	@$(MKDIR) $(API_DEST_DIR)/$(notdir $(basename $<))
-	@if $(GOZERO) api go -api $< -dir $(API_DEST_DIR)/$(notdir $(basename $<)); then \
+	@# 捕获命令输出和返回码，支持跳过 "missing service" 错误
+	@OUTPUT=$$($(GOZERO) api go -api $< -dir $(API_DEST_DIR)/$(notdir $(basename $<)) 2>&1); \
+	RET_CODE=$$?; \
+	if [ $$RET_CODE -eq 0 ]; then \
 		$(TOUCH) $@; \
 		$(ECHO) "$(GREEN)API code generated to $(API_DEST_DIR)/$(notdir $(basename $<))$(NC)"; \
+	elif echo "$$OUTPUT" | grep -q "Error: missing service"; then \
+		$(ECHO) "$(YELLOW)Skipping $<: missing service definition$(NC)"; \
 	else \
-		$(ECHO) "$(RED)Failed to generate API code for $<$(NC)"; \
+		$(ECHO) "$(RED)Failed to generate API code for $<:$$OUTPUT$(NC)"; \
 		exit 1; \
 	fi
 
@@ -87,24 +91,28 @@ rpc: $(RPC_TARGETS)
 
 $(RPC_DEST_DIR)/%/. : $(RPC_SRC_DIR)/%.proto
 	@$(ECHO) "$(YELLOW)Generating RPC code for $<...$(NC)"
-	@$(MKDIR) $(RPC_DEST_DIR)/$(notdir $(basename $<))
-	@if cd $(RPC_SRC_DIR) && \
+	@# 捕获命令输出和返回码，支持跳过 "rpc service not found" 错误
+	@OUTPUT=$$(cd $(RPC_SRC_DIR) && \
 	 $(GOZERO) rpc protoc $(notdir $<) \
   	 --proto_path=. \
   	 --proto_path=../../third_party \
 	 --go_out=../../$(RPC_DEST_DIR)/$(notdir $(basename $<)) \
 	 --go-grpc_out=../../$(RPC_DEST_DIR)/$(notdir $(basename $<)) \
 	 --zrpc_out=../../$(RPC_DEST_DIR)/$(notdir $(basename $<)) \
-	 --plugin=protoc-gen-validate=$(GOPATH)/bin/protoc-gen-validate \
 	 --style=go_zero \
-	 -m; then \
+	 -m 2>&1); \
+	RET_CODE=$$?; \
+	if [ $$RET_CODE -eq 0 ]; then \
 		$(ECHO) "$(GREEN)RPC code generated to $(RPC_DEST_DIR)/$(notdir $(basename $<))$(NC)"; \
+		$(ECHO) "Injecting custom tags to remove omitempty..."; \
+		find $(RPC_DEST_DIR)/$(notdir $(basename $<))/pb -name "*.pb.go" -exec protoc-go-inject-tag -input={} \;; \
+		$(TOUCH) $@; \
+	elif echo "$$OUTPUT" | grep -q "rpc service not found"; then \
+		$(ECHO) "$(YELLOW)Skipping $<: rpc service not found$(NC)"; \
 	else \
-		$(ECHO) "$(RED)Failed to generate RPC code for $<$(NC)"; \
+		$(ECHO) "$(RED)Failed to generate RPC code for $<:$$OUTPUT$(NC)"; \
 		exit 1; \
 	fi
-	@echo "Injecting custom tags to remove omitempty..."
-	@find $(RPC_DEST_DIR)/$(notdir $(basename $<))/pb -name "*.pb.go" -exec protoc-go-inject-tag -input={} \;
 
 # 检查文件
 check:

@@ -1,31 +1,30 @@
-package authlogic
+package sso
 
 import (
 	"context"
 
-	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
-	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
+	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
+	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type LoginLogic struct {
+	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic {
 	return &LoginLogic{
+		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
-// 用户登录
-func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
+func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.LoginResp{}, nil
+	return
 }

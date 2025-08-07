@@ -7,7 +7,6 @@
 package pb
 
 import (
-	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -2049,19 +2048,18 @@ var File_sso_proto protoreflect.FileDescriptor
 
 const file_sso_proto_rawDesc = "" +
 	"\n" +
-	"\tsso.proto\x12\x03sso\x1a\x17validate/validate.proto\"\xde\x05\n" +
-	"\bLoginReq\x125\n" +
-	"\x06mobile\x18\x01 \x01(\tB\x18\xfaB\x15r\x13\x10\v\x18\v2\r^1[3-9]\\d{9}$H\x00R\x06mobile\x88\x01\x01\x121\n" +
-	"\bsms_code\x18\x02 \x01(\tB\x11\xfaB\x0er\f2\a^\\d{6}$\x98\x01\x06H\x01R\asmsCode\x88\x01\x01\x12:\n" +
-	"\bplatform\x18\x03 \x01(\tB\x19\xfaB\x16r\x14R\x06wechatR\x02qqR\x06alipayH\x02R\bplatform\x88\x01\x01\x12'\n" +
-	"\aopen_id\x18\x04 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18dH\x03R\x06openId\x88\x01\x01\x12>\n" +
-	"\aaccount\x18\x05 \x01(\tB\x1f\xfaB\x1cr\x1a\x10\x04\x18\x142\x14^[a-zA-Z0-9_]{4,20}$H\x04R\aaccount\x88\x01\x01\x12j\n" +
-	"\bpassword\x18\x06 \x01(\tBI\xfaBFrD\x10\b\x18 2>^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*])[A-Za-z\\d@#$%^&*]{8,32}$H\x05R\bpassword\x88\x01\x01\x128\n" +
-	"\vdevice_type\x18\a \x01(\tB\x12\xfaB\x0fr\rR\x03appR\x02pcR\x02h5H\x06R\n" +
-	"deviceType\x88\x01\x01\x12+\n" +
-	"\tdevice_id\x18\b \x01(\tB\t\xfaB\x06r\x04\x10\n" +
-	"\x18@H\aR\bdeviceId\x88\x01\x01\x12N\n" +
-	"\blogin_ip\x18\t \x01(\tB.\xfaB+r)2'^(\\d{1,3}\\.){3}\\d{1,3}$|^[0-9a-fA-F:]+$H\bR\aloginIp\x88\x01\x01\x12\x1e\n" +
+	"\tsso.proto\x12\x03sso\"\xd0\x03\n" +
+	"\bLoginReq\x12\x1b\n" +
+	"\x06mobile\x18\x01 \x01(\tH\x00R\x06mobile\x88\x01\x01\x12\x1e\n" +
+	"\bsms_code\x18\x02 \x01(\tH\x01R\asmsCode\x88\x01\x01\x12\x1f\n" +
+	"\bplatform\x18\x03 \x01(\tH\x02R\bplatform\x88\x01\x01\x12\x1c\n" +
+	"\aopen_id\x18\x04 \x01(\tH\x03R\x06openId\x88\x01\x01\x12\x1d\n" +
+	"\aaccount\x18\x05 \x01(\tH\x04R\aaccount\x88\x01\x01\x12\x1f\n" +
+	"\bpassword\x18\x06 \x01(\tH\x05R\bpassword\x88\x01\x01\x12$\n" +
+	"\vdevice_type\x18\a \x01(\tH\x06R\n" +
+	"deviceType\x88\x01\x01\x12 \n" +
+	"\tdevice_id\x18\b \x01(\tH\aR\bdeviceId\x88\x01\x01\x12\x1e\n" +
+	"\blogin_ip\x18\t \x01(\tH\bR\aloginIp\x88\x01\x01\x12\x1e\n" +
 	"\bis_quick\x18\n" +
 	" \x01(\bH\tR\aisQuick\x88\x01\x01B\t\n" +
 	"\a_mobileB\v\n" +
@@ -2117,48 +2115,48 @@ const file_sso_proto_rawDesc = "" +
 	"\n" +
 	"LogoutResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"l\n" +
-	"\x0eSendSmsCodeReq\x12!\n" +
-	"\x06mobile\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\v\x18\vR\x06mobile\x127\n" +
-	"\x05scene\x18\x02 \x01(\tB!\xfaB\x1er\x1cR\bregisterR\x05loginR\treset_pwdR\x05scene\"l\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\">\n" +
+	"\x0eSendSmsCodeReq\x12\x16\n" +
+	"\x06mobile\x18\x01 \x01(\tR\x06mobile\x12\x14\n" +
+	"\x05scene\x18\x02 \x01(\tR\x05scene\"l\n" +
 	"\x0fSendSmsCodeResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12%\n" +
-	"\x0eexpire_seconds\x18\x03 \x01(\x05R\rexpireSeconds\"\xa0\x01\n" +
-	"\x10ResetPasswordReq\x12!\n" +
-	"\x06mobile\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\v\x18\vR\x06mobile\x12#\n" +
-	"\bsms_code\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01\x06R\asmsCode\x12D\n" +
-	"\fnew_password\x18\x03 \x01(\tB!\xfaB\x1er\x1c\x10\b\x18 2\x16^[a-zA-Z0-9_@#$%^&*]+$R\vnewPassword\"\x8f\x01\n" +
-	"\x17ResetPasswordByEmailReq\x12\x1d\n" +
-	"\x05email\x18\x01 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\x12'\n" +
+	"\x0eexpire_seconds\x18\x03 \x01(\x05R\rexpireSeconds\"h\n" +
+	"\x10ResetPasswordReq\x12\x16\n" +
+	"\x06mobile\x18\x01 \x01(\tR\x06mobile\x12\x19\n" +
+	"\bsms_code\x18\x02 \x01(\tR\asmsCode\x12!\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"q\n" +
+	"\x17ResetPasswordByEmailReq\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1d\n" +
 	"\n" +
-	"email_code\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01\x06R\temailCode\x12,\n" +
-	"\fnew_password\x18\x03 \x01(\tB\t\xfaB\x06r\x04\x10\b\x18 R\vnewPassword\"G\n" +
+	"email_code\x18\x02 \x01(\tR\temailCode\x12!\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"G\n" +
 	"\x11ResetPasswordResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"N\n" +
 	"\x18ResetPasswordByEmailResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"?\n" +
-	"\x0fRefreshTokenReq\x12,\n" +
-	"\rrefresh_token\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\frefreshToken\"M\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"6\n" +
+	"\x0fRefreshTokenReq\x12#\n" +
+	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"M\n" +
 	"\x10RefreshTokenResp\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"c\n" +
-	"\x10SendEmailCodeReq\x12\x1d\n" +
-	"\x05email\x18\x01 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\x120\n" +
-	"\x05scene\x18\x02 \x01(\tB\x1a\xfaB\x17r\x15R\bregisterR\treset_pwdR\x05scene\"n\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\">\n" +
+	"\x10SendEmailCodeReq\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x14\n" +
+	"\x05scene\x18\x02 \x01(\tR\x05scene\"n\n" +
 	"\x11SendEmailCodeResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12%\n" +
-	"\x0eexpire_seconds\x18\x03 \x01(\x05R\rexpireSeconds\"W\n" +
-	"\rBindMobileReq\x12!\n" +
-	"\x06mobile\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\v\x18\vR\x06mobile\x12#\n" +
-	"\bsms_code\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01\x06R\asmsCode\"V\n" +
-	"\fBindEmailReq\x12\x1d\n" +
-	"\x05email\x18\x01 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\x12'\n" +
+	"\x0eexpire_seconds\x18\x03 \x01(\x05R\rexpireSeconds\"B\n" +
+	"\rBindMobileReq\x12\x16\n" +
+	"\x06mobile\x18\x01 \x01(\tR\x06mobile\x12\x19\n" +
+	"\bsms_code\x18\x02 \x01(\tR\asmsCode\"C\n" +
+	"\fBindEmailReq\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1d\n" +
 	"\n" +
-	"email_code\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01\x06R\temailCode\"D\n" +
+	"email_code\x18\x02 \x01(\tR\temailCode\"D\n" +
 	"\x0eBindMobileResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"C\n" +
@@ -2176,29 +2174,29 @@ const file_sso_proto_rawDesc = "" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"H\n" +
 	"\x12BindThirdPartyResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\x89\x01\n" +
-	"\x13UnbindThirdPartyReq\x125\n" +
-	"\bplatform\x18\x01 \x01(\tB\x19\xfaB\x16r\x14R\x06wechatR\x02qqR\x06alipayR\bplatform\x12 \n" +
-	"\aopen_id\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\x06openId\x12\x19\n" +
-	"\bunion_id\x18\x03 \x01(\tR\aunionId\"\x87\x01\n" +
-	"\x11BindThirdPartyReq\x125\n" +
-	"\bplatform\x18\x01 \x01(\tB\x19\xfaB\x16r\x14R\x06wechatR\x02qqR\x06alipayR\bplatform\x12 \n" +
-	"\aopen_id\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\x06openId\x12\x19\n" +
-	"\bunion_id\x18\x03 \x01(\tR\aunionId\"X\n" +
-	"\x0eUnbindEmailReq\x12\x1d\n" +
-	"\x05email\x18\x01 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\x12'\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"e\n" +
+	"\x13UnbindThirdPartyReq\x12\x1a\n" +
+	"\bplatform\x18\x01 \x01(\tR\bplatform\x12\x17\n" +
+	"\aopen_id\x18\x02 \x01(\tR\x06openId\x12\x19\n" +
+	"\bunion_id\x18\x03 \x01(\tR\aunionId\"c\n" +
+	"\x11BindThirdPartyReq\x12\x1a\n" +
+	"\bplatform\x18\x01 \x01(\tR\bplatform\x12\x17\n" +
+	"\aopen_id\x18\x02 \x01(\tR\x06openId\x12\x19\n" +
+	"\bunion_id\x18\x03 \x01(\tR\aunionId\"E\n" +
+	"\x0eUnbindEmailReq\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1d\n" +
 	"\n" +
-	"email_code\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01\x06R\temailCode\"\x94\x01\n" +
-	"\vRegisterReq\x12!\n" +
-	"\x06mobile\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\v\x18\vR\x06mobile\x12=\n" +
-	"\bpassword\x18\x02 \x01(\tB!\xfaB\x1er\x1c\x10\b\x18 2\x16^[a-zA-Z0-9_@#$%^&*]+$R\bpassword\x12#\n" +
-	"\bsms_code\x18\x03 \x01(\tB\b\xfaB\x05r\x03\x98\x01\x06R\asmsCode\"I\n" +
+	"email_code\x18\x02 \x01(\tR\temailCode\"\\\n" +
+	"\vRegisterReq\x12\x16\n" +
+	"\x06mobile\x18\x01 \x01(\tR\x06mobile\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x19\n" +
+	"\bsms_code\x18\x03 \x01(\tR\asmsCode\"I\n" +
 	"\fRegisterResp\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"Y\n" +
-	"\x0fUnbindMobileReq\x12!\n" +
-	"\x06mobile\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\v\x18\vR\x06mobile\x12#\n" +
-	"\bsms_code\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01\x06R\asmsCode2\xa6\b\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"D\n" +
+	"\x0fUnbindMobileReq\x12\x16\n" +
+	"\x06mobile\x18\x01 \x01(\tR\x06mobile\x12\x19\n" +
+	"\bsms_code\x18\x02 \x01(\tR\asmsCode2\xa6\b\n" +
 	"\x04auth\x12&\n" +
 	"\x05Login\x12\r.sso.LoginReq\x1a\x0e.sso.LoginResp\x121\n" +
 	"\x0eGenerateQrcode\x12\x0e.sso.QrcodeReq\x1a\x0f.sso.QrcodeResp\x12@\n" +

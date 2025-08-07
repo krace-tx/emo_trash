@@ -3,9 +3,10 @@ package filter
 import (
 	"context"
 	"net/http"
-	"zjyt-cloud/pkg/consts"
-	"zjyt-cloud/pkg/errorx"
-	"zjyt-cloud/pkg/utils"
+
+	"github.com/krace-tx/emo_trash/pkg/auth"
+	"github.com/krace-tx/emo_trash/pkg/constant"
+	errx "github.com/krace-tx/emo_trash/pkg/err"
 )
 
 // 该函数从请求头中提取 JWT 令牌，并验证其有效性。
@@ -14,7 +15,7 @@ func TokenFilter(r *http.Request, secret string) (*http.Request, error) {
 	token := r.Header.Get(consts.Authorize)
 	if token == "" {
 		// 如果令牌为空，返回未授权响应
-		return r, errorx.AuthTokenNotNull
+		return r, errx.AuthTokenNotNull
 	}
 
 	if token[:7] == "Bearer " {
@@ -22,10 +23,10 @@ func TokenFilter(r *http.Request, secret string) (*http.Request, error) {
 	}
 
 	// 解析 JWT 令牌，验证其有效性
-	claims, err := utils.ParseJwtToken(token, secret)
+	claims, err := auth.ParseJwtToken(token, secret)
 	if err != nil {
 		// 如果令牌验证失败，返回未授权响应
-		return r, errorx.AuthTokenFail
+		return r, errx.AuthTokenFail
 	}
 
 	// 将用户 ID 存入请求上下文，并返回更新后的请求

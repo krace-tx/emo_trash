@@ -1,0 +1,75 @@
+syntax = "v1"
+
+info (
+	title:   "Gateway Service API"
+	author:  "krace"
+	email:   "qilinhu009@gmail.com"
+	version: "v1"
+)
+
+import "sso.api"
+
+@server (
+	group:      sso
+	prefix:     /v1/auth
+	middleware: Filter,Log
+	jwt:        Auth
+	cors:       true
+	timeout:    10s
+)
+service gateway {
+	@handler Login
+	post /auth/login (LoginReq) returns (LoginResp)
+
+	@handler GenerateQrcode
+	post /auth/qrcode/generate (QrcodeReq) returns (QrcodeResp)
+
+	@handler CheckQrcodeStatus
+	post /auth/qrcode/status (QrcodeStatusReq) returns (QrcodeStatusResp)
+
+	@handler ConfirmQrcodeLogin
+	post /auth/qrcode/confirm (QrcodeConfirmReq) returns (LoginResp)
+
+	@handler VerifyToken
+	post /auth/token/verify (VerifyReq) returns (VerifyResp)
+
+	@handler Logout
+	post /auth/logout (LogoutReq) returns (CommonResp)
+
+	@handler Register
+	post /auth/register (RegisterReq) returns (RegisterResp)
+
+	@handler SendSmsCode
+	post /auth/sms/code (SendSmsCodeReq) returns (SendSmsCodeResp)
+
+	@handler ResetPassword
+	post /auth/password/reset (ResetPasswordReq) returns (CommonResp)
+
+	@handler RefreshToken
+	post /auth/token/refresh (RefreshTokenReq) returns (RefreshTokenResp)
+
+	@handler SendEmailCode
+	post /auth/email/code (SendEmailCodeReq) returns (CommonResp)
+
+	@handler ResetPasswordByEmail
+	post /auth/password/reset/email (ResetPasswordByEmailReq) returns (CommonResp)
+
+	@handler BindMobile
+	post /auth/bind/mobile (BindMobileReq) returns (CommonResp)
+
+	@handler BindEmail
+	post /auth/bind/email (BindEmailReq) returns (CommonResp)
+
+	@handler UnbindMobile
+	post /auth/unbind/mobile (UnbindMobileReq) returns (CommonResp)
+
+	@handler UnbindEmail
+	post /auth/unbind/email (UnbindEmailReq) returns (CommonResp)
+
+	@handler UnbindThirdParty
+	post /auth/unbind/thirdparty (UnbindThirdPartyReq) returns (CommonResp)
+
+	@handler BindThirdParty
+	post /auth/bind/thirdparty (BindThirdPartyReq) returns (CommonResp)
+}
+
