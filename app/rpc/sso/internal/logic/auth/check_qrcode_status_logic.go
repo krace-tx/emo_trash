@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
-	"github.com/krace-tx/emo_trash/app/rpc/sso/sso"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,9 +23,9 @@ func NewCheckQrcodeStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-// 检查二维码状态
-func (l *CheckQrcodeStatusLogic) CheckQrcodeStatus(in *sso.QrcodeStatusReq) (*sso.QrcodeStatusResp, error) {
+// 检查二维码状态(PC端)
+func (l *CheckQrcodeStatusLogic) CheckQrcodeStatus(in *pb.QrcodeStatusReq) (*pb.QrcodeStatusResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &sso.QrcodeStatusResp{}, nil
+	return &pb.QrcodeStatusResp{}, nil
 }

@@ -104,7 +104,7 @@ $(RPC_DEST_DIR)/%/. : $(RPC_SRC_DIR)/%.proto
 		exit 1; \
 	fi
 	@echo "Injecting custom tags to remove omitempty..."
-	@find $(RPC_DEST_DIR) -name "*.pb.go" -exec protoc-go-inject-tag -input={} \;
+	@find $(RPC_DEST_DIR)/$(notdir $(basename $<))/pb -name "*.pb.go" -exec protoc-go-inject-tag -input={} \;
 
 # 检查文件
 check:

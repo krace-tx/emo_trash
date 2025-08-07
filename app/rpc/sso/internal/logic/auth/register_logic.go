@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
-	"github.com/krace-tx/emo_trash/app/rpc/sso/sso"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,9 +23,9 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-// 手机号注册
-func (l *RegisterLogic) Register(in *sso.RegisterReq) (*sso.RegisterResp, error) {
+// 注册
+func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &sso.RegisterResp{}, nil
+	return &pb.RegisterResp{}, nil
 }

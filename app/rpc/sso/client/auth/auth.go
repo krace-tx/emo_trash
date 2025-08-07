@@ -7,41 +7,86 @@ package auth
 import (
 	"context"
 
-	"github.com/krace-tx/emo_trash/app/rpc/sso/sso"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 )
 
 type (
-	LoginReq         = sso.LoginReq
-	LoginResp        = sso.LoginResp
-	LogoutReq        = sso.LogoutReq
-	QrcodeConfirmReq = sso.QrcodeConfirmReq
-	QrcodeReq        = sso.QrcodeReq
-	QrcodeResp       = sso.QrcodeResp
-	QrcodeStatusReq  = sso.QrcodeStatusReq
-	QrcodeStatusResp = sso.QrcodeStatusResp
-	RegisterReq      = sso.RegisterReq
-	RegisterResp     = sso.RegisterResp
-	VerifyReq        = sso.VerifyReq
-	VerifyResp       = sso.VerifyResp
+	BindEmailReq             = pb.BindEmailReq
+	BindEmailResp            = pb.BindEmailResp
+	BindMobileReq            = pb.BindMobileReq
+	BindMobileResp           = pb.BindMobileResp
+	BindThirdPartyReq        = pb.BindThirdPartyReq
+	BindThirdPartyResp       = pb.BindThirdPartyResp
+	LoginReq                 = pb.LoginReq
+	LoginResp                = pb.LoginResp
+	LogoutReq                = pb.LogoutReq
+	LogoutResp               = pb.LogoutResp
+	QrcodeConfirmReq         = pb.QrcodeConfirmReq
+	QrcodeReq                = pb.QrcodeReq
+	QrcodeResp               = pb.QrcodeResp
+	QrcodeStatusReq          = pb.QrcodeStatusReq
+	QrcodeStatusResp         = pb.QrcodeStatusResp
+	RefreshTokenReq          = pb.RefreshTokenReq
+	RefreshTokenResp         = pb.RefreshTokenResp
+	RegisterReq              = pb.RegisterReq
+	RegisterResp             = pb.RegisterResp
+	ResetPasswordByEmailReq  = pb.ResetPasswordByEmailReq
+	ResetPasswordByEmailResp = pb.ResetPasswordByEmailResp
+	ResetPasswordReq         = pb.ResetPasswordReq
+	ResetPasswordResp        = pb.ResetPasswordResp
+	SendEmailCodeReq         = pb.SendEmailCodeReq
+	SendEmailCodeResp        = pb.SendEmailCodeResp
+	SendSmsCodeReq           = pb.SendSmsCodeReq
+	SendSmsCodeResp          = pb.SendSmsCodeResp
+	UnbindEmailReq           = pb.UnbindEmailReq
+	UnbindEmailResp          = pb.UnbindEmailResp
+	UnbindMobileReq          = pb.UnbindMobileReq
+	UnbindMobileResp         = pb.UnbindMobileResp
+	UnbindThirdPartyReq      = pb.UnbindThirdPartyReq
+	UnbindThirdPartyResp     = pb.UnbindThirdPartyResp
+	VerifyReq                = pb.VerifyReq
+	VerifyResp               = pb.VerifyResp
 
 	Auth interface {
 		// 用户登录
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
-		// 手机号注册
-		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
-		// 生成登录二维码
+		// 生成登录二维码(PC端)
 		GenerateQrcode(ctx context.Context, in *QrcodeReq, opts ...grpc.CallOption) (*QrcodeResp, error)
-		// 检查二维码状态
+		// 检查二维码状态(PC端)
 		CheckQrcodeStatus(ctx context.Context, in *QrcodeStatusReq, opts ...grpc.CallOption) (*QrcodeStatusResp, error)
-		// 手机端确认登录
+		// 手机端确认登录(PC端)
 		ConfirmQrcodeLogin(ctx context.Context, in *QrcodeConfirmReq, opts ...grpc.CallOption) (*LoginResp, error)
 		// 验证会话
 		VerifyToken(ctx context.Context, in *VerifyReq, opts ...grpc.CallOption) (*VerifyResp, error)
 		// 用户登出
-		Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*VerifyResp, error)
+		Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*LogoutResp, error)
+		// 注册
+		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
+		// 发送短信验证码
+		SendSmsCode(ctx context.Context, in *SendSmsCodeReq, opts ...grpc.CallOption) (*SendSmsCodeResp, error)
+		// 重置密码
+		ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error)
+		// 刷新Token
+		RefreshToken(ctx context.Context, in *RefreshTokenReq, opts ...grpc.CallOption) (*RefreshTokenResp, error)
+		// 发送邮件验证码
+		SendEmailCode(ctx context.Context, in *SendEmailCodeReq, opts ...grpc.CallOption) (*SendEmailCodeResp, error)
+		// 重置密码
+		ResetPasswordByEmail(ctx context.Context, in *ResetPasswordByEmailReq, opts ...grpc.CallOption) (*ResetPasswordByEmailResp, error)
+		// 绑定手机号
+		BindMobile(ctx context.Context, in *BindMobileReq, opts ...grpc.CallOption) (*BindMobileResp, error)
+		// 绑定邮箱
+		BindEmail(ctx context.Context, in *BindEmailReq, opts ...grpc.CallOption) (*BindEmailResp, error)
+		// 解绑手机号
+		UnbindMobile(ctx context.Context, in *UnbindMobileReq, opts ...grpc.CallOption) (*UnbindMobileResp, error)
+		// 解绑邮箱
+		UnbindEmail(ctx context.Context, in *UnbindEmailReq, opts ...grpc.CallOption) (*UnbindEmailResp, error)
+		// 解绑第三方登录
+		UnbindThirdParty(ctx context.Context, in *UnbindThirdPartyReq, opts ...grpc.CallOption) (*UnbindThirdPartyResp, error)
+		// 绑定第三方登录
+		BindThirdParty(ctx context.Context, in *BindThirdPartyReq, opts ...grpc.CallOption) (*BindThirdPartyResp, error)
 	}
 
 	defaultAuth struct {
@@ -57,42 +102,108 @@ func NewAuth(cli zrpc.Client) Auth {
 
 // 用户登录
 func (m *defaultAuth) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
-	client := sso.NewAuthClient(m.cli.Conn())
+	client := pb.NewAuthClient(m.cli.Conn())
 	return client.Login(ctx, in, opts...)
 }
 
-// 手机号注册
-func (m *defaultAuth) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
-	client := sso.NewAuthClient(m.cli.Conn())
-	return client.Register(ctx, in, opts...)
-}
-
-// 生成登录二维码
+// 生成登录二维码(PC端)
 func (m *defaultAuth) GenerateQrcode(ctx context.Context, in *QrcodeReq, opts ...grpc.CallOption) (*QrcodeResp, error) {
-	client := sso.NewAuthClient(m.cli.Conn())
+	client := pb.NewAuthClient(m.cli.Conn())
 	return client.GenerateQrcode(ctx, in, opts...)
 }
 
-// 检查二维码状态
+// 检查二维码状态(PC端)
 func (m *defaultAuth) CheckQrcodeStatus(ctx context.Context, in *QrcodeStatusReq, opts ...grpc.CallOption) (*QrcodeStatusResp, error) {
-	client := sso.NewAuthClient(m.cli.Conn())
+	client := pb.NewAuthClient(m.cli.Conn())
 	return client.CheckQrcodeStatus(ctx, in, opts...)
 }
 
-// 手机端确认登录
+// 手机端确认登录(PC端)
 func (m *defaultAuth) ConfirmQrcodeLogin(ctx context.Context, in *QrcodeConfirmReq, opts ...grpc.CallOption) (*LoginResp, error) {
-	client := sso.NewAuthClient(m.cli.Conn())
+	client := pb.NewAuthClient(m.cli.Conn())
 	return client.ConfirmQrcodeLogin(ctx, in, opts...)
 }
 
 // 验证会话
 func (m *defaultAuth) VerifyToken(ctx context.Context, in *VerifyReq, opts ...grpc.CallOption) (*VerifyResp, error) {
-	client := sso.NewAuthClient(m.cli.Conn())
+	client := pb.NewAuthClient(m.cli.Conn())
 	return client.VerifyToken(ctx, in, opts...)
 }
 
 // 用户登出
-func (m *defaultAuth) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*VerifyResp, error) {
-	client := sso.NewAuthClient(m.cli.Conn())
+func (m *defaultAuth) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*LogoutResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
 	return client.Logout(ctx, in, opts...)
+}
+
+// 注册
+func (m *defaultAuth) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.Register(ctx, in, opts...)
+}
+
+// 发送短信验证码
+func (m *defaultAuth) SendSmsCode(ctx context.Context, in *SendSmsCodeReq, opts ...grpc.CallOption) (*SendSmsCodeResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.SendSmsCode(ctx, in, opts...)
+}
+
+// 重置密码
+func (m *defaultAuth) ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.ResetPassword(ctx, in, opts...)
+}
+
+// 刷新Token
+func (m *defaultAuth) RefreshToken(ctx context.Context, in *RefreshTokenReq, opts ...grpc.CallOption) (*RefreshTokenResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.RefreshToken(ctx, in, opts...)
+}
+
+// 发送邮件验证码
+func (m *defaultAuth) SendEmailCode(ctx context.Context, in *SendEmailCodeReq, opts ...grpc.CallOption) (*SendEmailCodeResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.SendEmailCode(ctx, in, opts...)
+}
+
+// 重置密码
+func (m *defaultAuth) ResetPasswordByEmail(ctx context.Context, in *ResetPasswordByEmailReq, opts ...grpc.CallOption) (*ResetPasswordByEmailResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.ResetPasswordByEmail(ctx, in, opts...)
+}
+
+// 绑定手机号
+func (m *defaultAuth) BindMobile(ctx context.Context, in *BindMobileReq, opts ...grpc.CallOption) (*BindMobileResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.BindMobile(ctx, in, opts...)
+}
+
+// 绑定邮箱
+func (m *defaultAuth) BindEmail(ctx context.Context, in *BindEmailReq, opts ...grpc.CallOption) (*BindEmailResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.BindEmail(ctx, in, opts...)
+}
+
+// 解绑手机号
+func (m *defaultAuth) UnbindMobile(ctx context.Context, in *UnbindMobileReq, opts ...grpc.CallOption) (*UnbindMobileResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.UnbindMobile(ctx, in, opts...)
+}
+
+// 解绑邮箱
+func (m *defaultAuth) UnbindEmail(ctx context.Context, in *UnbindEmailReq, opts ...grpc.CallOption) (*UnbindEmailResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.UnbindEmail(ctx, in, opts...)
+}
+
+// 解绑第三方登录
+func (m *defaultAuth) UnbindThirdParty(ctx context.Context, in *UnbindThirdPartyReq, opts ...grpc.CallOption) (*UnbindThirdPartyResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.UnbindThirdParty(ctx, in, opts...)
+}
+
+// 绑定第三方登录
+func (m *defaultAuth) BindThirdParty(ctx context.Context, in *BindThirdPartyReq, opts ...grpc.CallOption) (*BindThirdPartyResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.BindThirdParty(ctx, in, opts...)
 }

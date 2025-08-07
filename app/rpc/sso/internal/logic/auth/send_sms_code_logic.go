@@ -9,23 +9,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type LogoutLogic struct {
+type SendSmsCodeLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogic {
-	return &LogoutLogic{
+func NewSendSmsCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendSmsCodeLogic {
+	return &SendSmsCodeLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// 用户登出
-func (l *LogoutLogic) Logout(in *pb.LogoutReq) (*pb.LogoutResp, error) {
+// 发送短信验证码
+func (l *SendSmsCodeLogic) SendSmsCode(in *pb.SendSmsCodeReq) (*pb.SendSmsCodeResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.LogoutResp{}, nil
+	return &pb.SendSmsCodeResp{}, nil
 }

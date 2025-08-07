@@ -9,23 +9,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type LogoutLogic struct {
+type UnbindEmailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogic {
-	return &LogoutLogic{
+func NewUnbindEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UnbindEmailLogic {
+	return &UnbindEmailLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// 用户登出
-func (l *LogoutLogic) Logout(in *pb.LogoutReq) (*pb.LogoutResp, error) {
+// 解绑邮箱
+func (l *UnbindEmailLogic) UnbindEmail(in *pb.UnbindEmailReq) (*pb.UnbindEmailResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.LogoutResp{}, nil
+	return &pb.UnbindEmailResp{}, nil
 }

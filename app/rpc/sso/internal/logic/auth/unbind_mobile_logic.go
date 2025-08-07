@@ -9,23 +9,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type LogoutLogic struct {
+type UnbindMobileLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogic {
-	return &LogoutLogic{
+func NewUnbindMobileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UnbindMobileLogic {
+	return &UnbindMobileLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// 用户登出
-func (l *LogoutLogic) Logout(in *pb.LogoutReq) (*pb.LogoutResp, error) {
+// 解绑手机号
+func (l *UnbindMobileLogic) UnbindMobile(in *pb.UnbindMobileReq) (*pb.UnbindMobileResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.LogoutResp{}, nil
+	return &pb.UnbindMobileResp{}, nil
 }

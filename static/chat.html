@@ -533,39 +533,40 @@
     let isSpeaking = false;
     let currentEmotionType = 'neutral';
 
+    // === 删除这部分原始emotions定义 ===
     // 情感配置
-    const emotions = {
-        happy: {
-            name: "开心",
-            color: "#FFD700",
-            voice: { rate: 1.2, pitch: 1.3, volume: 1.0 },
-            mouth: "height: 15px; width: 70px; border-radius: 0 0 40px 40px;"
-        },
-        sad: {
-            name: "悲伤",
-            color: "#1E90FF",
-            voice: { rate: 0.8, pitch: 0.7, volume: 0.9 },
-            mouth: "height: 5px; width: 60px; border-radius: 50%; top: 15px;"
-        },
-        angry: {
-            name: "生气",
-            color: "#FF4500",
-            voice: { rate: 1.3, pitch: 0.8, volume: 1.1 },
-            mouth: "height: 8px; width: 70px; border-radius: 10px;"
-        },
-        surprised: {
-            name: "惊讶",
-            color: "#BA55D3",
-            voice: { rate: 1.1, pitch: 1.5, volume: 1.0 },
-            mouth: "height: 25px; width: 40px; border-radius: 50%;"
-        },
-        neutral: {
-            name: "中性",
-            color: "#5c6bc0",
-            voice: { rate: 1.0, pitch: 1.0, volume: 1.0 },
-            mouth: "height: 10px; width: 60px; border-radius: 0 0 30px 30px;"
-        }
-    };
+    // const emotions = {
+    //     happy: {
+    //         name: "开心",
+    //         color: "#FFD700",
+    //         voice: { rate: 1.2, pitch: 1.3, volume: 1.0 },
+    //         mouth: "height: 15px; width: 70px; border-radius: 0 0 40px 40px;"
+    //     },
+    //     sad: {
+    //         name: "悲伤",
+    //         color: "#1E90FF",
+    //         voice: { rate: 0.8, pitch: 0.7, volume: 0.9 },
+    //         mouth: "height: 5px; width: 60px; border-radius: 50%; top: 15px;"
+    //     },
+    //     angry: {
+    //         name: "生气",
+    //         color: "#FF4500",
+    //         voice: { rate: 1.3, pitch: 0.8, volume: 1.1 },
+    //         mouth: "height: 8px; width: 70px; border-radius: 10px;"
+    //     },
+    //     surprised: {
+    //         name: "惊讶",
+    //         color: "#BA55D3",
+    //         voice: { rate: 1.1, pitch: 1.5, volume: 1.0 },
+    //         mouth: "height: 25px; width: 40px; border-radius: 50%;"
+    //     },
+    //     neutral: {
+    //         name: "中性",
+    //         color: "#5c6bc0",
+    //         voice: { rate: 1.0, pitch: 1.0, volume: 1.0 },
+    //         mouth: "height: 10px; width: 60px; border-radius: 0 0 30px 30px;"
+    //     }
+    // };
 
     // 初始化语音识别
     function initSpeechRecognition() {
@@ -757,7 +758,41 @@
         }
     }
 
-    // 情感语音合成
+    // 情感配置（修改语音参数模拟丁真风格）
+    const emotions = {
+        happy: {
+            name: "开心",
+            color: "#FFD700",
+            voice: { rate: 0.85, pitch: 0.9, volume: 1.0 }, // 降低语速和音调
+            mouth: "height: 15px; width: 70px; border-radius: 0 0 40px 40px;"
+        },
+        sad: {
+            name: "悲伤",
+            color: "#1E90FF",
+            voice: { rate: 0.75, pitch: 0.8, volume: 0.9 }, // 更慢语速和更低音调
+            mouth: "height: 5px; width: 60px; border-radius: 50%; top: 15px;"
+        },
+        angry: {
+            name: "生气",
+            color: "#FF4500",
+            voice: { rate: 0.9, pitch: 0.85, volume: 1.1 },
+            mouth: "height: 8px; width: 70px; border-radius: 10px;"
+        },
+        surprised: {
+            name: "惊讶",
+            color: "#BA55D3",
+            voice: { rate: 0.8, pitch: 0.95, volume: 1.0 },
+            mouth: "height: 25px; width: 40px; border-radius: 50%;"
+        },
+        neutral: {
+            name: "中性",
+            color: "#5c6bc0",
+            voice: { rate: 0.8, pitch: 0.9, volume: 1.0 }, // 基础风格：语速慢、音调低
+            mouth: "height: 10px; width: 60px; border-radius: 0 0 30px 30px;"
+        }
+    };
+
+    // 情感语音合成（添加方言模拟参数）
     function speakText(text, emotion = 'neutral') {
         if (!speechSynthesis || !text) return;
         if (isSpeaking) speechSynthesis.cancel();
@@ -766,14 +801,16 @@
 
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'zh-CN';
-        utterance.rate = emotionData.voice.rate;
-        utterance.pitch = emotionData.voice.pitch;
-        utterance.volume = emotionData.voice.volume;
+        // 应用丁真风格参数（覆盖情感参数）
+        utterance.rate = 0.8;    // 较慢语速（0.1-10，默认1）
+        utterance.pitch = 0.85;  // 较低音调（0-2，默认1）
+        utterance.volume = 1.0;  // 正常音量
 
-        // 查找中文语音
+        // 查找中文语音（优先选择男声）
         const voices = speechSynthesis.getVoices();
         const chineseVoice = voices.find(voice =>
-            voice.lang.includes('zh') || voice.name.includes('Chinese')
+            (voice.lang.includes('zh') || voice.name.includes('Chinese')) &&
+            voice.name.includes('Male') // 优先男声
         );
         if (chineseVoice) utterance.voice = chineseVoice;
 

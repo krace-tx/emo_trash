@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
-	"github.com/krace-tx/emo_trash/app/rpc/sso/sso"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,9 +23,9 @@ func NewGenerateQrcodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 	}
 }
 
-// 生成登录二维码
-func (l *GenerateQrcodeLogic) GenerateQrcode(in *sso.QrcodeReq) (*sso.QrcodeResp, error) {
+// 生成登录二维码(PC端)
+func (l *GenerateQrcodeLogic) GenerateQrcode(in *pb.QrcodeReq) (*pb.QrcodeResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &sso.QrcodeResp{}, nil
+	return &pb.QrcodeResp{}, nil
 }

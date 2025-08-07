@@ -9,12 +9,12 @@ import (
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/logic/auth"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
-	"github.com/krace-tx/emo_trash/app/rpc/sso/sso"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 )
 
 type AuthServer struct {
 	svcCtx *svc.ServiceContext
-	sso.UnimplementedAuthServer
+	pb.UnimplementedAuthServer
 }
 
 func NewAuthServer(svcCtx *svc.ServiceContext) *AuthServer {
@@ -24,43 +24,109 @@ func NewAuthServer(svcCtx *svc.ServiceContext) *AuthServer {
 }
 
 // 用户登录
-func (s *AuthServer) Login(ctx context.Context, in *sso.LoginReq) (*sso.LoginResp, error) {
+func (s *AuthServer) Login(ctx context.Context, in *pb.LoginReq) (*pb.LoginResp, error) {
 	l := authlogic.NewLoginLogic(ctx, s.svcCtx)
 	return l.Login(in)
 }
 
-// 手机号注册
-func (s *AuthServer) Register(ctx context.Context, in *sso.RegisterReq) (*sso.RegisterResp, error) {
-	l := authlogic.NewRegisterLogic(ctx, s.svcCtx)
-	return l.Register(in)
-}
-
-// 生成登录二维码
-func (s *AuthServer) GenerateQrcode(ctx context.Context, in *sso.QrcodeReq) (*sso.QrcodeResp, error) {
+// 生成登录二维码(PC端)
+func (s *AuthServer) GenerateQrcode(ctx context.Context, in *pb.QrcodeReq) (*pb.QrcodeResp, error) {
 	l := authlogic.NewGenerateQrcodeLogic(ctx, s.svcCtx)
 	return l.GenerateQrcode(in)
 }
 
-// 检查二维码状态
-func (s *AuthServer) CheckQrcodeStatus(ctx context.Context, in *sso.QrcodeStatusReq) (*sso.QrcodeStatusResp, error) {
+// 检查二维码状态(PC端)
+func (s *AuthServer) CheckQrcodeStatus(ctx context.Context, in *pb.QrcodeStatusReq) (*pb.QrcodeStatusResp, error) {
 	l := authlogic.NewCheckQrcodeStatusLogic(ctx, s.svcCtx)
 	return l.CheckQrcodeStatus(in)
 }
 
-// 手机端确认登录
-func (s *AuthServer) ConfirmQrcodeLogin(ctx context.Context, in *sso.QrcodeConfirmReq) (*sso.LoginResp, error) {
+// 手机端确认登录(PC端)
+func (s *AuthServer) ConfirmQrcodeLogin(ctx context.Context, in *pb.QrcodeConfirmReq) (*pb.LoginResp, error) {
 	l := authlogic.NewConfirmQrcodeLoginLogic(ctx, s.svcCtx)
 	return l.ConfirmQrcodeLogin(in)
 }
 
 // 验证会话
-func (s *AuthServer) VerifyToken(ctx context.Context, in *sso.VerifyReq) (*sso.VerifyResp, error) {
+func (s *AuthServer) VerifyToken(ctx context.Context, in *pb.VerifyReq) (*pb.VerifyResp, error) {
 	l := authlogic.NewVerifyTokenLogic(ctx, s.svcCtx)
 	return l.VerifyToken(in)
 }
 
 // 用户登出
-func (s *AuthServer) Logout(ctx context.Context, in *sso.LogoutReq) (*sso.VerifyResp, error) {
+func (s *AuthServer) Logout(ctx context.Context, in *pb.LogoutReq) (*pb.LogoutResp, error) {
 	l := authlogic.NewLogoutLogic(ctx, s.svcCtx)
 	return l.Logout(in)
+}
+
+// 注册
+func (s *AuthServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.RegisterResp, error) {
+	l := authlogic.NewRegisterLogic(ctx, s.svcCtx)
+	return l.Register(in)
+}
+
+// 发送短信验证码
+func (s *AuthServer) SendSmsCode(ctx context.Context, in *pb.SendSmsCodeReq) (*pb.SendSmsCodeResp, error) {
+	l := authlogic.NewSendSmsCodeLogic(ctx, s.svcCtx)
+	return l.SendSmsCode(in)
+}
+
+// 重置密码
+func (s *AuthServer) ResetPassword(ctx context.Context, in *pb.ResetPasswordReq) (*pb.ResetPasswordResp, error) {
+	l := authlogic.NewResetPasswordLogic(ctx, s.svcCtx)
+	return l.ResetPassword(in)
+}
+
+// 刷新Token
+func (s *AuthServer) RefreshToken(ctx context.Context, in *pb.RefreshTokenReq) (*pb.RefreshTokenResp, error) {
+	l := authlogic.NewRefreshTokenLogic(ctx, s.svcCtx)
+	return l.RefreshToken(in)
+}
+
+// 发送邮件验证码
+func (s *AuthServer) SendEmailCode(ctx context.Context, in *pb.SendEmailCodeReq) (*pb.SendEmailCodeResp, error) {
+	l := authlogic.NewSendEmailCodeLogic(ctx, s.svcCtx)
+	return l.SendEmailCode(in)
+}
+
+// 重置密码
+func (s *AuthServer) ResetPasswordByEmail(ctx context.Context, in *pb.ResetPasswordByEmailReq) (*pb.ResetPasswordByEmailResp, error) {
+	l := authlogic.NewResetPasswordByEmailLogic(ctx, s.svcCtx)
+	return l.ResetPasswordByEmail(in)
+}
+
+// 绑定手机号
+func (s *AuthServer) BindMobile(ctx context.Context, in *pb.BindMobileReq) (*pb.BindMobileResp, error) {
+	l := authlogic.NewBindMobileLogic(ctx, s.svcCtx)
+	return l.BindMobile(in)
+}
+
+// 绑定邮箱
+func (s *AuthServer) BindEmail(ctx context.Context, in *pb.BindEmailReq) (*pb.BindEmailResp, error) {
+	l := authlogic.NewBindEmailLogic(ctx, s.svcCtx)
+	return l.BindEmail(in)
+}
+
+// 解绑手机号
+func (s *AuthServer) UnbindMobile(ctx context.Context, in *pb.UnbindMobileReq) (*pb.UnbindMobileResp, error) {
+	l := authlogic.NewUnbindMobileLogic(ctx, s.svcCtx)
+	return l.UnbindMobile(in)
+}
+
+// 解绑邮箱
+func (s *AuthServer) UnbindEmail(ctx context.Context, in *pb.UnbindEmailReq) (*pb.UnbindEmailResp, error) {
+	l := authlogic.NewUnbindEmailLogic(ctx, s.svcCtx)
+	return l.UnbindEmail(in)
+}
+
+// 解绑第三方登录
+func (s *AuthServer) UnbindThirdParty(ctx context.Context, in *pb.UnbindThirdPartyReq) (*pb.UnbindThirdPartyResp, error) {
+	l := authlogic.NewUnbindThirdPartyLogic(ctx, s.svcCtx)
+	return l.UnbindThirdParty(in)
+}
+
+// 绑定第三方登录
+func (s *AuthServer) BindThirdParty(ctx context.Context, in *pb.BindThirdPartyReq) (*pb.BindThirdPartyResp, error) {
+	l := authlogic.NewBindThirdPartyLogic(ctx, s.svcCtx)
+	return l.BindThirdParty(in)
 }

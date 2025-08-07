@@ -9,23 +9,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type LogoutLogic struct {
+type ResetPasswordByEmailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogic {
-	return &LogoutLogic{
+func NewResetPasswordByEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetPasswordByEmailLogic {
+	return &ResetPasswordByEmailLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// 用户登出
-func (l *LogoutLogic) Logout(in *pb.LogoutReq) (*pb.LogoutResp, error) {
+// 重置密码
+func (l *ResetPasswordByEmailLogic) ResetPasswordByEmail(in *pb.ResetPasswordByEmailReq) (*pb.ResetPasswordByEmailResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.LogoutResp{}, nil
+	return &pb.ResetPasswordByEmailResp{}, nil
 }

@@ -9,23 +9,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type LogoutLogic struct {
+type BindThirdPartyLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogic {
-	return &LogoutLogic{
+func NewBindThirdPartyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BindThirdPartyLogic {
+	return &BindThirdPartyLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// 用户登出
-func (l *LogoutLogic) Logout(in *pb.LogoutReq) (*pb.LogoutResp, error) {
+// 绑定第三方登录
+func (l *BindThirdPartyLogic) BindThirdParty(in *pb.BindThirdPartyReq) (*pb.BindThirdPartyResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.LogoutResp{}, nil
+	return &pb.BindThirdPartyResp{}, nil
 }

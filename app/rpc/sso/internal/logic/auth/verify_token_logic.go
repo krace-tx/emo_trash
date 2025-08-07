@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
-	"github.com/krace-tx/emo_trash/app/rpc/sso/sso"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,8 +24,8 @@ func NewVerifyTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Verif
 }
 
 // 验证会话
-func (l *VerifyTokenLogic) VerifyToken(in *sso.VerifyReq) (*sso.VerifyResp, error) {
+func (l *VerifyTokenLogic) VerifyToken(in *pb.VerifyReq) (*pb.VerifyResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &sso.VerifyResp{}, nil
+	return &pb.VerifyResp{}, nil
 }

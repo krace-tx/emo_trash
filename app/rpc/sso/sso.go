@@ -7,7 +7,7 @@ import (
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/config"
 	authServer "github.com/krace-tx/emo_trash/app/rpc/sso/internal/server/auth"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
-	"github.com/krace-tx/emo_trash/app/rpc/sso/sso"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -26,7 +26,7 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		sso.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
+		pb.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
