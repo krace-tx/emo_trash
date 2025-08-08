@@ -23,6 +23,7 @@ RPC_SRC_DIR := cmd/rpc
 API_DEST_DIR := app/api
 RPC_DEST_DIR := app/rpc
 SWAGGER_DEST_DIR := swagger
+DOCKER_COMPOSE_DIR := deploy
 
 # 查找文件
 API_FILES := $(wildcard $(API_SRC_DIR)/*.api)
@@ -35,7 +36,7 @@ RPC_TARGETS := $(patsubst $(RPC_SRC_DIR)/%.proto,$(RPC_DEST_DIR)/%/.,$(PROTO_FIL
 # 默认目标
 .DEFAULT_GOAL := help
 
-.PHONY: all init api rpc check mod clean swagger help
+.PHONY: all init api rpc check mod clean swagger docker-compose help
 
 all: api rpc
 	@$(ECHO) "$(GREEN)All code generated successfully!$(NC)"
@@ -131,6 +132,35 @@ swagger:
 	@$(ECHO) "$(YELLOW)Generating Swagger documentation...$(NC)"
 	@$(GOZERO) api swagger -api $(API_FILES) -dir $(SWAGGER_DEST_DIR)
 
+docker-compose:
+	@$(ECHO) "$(YELLOW)=== Starting Docker Compose Services ==="$(NC)
+
+	# Check if docker-compose (V1 or V2) is installed
+	@if ! command -v docker-compose &> /dev/null && ! command -v docker compose &> /dev/null; then \
+		$(ECHO) "$(RED)Error: docker-compose is not installed. Please install it first.$(NC)"; \
+		exit 1; \
+	fi
+
+	# Check if docker-compose.yaml exists
+	@if [ ! -f "$(DOCKER_COMPOSE_DIR)/docker-compose.yaml" ]; then \
+		$(ECHO) "$(RED)Error: docker-compose.yaml not found in $(DOCKER_COMPOSE_DIR)/$(NC)"; \
+		exit 1; \
+	fi
+
+	@cd $(DOCKER_COMPOSE_DIR) && \
+	  $(ECHO) "$(YELLOW)=== Stopping existing containers ==="$(NC) && \
+	  # Use docker-compose if available, otherwise docker compose
+	  if command -v docker-compose &> /dev/null; then \
+		docker-compose down && \
+		docker-compose pull && \
+		docker-compose up -d --build --force-recreate; \
+	  else \
+		docker compose down && \
+		docker compose pull && \
+		docker compose up -d --build --force-recreate; \
+	  fi && \
+	  $(ECHO) "$(GREEN)=== Docker Compose services started successfully ==="$(NC)
+
 # 帮助信息
 help:
 	@$(ECHO) "$(GREEN)Available targets:$(NC)"
@@ -148,5 +178,8 @@ help:
 	@$(ECHO) "  make                # Generate all code"
 	@$(ECHO) "  make rpc            # Generate only RPC code"
 	@$(ECHO) "  make check          # Check for API and Proto files"
+	@$(ECHO) "  make swagger        # Generate Swagger documentation"
+	@$(ECHO) "  make docker-compose # Start Docker Compose services"
+	@$(ECHO) "  make help           # Show this help message"
 
 

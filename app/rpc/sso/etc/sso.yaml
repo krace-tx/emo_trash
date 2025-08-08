@@ -3,4 +3,27 @@ ListenOn: 0.0.0.0:8080
 Etcd:
   Hosts:
   - 127.0.0.1:2379
+  User: root
+  Pass: emoTrashEtcd123!
   Key: sso.rpc
+
+Redis:
+  Host: 127.0.0.1:6379
+  Key: "sso:"
+  Type: node
+  Pass: emoTrashRedis123!
+  NonBlock: true
+  PingTimeout: 3s
+
+Middlewares:
+  Trace: true
+  Log: true
+  Prometheus: false
+  MaxConns: false
+  Breaker: false
+  Shedding: false
+  Timeout: true
+  Recover: true
+  Metrics: false
+  MaxBytes: false
+  Gunzip: false
