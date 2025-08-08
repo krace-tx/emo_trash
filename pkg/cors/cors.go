@@ -1,31 +1,33 @@
 package cors
 
 import (
-	"github.com/rs/cors"
-	"github.com/zeromicro/go-zero/rest"
 	"net/http"
+
+	"github.com/zeromicro/go-zero/rest"
 )
 
-func NewCors() *cors.Cors {
-	return cors.New(cors.Options{
-		// 生产环境切换允许跨域来源
-		AllowedOrigins: []string{
-			"http://*",
-			"https://*",
-		},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
-		AllowedHeaders:   []string{"Content-Type", "Access-Control-Allow-Headers", "X-Requested-With", "Access-Control-Allow-Credentials", "User-Agent", "Content-Length", "Authorization"},
-		AllowCredentials: true,  // 启用凭证
-		Debug:            false, // 生产环境关闭调试模式
-	})
-}
-
 func NewRestCors() rest.RunOption {
-	return rest.WithCustomCors(nil, func(w http.ResponseWriter) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
-		w.Header().Set("Access-Control-Expose-Headers", "Content-Length, Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Headers")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-	}, "*")
+	return rest.WithCustomCors(
+		func(header http.Header) {
+			// 允许的来源（根据需求动态设置或使用白名单）
+			header.Set("Access-Control-Allow-Origin", "*") // 生产环境应替换为具体域名
+
+			// 显式声明允许的请求头（避免使用 *）
+			header.Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+
+			// 允许的 HTTP 方法
+			header.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
+
+			// 暴露必要的自定义头（移除冗余的 CORS 头）
+			header.Set("Access-Control-Expose-Headers", "Content-Length, Content-Type")
+
+			// 预检请求缓存时间（单位：秒）
+			header.Set("Access-Control-Max-Age", "86400") // 24 小时
+
+			// 如果需要跨域凭据（Cookie/Auth），需注释掉 Allow-Origin: * 并改用具体域名
+			// header.Set("Access-Control-Allow-Credentials", "true")
+		},
+		nil, // 使用默认的 "不允许的请求" 处理器
+		"*", // 允许的来源（可替换为白名单，如 "https://example.com"）
+	)
 }
