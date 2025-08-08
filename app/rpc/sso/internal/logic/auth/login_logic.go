@@ -26,6 +26,6 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 // 用户登录
 func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	// todo: add your logic here and delete this line
-
+	panic("implement me")
 	return &pb.LoginResp{}, nil
 }

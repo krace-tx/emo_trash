@@ -8,6 +8,7 @@ import (
 	authServer "github.com/krace-tx/emo_trash/app/rpc/sso/internal/server/auth"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
+	"github.com/krace-tx/emo_trash/pkg/interceptor"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -24,15 +25,24 @@ func main() {
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
 
-	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
+	s := zrpc.MustNewServer(c.ZrpcConf, func(grpcServer *grpc.Server) {
 		pb.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
 
-		if c.Mode == service.DevMode || c.Mode == service.TestMode {
+		if c.ZrpcConf.Mode == service.DevMode || c.ZrpcConf.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}
 	})
+
+	// 添加流拦截器
+	s.AddStreamInterceptors(interceptor.StreamAuthInterceptor)
+	// 添加一元拦截器
+	s.AddUnaryInterceptors(
+		interceptor.UnaryAuthInterceptor,
+		interceptor.UnaryRecoverInterceptor,
+	)
+
 	defer s.Stop()
 
-	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
+	fmt.Printf("Starting rpc server at %s...\n", c.ZrpcConf.ListenOn)
 	s.Start()
 }

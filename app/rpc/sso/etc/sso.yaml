@@ -1,29 +1,69 @@
-Name: sso.rpc
-ListenOn: 0.0.0.0:8080
-Etcd:
-  Hosts:
-  - 127.0.0.1:2379
-  User: root
-  Pass: emoTrashEtcd123!
-  Key: sso.rpc
+zrpc:
+  Name: sso.rpc
+  ListenOn: 0.0.0.0:8080
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    User: root
+    Pass: emoTrashEtcd123!
+    Key: sso.rpc
 
-Redis:
-  Host: 127.0.0.1:6379
-  Key: "sso:"
-  Type: node
-  Pass: emoTrashRedis123!
-  NonBlock: true
-  PingTimeout: 3s
+  Redis:
+    Host: 127.0.0.1:6379
+    Key: sso-rpc-token
+    Type: node
+    Pass: emoTrashRedis123!
+    NonBlock: true
+    PingTimeout: 3s
 
-Middlewares:
-  Trace: true
-  Log: true
-  Prometheus: false
-  MaxConns: false
-  Breaker: false
-  Shedding: false
-  Timeout: true
-  Recover: true
-  Metrics: false
-  MaxBytes: false
-  Gunzip: false
+  Middlewares:
+    Trace: true
+    Log: true
+    Prometheus: false
+    MaxConns: false
+    Breaker: false
+    Shedding: false
+    Timeout: true
+    Recover: false
+    Metrics: false
+    MaxBytes: false
+    Gunzip: false
+
+  Health: true
+  Auth: false
+
+
+service:
+  # ServiceConf 核心配置
+  Name: sso.rpc  # 服务名称（必填，与业务模块对应）
+  Log: # 日志配置（logx.LogConf 类型）
+    ServiceName: sso.rpc  # 日志中标识的服务名（默认继承 Name）
+    Mode: file  # 日志输出模式：file（文件）/console（控制台）
+    Path: ./logs  # 日志文件路径（Mode=file 时生效）
+    Level: info  # 日志级别：debug/info/warn/error
+    MaxSize: 100  # 单个日志文件大小（MB）
+    MaxBackups: 10  # 日志文件最大备份数
+    MaxAge: 30  # 日志文件保留天数
+  Mode: pro  # 服务运行模式（默认 pro，可选：dev/test/rt/pre/pro）
+  MetricsUrl: http://localhost:9091/metrics  # 指标上报地址（可选）
+
+  Telemetry: # 链路追踪配置（trace.Config 类型，可选）
+    Name: sso.rpc  # 追踪服务名（默认继承 Name）
+    Endpoint: http://jaeger:14268/api/traces  # 追踪数据上报端点（如 Jaeger 地址）
+    Sampler: 1.0  # 采样率（0.0-1.0，1.0 表示全采样）
+    Batcher: jaeger  # 批处理类型（jaeger/zipkin）
+
+  DevServer: # 开发服务器配置（DevServerConfig 类型，可选，用于本地开发调试）
+    Port: 6060  # 开发服务器端口
+    MetricsPath: /metrics  # 指标接口路径
+    PprofPath: /debug/pprof  # 性能分析接口路径
+
+  Shutdown: # 优雅关闭配置（proc.ShutdownConf 类型，可选）
+    Timeout: 30s  # 总关闭超时时间
+    StepTimeout: 10s  # 每个关闭步骤的超时时间
+
+  Profiling: # 持续性能分析配置（profiling.Config 类型，可选）
+    ServerAddr: 0.0.0.0:6061
+    Enable: false  # 是否启用
+    Endpoint: http://pprof-collector:8080  # 性能数据上报端点
+    Period: 60s  # 采样周期
