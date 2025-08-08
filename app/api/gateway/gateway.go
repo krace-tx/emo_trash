@@ -7,6 +7,7 @@ import (
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/config"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/handler"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
+	"github.com/krace-tx/emo_trash/pkg/cors"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
@@ -20,7 +21,7 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	server := rest.MustNewServer(c.RestConf)
+	server := rest.MustNewServer(c.RestConf, cors.NewRestCors())
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
