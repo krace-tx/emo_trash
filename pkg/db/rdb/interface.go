@@ -13,7 +13,11 @@ import (
 type EngineInterface[T any] interface {
 	// DB 返回原始gorm.DB实例，用于自定义查询
 	DB() *gorm.DB
+
+	// Transaction 开启事务并执行回调函数
 	Transaction(ctx context.Context, fn func(EngineInterface[T]) error) error
+
+	// Create 插入单条记录（基于GORM的Create方法）
 	Create(ctx context.Context, entity *T) error
 
 	// GetByID 根据主键ID查询单条记录
