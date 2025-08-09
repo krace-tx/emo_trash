@@ -33,14 +33,8 @@ func main() {
 		}
 	})
 
-	// 添加流拦截器
-	s.AddStreamInterceptors(interceptor.StreamAuthInterceptor)
 	// 添加一元拦截器
-	s.AddUnaryInterceptors(
-		interceptor.UnaryAuthInterceptor,
-		interceptor.UnaryRecoverInterceptor,
-	)
-
+	s.AddUnaryInterceptors(interceptor.UnaryRecoverInterceptor)
 	interceptor.SignalInterceptor()
 
 	defer s.Stop()

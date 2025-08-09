@@ -2,6 +2,11 @@ package model
 
 import "time" // 新增时间包导入
 
+var (
+	UserStatusNormal   = int32(0)
+	UserStatusDisabled = int32(1)
+)
+
 type UserAuth struct {
 	UserID      int64     `gorm:"primaryKey;column:user_id" json:"user_id"`              // 用户唯一标识（关联UserProfile）
 	Mobile      string    `gorm:"column:mobile"             json:"mobile"`               // 手机号(可选)

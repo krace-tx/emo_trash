@@ -33,7 +33,7 @@ zrpc:
   Auth: false
 
 
-service:
+Service:
   # ServiceConf 核心配置
   Name: sso.rpc  # 服务名称（必填，与业务模块对应）
   Log: # 日志配置（logx.LogConf 类型）
@@ -75,3 +75,11 @@ Mysql:
   ConnMaxLife: 30m         # 连接最大存活时间
   LogLevel: info           # 日志级别：silent/error/warn/info
   TablePrefix: sso_        # 表前缀
+
+JWT:
+  # 访问令牌密钥（32位随机字符串，生产环境建议通过环境变量注入）
+  AccessSecret: "xY9L3pQ7sT2vB5mK8jH0gF4dS1aZ6cV2bN"
+  AccessExpire: 86400          # 访问令牌过期时间（秒）= 24小时
+  # 刷新令牌密钥（独立密钥，与访问令牌分离）
+  RefreshSecret: "rT6fG8kH2jM5nP9qR3sV7wX1zC4vB6mN8p"
+  RefreshExpire: 604800        # 刷新令牌过期时间（秒）= 7天

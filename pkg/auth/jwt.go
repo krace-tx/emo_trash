@@ -1,4 +1,4 @@
-package auth
+package authx
 
 import (
 	"fmt"
@@ -8,6 +8,13 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 )
+
+type JWTConfig struct {
+	AccessSecret  string `json:"AccessSecret"`
+	AccessExpire  int64  `json:"AccessExpire"`
+	RefreshSecret string `json:"RefreshSecret"`
+	RefreshExpire int64  `json:"RefreshExpire"`
+}
 
 // GenJwtToken 生成 JWT 令牌
 func GenJwtToken(secret string, expired int64, data map[string]any) (string, error) {
