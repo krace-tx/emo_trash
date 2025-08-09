@@ -122,6 +122,19 @@ func Close() (err error) {
 		P = nil
 	}
 
+	if T != nil {
+		if sqlDB, e := T.DB(); e == nil {
+			if e := sqlDB.Close(); e != nil {
+				if err != nil {
+					err = fmt.Errorf("%v; tinydb close failed: %w", err, e)
+				} else {
+					err = fmt.Errorf("tinydb close failed: %w", e)
+				}
+			}
+		}
+		T = nil
+	}
+
 	return
 }
 
