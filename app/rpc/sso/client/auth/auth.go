@@ -20,6 +20,9 @@ type (
 	BindMobileResp           = pb.BindMobileResp
 	BindThirdPartyReq        = pb.BindThirdPartyReq
 	BindThirdPartyResp       = pb.BindThirdPartyResp
+	LoginByMobileReq         = pb.LoginByMobileReq
+	LoginByPasswordReq       = pb.LoginByPasswordReq
+	LoginByThirdPartyReq     = pb.LoginByThirdPartyReq
 	LoginReq                 = pb.LoginReq
 	LoginResp                = pb.LoginResp
 	LogoutReq                = pb.LogoutReq
@@ -52,7 +55,11 @@ type (
 
 	Auth interface {
 		// 用户登录
-		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
+		LoginByMobile(ctx context.Context, in *LoginByMobileReq, opts ...grpc.CallOption) (*LoginResp, error)
+		// 账号密码登录
+		LoginByPassword(ctx context.Context, in *LoginByPasswordReq, opts ...grpc.CallOption) (*LoginResp, error)
+		// 第三方平台登录
+		LoginByThirdParty(ctx context.Context, in *LoginByThirdPartyReq, opts ...grpc.CallOption) (*LoginResp, error)
 		// 生成登录二维码(PC端)
 		GenerateQrcode(ctx context.Context, in *QrcodeReq, opts ...grpc.CallOption) (*QrcodeResp, error)
 		// 检查二维码状态(PC端)
@@ -101,9 +108,21 @@ func NewAuth(cli zrpc.Client) Auth {
 }
 
 // 用户登录
-func (m *defaultAuth) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
+func (m *defaultAuth) LoginByMobile(ctx context.Context, in *LoginByMobileReq, opts ...grpc.CallOption) (*LoginResp, error) {
 	client := pb.NewAuthClient(m.cli.Conn())
-	return client.Login(ctx, in, opts...)
+	return client.LoginByMobile(ctx, in, opts...)
+}
+
+// 账号密码登录
+func (m *defaultAuth) LoginByPassword(ctx context.Context, in *LoginByPasswordReq, opts ...grpc.CallOption) (*LoginResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.LoginByPassword(ctx, in, opts...)
+}
+
+// 第三方平台登录
+func (m *defaultAuth) LoginByThirdParty(ctx context.Context, in *LoginByThirdPartyReq, opts ...grpc.CallOption) (*LoginResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.LoginByThirdParty(ctx, in, opts...)
 }
 
 // 生成登录二维码(PC端)

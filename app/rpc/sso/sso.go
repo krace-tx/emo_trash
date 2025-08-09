@@ -41,6 +41,8 @@ func main() {
 		interceptor.UnaryRecoverInterceptor,
 	)
 
+	interceptor.SignalInterceptor()
+
 	defer s.Stop()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ZrpcConf.ListenOn)

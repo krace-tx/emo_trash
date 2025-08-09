@@ -24,9 +24,21 @@ func NewAuthServer(svcCtx *svc.ServiceContext) *AuthServer {
 }
 
 // 用户登录
-func (s *AuthServer) Login(ctx context.Context, in *pb.LoginReq) (*pb.LoginResp, error) {
-	l := authlogic.NewLoginLogic(ctx, s.svcCtx)
-	return l.Login(in)
+func (s *AuthServer) LoginByMobile(ctx context.Context, in *pb.LoginByMobileReq) (*pb.LoginResp, error) {
+	l := authlogic.NewLoginByMobileLogic(ctx, s.svcCtx)
+	return l.LoginByMobile(in)
+}
+
+// 账号密码登录
+func (s *AuthServer) LoginByPassword(ctx context.Context, in *pb.LoginByPasswordReq) (*pb.LoginResp, error) {
+	l := authlogic.NewLoginByPasswordLogic(ctx, s.svcCtx)
+	return l.LoginByPassword(in)
+}
+
+// 第三方平台登录
+func (s *AuthServer) LoginByThirdParty(ctx context.Context, in *pb.LoginByThirdPartyReq) (*pb.LoginResp, error) {
+	l := authlogic.NewLoginByThirdPartyLogic(ctx, s.svcCtx)
+	return l.LoginByThirdParty(in)
 }
 
 // 生成登录二维码(PC端)

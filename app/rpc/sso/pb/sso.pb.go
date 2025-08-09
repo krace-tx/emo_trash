@@ -202,11 +202,17 @@ func (x *LoginReq) GetIsQuick() bool {
 
 // 登录响应
 type LoginResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`                                   // JWT Token
-	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"` // 刷新Token
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"access_token"
+	AccessToken string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token"` // 访问Token
+	// @inject_tag: json:"access_token_expire"
+	AccessTokenExpire int64 `protobuf:"varint,2,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire"` // 访问Token过期时间
+	// @inject_tag: json:"refresh_token"
+	RefreshToken string `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token"` // 刷新Token
+	// @inject_tag: json:"refresh_token_expire"
+	RefreshTokenExpire int64 `protobuf:"varint,4,opt,name=refresh_token_expire,json=refreshTokenExpire,proto3" json:"refresh_token_expire"` // 刷新Token过期时间
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *LoginResp) Reset() {
@@ -239,11 +245,18 @@ func (*LoginResp) Descriptor() ([]byte, []int) {
 	return file_sso_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *LoginResp) GetToken() string {
+func (x *LoginResp) GetAccessToken() string {
 	if x != nil {
-		return x.Token
+		return x.AccessToken
 	}
 	return ""
+}
+
+func (x *LoginResp) GetAccessTokenExpire() int64 {
+	if x != nil {
+		return x.AccessTokenExpire
+	}
+	return 0
 }
 
 func (x *LoginResp) GetRefreshToken() string {
@@ -253,11 +266,20 @@ func (x *LoginResp) GetRefreshToken() string {
 	return ""
 }
 
+func (x *LoginResp) GetRefreshTokenExpire() int64 {
+	if x != nil {
+		return x.RefreshTokenExpire
+	}
+	return 0
+}
+
 // 二维码生成请求
 type QrcodeReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DeviceId      string                 `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"` // PC设备ID
-	LoginIp       string                 `protobuf:"bytes,2,opt,name=login_ip,json=loginIp,proto3" json:"login_ip,omitempty"`    // 登录IP
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"device_id"
+	DeviceId string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id"` // 设备唯一标识
+	// @inject_tag: json:"login_ip"
+	LoginIp       string `protobuf:"bytes,2,opt,name=login_ip,json=loginIp,proto3" json:"login_ip"` // 登录IP
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -308,9 +330,11 @@ func (x *QrcodeReq) GetLoginIp() string {
 
 // 二维码生成响应
 type QrcodeResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Qid           string                 `protobuf:"bytes,1,opt,name=qid,proto3" json:"qid,omitempty"`                           // 二维码唯一ID
-	ImageUrl      string                 `protobuf:"bytes,2,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"` // 二维码图片URL
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"qid"
+	Qid string `protobuf:"bytes,1,opt,name=qid,proto3" json:"qid"` // 二维码唯一ID
+	// @inject_tag: json:"image_url"
+	ImageUrl      string `protobuf:"bytes,2,opt,name=image_url,json=imageUrl,proto3" json:"image_url"` // 二维码图片URL
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -361,8 +385,9 @@ func (x *QrcodeResp) GetImageUrl() string {
 
 // 二维码状态请求
 type QrcodeStatusReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Qid           string                 `protobuf:"bytes,1,opt,name=qid,proto3" json:"qid,omitempty"` // 二维码ID
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"qid"
+	Qid           string `protobuf:"bytes,1,opt,name=qid,proto3" json:"qid"` // 二维码ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -406,9 +431,11 @@ func (x *QrcodeStatusReq) GetQid() string {
 
 // 二维码状态响应
 type QrcodeStatusResp struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Status        QrcodeStatusResp_Status `protobuf:"varint,1,opt,name=status,proto3,enum=sso.QrcodeStatusResp_Status" json:"status,omitempty"`
-	Token         string                  `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"` // 登录成功的Token(当状态为CONFIRMED时返回)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"status"
+	Status QrcodeStatusResp_Status `protobuf:"varint,1,opt,name=status,proto3,enum=sso.QrcodeStatusResp_Status" json:"status"` // 二维码状态
+	// @inject_tag: json:"token"
+	Token         string `protobuf:"bytes,2,opt,name=token,proto3" json:"token"` // 登录成功的Token(当状态为CONFIRMED时返回)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -459,9 +486,11 @@ func (x *QrcodeStatusResp) GetToken() string {
 
 // 二维码确认请求
 type QrcodeConfirmReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Qid           string                 `protobuf:"bytes,1,opt,name=qid,proto3" json:"qid,omitempty"`                           // 二维码ID
-	AppToken      string                 `protobuf:"bytes,2,opt,name=app_token,json=appToken,proto3" json:"app_token,omitempty"` // 手机端Token
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"qid"
+	Qid string `protobuf:"bytes,1,opt,name=qid,proto3" json:"qid"` // 二维码ID
+	// @inject_tag: json:"app_token"
+	AppToken      string `protobuf:"bytes,2,opt,name=app_token,json=appToken,proto3" json:"app_token"` // 手机端Token
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -512,9 +541,11 @@ func (x *QrcodeConfirmReq) GetAppToken() string {
 
 // 会话验证请求
 type VerifyReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`                             // 待验证的Token
-	DeviceType    string                 `protobuf:"bytes,2,opt,name=device_type,json=deviceType,proto3" json:"device_type,omitempty"` // 设备类型
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"token"
+	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token"` // 待验证的Token
+	// @inject_tag: json:"device_type"
+	DeviceType    string `protobuf:"bytes,2,opt,name=device_type,json=deviceType,proto3" json:"device_type"` // 设备类型
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -565,10 +596,13 @@ func (x *VerifyReq) GetDeviceType() string {
 
 // 会话验证响应
 type VerifyResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`            // 用户ID
-	DeviceType    string                 `protobuf:"bytes,2,opt,name=device_type,json=deviceType,proto3" json:"device_type,omitempty"` // 设备类型
-	DeviceId      string                 `protobuf:"bytes,3,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`       // 设备ID
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"user_id"
+	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id"` // 用户ID
+	// @inject_tag: json:"device_type"
+	DeviceType string `protobuf:"bytes,2,opt,name=device_type,json=deviceType,proto3" json:"device_type"` // 设备类型
+	// @inject_tag: json:"device_id"
+	DeviceId      string `protobuf:"bytes,3,opt,name=device_id,json=deviceId,proto3" json:"device_id"` // 设备ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -626,9 +660,11 @@ func (x *VerifyResp) GetDeviceId() string {
 
 // 登出请求
 type LogoutReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`                             // 当前Token
-	DeviceType    string                 `protobuf:"bytes,2,opt,name=device_type,json=deviceType,proto3" json:"device_type,omitempty"` // 设备类型
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"token"
+	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token"` // 当前Token
+	// @inject_tag: json:"device_type"
+	DeviceType    string `protobuf:"bytes,2,opt,name=device_type,json=deviceType,proto3" json:"device_type"` // 设备类型
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -678,9 +714,11 @@ func (x *LogoutReq) GetDeviceType() string {
 }
 
 type LogoutResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // 登出结果
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`  // 提示信息(如"账号已在其他设备登录")
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"` // 登出结果
+	// @inject_tag: json:"message"
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"` // 提示信息(如"账号已在其他设备登录")
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -731,9 +769,11 @@ func (x *LogoutResp) GetMessage() string {
 
 // 短信验证码请求
 type SendSmsCodeReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Mobile        string                 `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile,omitempty"` // 手机号(必填)
-	Scene         string                 `protobuf:"bytes,2,opt,name=scene,proto3" json:"scene,omitempty"`   // 场景: register/login/reset_pwd
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"mobile"
+	Mobile string `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile"` // 手机号(必填)
+	// @inject_tag: json:"scene"
+	Scene         string `protobuf:"bytes,2,opt,name=scene,proto3" json:"scene"` // 场景: register/login/reset_pwd
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -784,10 +824,13 @@ func (x *SendSmsCodeReq) GetScene() string {
 
 // 短信验证码响应
 type SendSmsCodeResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	ExpireSeconds int32                  `protobuf:"varint,3,opt,name=expire_seconds,json=expireSeconds,proto3" json:"expire_seconds,omitempty"` // 验证码有效期(秒)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"`
+	// @inject_tag: json:"message"
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"`
+	// @inject_tag: json:"expire_seconds"
+	ExpireSeconds int32 `protobuf:"varint,3,opt,name=expire_seconds,json=expireSeconds,proto3" json:"expire_seconds"` // 验证码有效期(秒)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -845,10 +888,13 @@ func (x *SendSmsCodeResp) GetExpireSeconds() int32 {
 
 // 密码重置请求(手机号)
 type ResetPasswordReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Mobile        string                 `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile,omitempty"`                              // 手机号(必填)
-	SmsCode       string                 `protobuf:"bytes,2,opt,name=sms_code,json=smsCode,proto3" json:"sms_code,omitempty"`             // 短信验证码(必填)
-	NewPassword   string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"` // 新密码(必填，8-32位字母/数字/特殊字符)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"mobile"
+	Mobile string `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile"` // 手机号(必填)
+	// @inject_tag: json:"sms_code"
+	SmsCode string `protobuf:"bytes,2,opt,name=sms_code,json=smsCode,proto3" json:"sms_code"` // 短信验证码(必填)
+	// @inject_tag: json:"new_password"
+	NewPassword   string `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password"` // 新密码(必填，8-32位字母/数字/特殊字符)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -906,10 +952,13 @@ func (x *ResetPasswordReq) GetNewPassword() string {
 
 // 邮箱重置密码请求
 type ResetPasswordByEmailReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`                                // 邮箱(必填)
-	EmailCode     string                 `protobuf:"bytes,2,opt,name=email_code,json=emailCode,proto3" json:"email_code,omitempty"`       // 邮箱验证码(必填)
-	NewPassword   string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"` // 新密码(同手机号重置规则)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"email"
+	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email"` // 邮箱(必填)
+	// @inject_tag: json:"email_code"
+	EmailCode string `protobuf:"bytes,2,opt,name=email_code,json=emailCode,proto3" json:"email_code"` // 邮箱验证码(必填)
+	// @inject_tag: json:"new_password"
+	NewPassword   string `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password"` // 新密码(同手机号重置规则)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -967,9 +1016,11 @@ func (x *ResetPasswordByEmailReq) GetNewPassword() string {
 
 // 密码重置响应(通用)
 type ResetPasswordResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"`
+	// @inject_tag: json:"message"
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1019,9 +1070,11 @@ func (x *ResetPasswordResp) GetMessage() string {
 }
 
 type ResetPasswordByEmailResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // 与ResetPasswordResp结构一致，便于复用
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"` // 与ResetPasswordResp结构一致，便于复用
+	// @inject_tag: json:"message"
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1072,8 +1125,9 @@ func (x *ResetPasswordByEmailResp) GetMessage() string {
 
 // 刷新Token请求
 type RefreshTokenReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RefreshToken  string                 `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"` // 刷新Token(必填)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"refresh_token"
+	RefreshToken  string `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token"` // 刷新Token(必填)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1117,11 +1171,17 @@ func (x *RefreshTokenReq) GetRefreshToken() string {
 
 // 刷新Token响应
 type RefreshTokenResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`                                   // 新访问Token
-	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"` // 新刷新Token(延长有效期)
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"token"
+	AccessToken string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"token"` // 新访问Token
+	// @inject_tag: json:"access_token_expire"
+	AccessTokenExpire int64 `protobuf:"varint,2,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire"` // 新访问Token有效期(秒)
+	// @inject_tag: json:"refresh_token"
+	RefreshToken string `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token"` // 新刷新Token(延长有效期)
+	// @inject_tag: json:"refresh_token_expire"
+	RefreshTokenExpire int64 `protobuf:"varint,4,opt,name=refresh_token_expire,json=refreshTokenExpire,proto3" json:"refresh_token_expire"` // 新刷新Token有效期(秒)
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *RefreshTokenResp) Reset() {
@@ -1154,11 +1214,18 @@ func (*RefreshTokenResp) Descriptor() ([]byte, []int) {
 	return file_sso_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *RefreshTokenResp) GetToken() string {
+func (x *RefreshTokenResp) GetAccessToken() string {
 	if x != nil {
-		return x.Token
+		return x.AccessToken
 	}
 	return ""
+}
+
+func (x *RefreshTokenResp) GetAccessTokenExpire() int64 {
+	if x != nil {
+		return x.AccessTokenExpire
+	}
+	return 0
 }
 
 func (x *RefreshTokenResp) GetRefreshToken() string {
@@ -1168,11 +1235,20 @@ func (x *RefreshTokenResp) GetRefreshToken() string {
 	return ""
 }
 
+func (x *RefreshTokenResp) GetRefreshTokenExpire() int64 {
+	if x != nil {
+		return x.RefreshTokenExpire
+	}
+	return 0
+}
+
 // 邮箱验证码请求(同短信验证码结构)
 type SendEmailCodeReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"` // 邮箱(必填)
-	Scene         string                 `protobuf:"bytes,2,opt,name=scene,proto3" json:"scene,omitempty"` // 场景
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"email"
+	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email"` // 邮箱(必填)
+	// @inject_tag: json:"scene"
+	Scene         string `protobuf:"bytes,2,opt,name=scene,proto3" json:"scene"` // 场景
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1223,10 +1299,13 @@ func (x *SendEmailCodeReq) GetScene() string {
 
 // 邮箱验证码响应(同短信)
 type SendEmailCodeResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	ExpireSeconds int32                  `protobuf:"varint,3,opt,name=expire_seconds,json=expireSeconds,proto3" json:"expire_seconds,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"`
+	// @inject_tag: json:"message"
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"`
+	// @inject_tag: json:"expire_seconds"
+	ExpireSeconds int32 `protobuf:"varint,3,opt,name=expire_seconds,json=expireSeconds,proto3" json:"expire_seconds"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1285,9 +1364,11 @@ func (x *SendEmailCodeResp) GetExpireSeconds() int32 {
 // 第三方账号绑定请求
 // 绑定手机号请求
 type BindMobileReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Mobile        string                 `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile,omitempty"`                  // 手机号(必填)
-	SmsCode       string                 `protobuf:"bytes,2,opt,name=sms_code,json=smsCode,proto3" json:"sms_code,omitempty"` // 验证码(必填)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"mobile"
+	Mobile string `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile"` // 手机号(必填)
+	// @inject_tag: json:"sms_code"
+	SmsCode       string `protobuf:"bytes,2,opt,name=sms_code,json=smsCode,proto3" json:"sms_code"` // 验证码(必填)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1338,9 +1419,11 @@ func (x *BindMobileReq) GetSmsCode() string {
 
 // 绑定邮箱请求
 type BindEmailReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`                          // 邮箱(必填)
-	EmailCode     string                 `protobuf:"bytes,2,opt,name=email_code,json=emailCode,proto3" json:"email_code,omitempty"` // 验证码(必填)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"email"
+	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email"` // 邮箱(必填)
+	// @inject_tag: json:"email_code"
+	EmailCode     string `protobuf:"bytes,2,opt,name=email_code,json=emailCode,proto3" json:"email_code"` // 验证码(必填)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1391,9 +1474,11 @@ func (x *BindEmailReq) GetEmailCode() string {
 
 // 绑定/解绑响应(通用结构)
 type BindMobileResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // 绑定结果
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`  // 提示信息(如"绑定成功"或"手机号已绑定")
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"` // 绑定结果
+	// @inject_tag: json:"message"
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"` // 提示信息(如"绑定成功"或"手机号已绑定")
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1443,9 +1528,11 @@ func (x *BindMobileResp) GetMessage() string {
 }
 
 type BindEmailResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // 绑定结果
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`  // 提示信息(如"绑定成功"或"邮箱已绑定")
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"` // 绑定结果
+	// @inject_tag: json:"message"
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"` // 提示信息(如"绑定成功"或"邮箱已绑定")
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1495,9 +1582,11 @@ func (x *BindEmailResp) GetMessage() string {
 }
 
 type UnbindMobileResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // 解绑结果
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`  // 提示信息(如"解绑成功"或"手机号未绑定")
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"` // 解绑结果
+	// @inject_tag: json:"message"
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"` // 提示信息(如"解绑成功"或"手机号未绑定")
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1547,9 +1636,11 @@ func (x *UnbindMobileResp) GetMessage() string {
 }
 
 type UnbindEmailResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // 解绑结果
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`  // 提示信息(如"解绑成功"或"邮箱未绑定")
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"` // 解绑结果
+	// @inject_tag: json:"message"
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"` // 提示信息(如"解绑成功"或"邮箱未绑定")
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1599,9 +1690,11 @@ func (x *UnbindEmailResp) GetMessage() string {
 }
 
 type UnbindThirdPartyResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // 解绑结果
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`  // 提示信息(如"解绑成功"或"第三方平台未绑定")
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"` // 解绑结果
+	// @inject_tag: json:"message"
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"` // 提示信息(如"解绑成功"或"第三方平台未绑定")
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1651,9 +1744,11 @@ func (x *UnbindThirdPartyResp) GetMessage() string {
 }
 
 type BindThirdPartyResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // 绑定结果
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`  // 提示信息(如"绑定成功"或"第三方平台已绑定")
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"success"
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success"` // 绑定结果
+	// @inject_tag: json:"message"
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message"` // 提示信息(如"绑定成功"或"第三方平台已绑定")
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1704,10 +1799,13 @@ func (x *BindThirdPartyResp) GetMessage() string {
 
 // 解绑第三方平台请求
 type UnbindThirdPartyReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Platform      string                 `protobuf:"bytes,1,opt,name=platform,proto3" json:"platform,omitempty"`              // 平台(必填，限制可选值)
-	OpenId        string                 `protobuf:"bytes,2,opt,name=open_id,json=openId,proto3" json:"open_id,omitempty"`    // 平台唯一标识(必填)
-	UnionId       string                 `protobuf:"bytes,3,opt,name=union_id,json=unionId,proto3" json:"union_id,omitempty"` // 可选，跨应用统一标识(如微信UnionID)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"platform"
+	Platform string `protobuf:"bytes,1,opt,name=platform,proto3" json:"platform"` // 平台(必填，限制可选值)
+	// @inject_tag: json:"open_id"
+	OpenId string `protobuf:"bytes,2,opt,name=open_id,json=openId,proto3" json:"open_id"` // 平台唯一标识(必填)
+	// @inject_tag: json:"union_id"
+	UnionId       string `protobuf:"bytes,3,opt,name=union_id,json=unionId,proto3" json:"union_id"` // 可选，跨应用统一标识(如微信UnionID)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1765,10 +1863,13 @@ func (x *UnbindThirdPartyReq) GetUnionId() string {
 
 // 第三方平台绑定请求
 type BindThirdPartyReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Platform      string                 `protobuf:"bytes,1,opt,name=platform,proto3" json:"platform,omitempty"`              // 平台(必填)
-	OpenId        string                 `protobuf:"bytes,2,opt,name=open_id,json=openId,proto3" json:"open_id,omitempty"`    // OpenID(必填)
-	UnionId       string                 `protobuf:"bytes,3,opt,name=union_id,json=unionId,proto3" json:"union_id,omitempty"` // 可选，跨应用统一标识
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"platform"
+	Platform string `protobuf:"bytes,1,opt,name=platform,proto3" json:"platform"` // 平台(必填)
+	// @inject_tag: json:"open_id"
+	OpenId string `protobuf:"bytes,2,opt,name=open_id,json=openId,proto3" json:"open_id"` // OpenID(必填)
+	// @inject_tag: json:"union_id"
+	UnionId       string `protobuf:"bytes,3,opt,name=union_id,json=unionId,proto3" json:"union_id"` // 可选，跨应用统一标识
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1826,9 +1927,11 @@ func (x *BindThirdPartyReq) GetUnionId() string {
 
 // 解绑邮箱请求（需验证验证码）
 type UnbindEmailReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`                          // 待解绑邮箱(必填)
-	EmailCode     string                 `protobuf:"bytes,2,opt,name=email_code,json=emailCode,proto3" json:"email_code,omitempty"` // 邮箱验证码(必填，验证邮箱归属)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"email"
+	Email string `protobuf:"bytes,1,opt,name=email,proto3" json:"email"` // 待解绑邮箱(必填)
+	// @inject_tag: json:"email_code"
+	EmailCode     string `protobuf:"bytes,2,opt,name=email_code,json=emailCode,proto3" json:"email_code"` // 邮箱验证码(必填，验证邮箱归属)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1879,10 +1982,13 @@ func (x *UnbindEmailReq) GetEmailCode() string {
 
 // 注册请求
 type RegisterReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Mobile        string                 `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile,omitempty"`                  // 手机号(必填，作为登录账号)
-	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`              // 密码(必填，8-32位字母/数字/特殊字符)
-	SmsCode       string                 `protobuf:"bytes,3,opt,name=sms_code,json=smsCode,proto3" json:"sms_code,omitempty"` // 短信验证码(必填，用于验证手机号归属)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"mobile"
+	Mobile string `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile"` // 手机号(必填，作为登录账号)
+	// @inject_tag: json:"password"
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password"` // 密码(必填，8-32位字母/数字/特殊字符)
+	// @inject_tag: json:"sms_code"
+	SmsCode       string `protobuf:"bytes,3,opt,name=sms_code,json=smsCode,proto3" json:"sms_code"` // 短信验证码(必填，用于验证手机号归属)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1940,11 +2046,17 @@ func (x *RegisterReq) GetSmsCode() string {
 
 // 注册响应（与登录响应结构一致，便于客户端统一处理）
 type RegisterResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`                                   // JWT访问Token
-	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"` // 刷新Token
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"token"
+	AccessToken string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"token"` // 新访问Token
+	// @inject_tag: json:"access_token_expire"
+	AccessTokenExpire int64 `protobuf:"varint,2,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire"` // 新访问Token有效期(秒)
+	// @inject_tag: json:"refresh_token"
+	RefreshToken string `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token"` // 新刷新Token(延长有效期)
+	// @inject_tag: json:"refresh_token_expire"
+	RefreshTokenExpire int64 `protobuf:"varint,4,opt,name=refresh_token_expire,json=refreshTokenExpire,proto3" json:"refresh_token_expire"` // 新刷新Token有效期(秒)
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *RegisterResp) Reset() {
@@ -1977,11 +2089,18 @@ func (*RegisterResp) Descriptor() ([]byte, []int) {
 	return file_sso_proto_rawDescGZIP(), []int{33}
 }
 
-func (x *RegisterResp) GetToken() string {
+func (x *RegisterResp) GetAccessToken() string {
 	if x != nil {
-		return x.Token
+		return x.AccessToken
 	}
 	return ""
+}
+
+func (x *RegisterResp) GetAccessTokenExpire() int64 {
+	if x != nil {
+		return x.AccessTokenExpire
+	}
+	return 0
 }
 
 func (x *RegisterResp) GetRefreshToken() string {
@@ -1991,11 +2110,20 @@ func (x *RegisterResp) GetRefreshToken() string {
 	return ""
 }
 
+func (x *RegisterResp) GetRefreshTokenExpire() int64 {
+	if x != nil {
+		return x.RefreshTokenExpire
+	}
+	return 0
+}
+
 // 解绑手机号请求（需验证验证码防止误操作）
 type UnbindMobileReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Mobile        string                 `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile,omitempty"`                  // 待解绑手机号(必填)
-	SmsCode       string                 `protobuf:"bytes,2,opt,name=sms_code,json=smsCode,proto3" json:"sms_code,omitempty"` // 短信验证码(必填，验证手机号归属)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"mobile"
+	Mobile string `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile"` // 待解绑手机号(必填)
+	// @inject_tag: json:"sms_code"
+	SmsCode       string `protobuf:"bytes,2,opt,name=sms_code,json=smsCode,proto3" json:"sms_code"` // 短信验证码(必填，验证手机号归属)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2044,6 +2172,261 @@ func (x *UnbindMobileReq) GetSmsCode() string {
 	return ""
 }
 
+// 登录请求
+type LoginByMobileReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"mobile"
+	Mobile string `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile"` // 手机号(必填，格式校验)
+	// @inject_tag: json:"sms_code"
+	SmsCode string `protobuf:"bytes,2,opt,name=sms_code,json=smsCode,proto3" json:"sms_code"` // 短信验证码(必填，6位数字)
+	// @inject_tag: json:"device_type"
+	DeviceType *string `protobuf:"bytes,3,opt,name=device_type,json=deviceType,proto3,oneof" json:"device_type"` // 设备类型: app/pc/h5(可选)
+	// @inject_tag: json:"device_id"
+	DeviceId *string `protobuf:"bytes,4,opt,name=device_id,json=deviceId,proto3,oneof" json:"device_id"` // 设备唯一标识(可选)
+	// @inject_tag: json:"login_ip"
+	LoginIp       *string `protobuf:"bytes,5,opt,name=login_ip,json=loginIp,proto3,oneof" json:"login_ip"` // 登录IP(可选，格式校验)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoginByMobileReq) Reset() {
+	*x = LoginByMobileReq{}
+	mi := &file_sso_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoginByMobileReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginByMobileReq) ProtoMessage() {}
+
+func (x *LoginByMobileReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginByMobileReq.ProtoReflect.Descriptor instead.
+func (*LoginByMobileReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *LoginByMobileReq) GetMobile() string {
+	if x != nil {
+		return x.Mobile
+	}
+	return ""
+}
+
+func (x *LoginByMobileReq) GetSmsCode() string {
+	if x != nil {
+		return x.SmsCode
+	}
+	return ""
+}
+
+func (x *LoginByMobileReq) GetDeviceType() string {
+	if x != nil && x.DeviceType != nil {
+		return *x.DeviceType
+	}
+	return ""
+}
+
+func (x *LoginByMobileReq) GetDeviceId() string {
+	if x != nil && x.DeviceId != nil {
+		return *x.DeviceId
+	}
+	return ""
+}
+
+func (x *LoginByMobileReq) GetLoginIp() string {
+	if x != nil && x.LoginIp != nil {
+		return *x.LoginIp
+	}
+	return ""
+}
+
+// 账号密码登录请求
+type LoginByPasswordReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"account"
+	Account string `protobuf:"bytes,1,opt,name=account,proto3" json:"account"` // 账号(必填，支持手机号/邮箱格式)
+	// @inject_tag: json:"password"
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password"` // 密码(必填，强密码策略校验)
+	// @inject_tag: json:"device_type"
+	DeviceType *string `protobuf:"bytes,3,opt,name=device_type,json=deviceType,proto3,oneof" json:"device_type"` // 设备类型: app/pc/h5(可选)
+	// @inject_tag: json:"device_id"
+	DeviceId *string `protobuf:"bytes,4,opt,name=device_id,json=deviceId,proto3,oneof" json:"device_id"` // 设备唯一标识(可选)
+	// @inject_tag: json:"login_ip"
+	LoginIp       *string `protobuf:"bytes,5,opt,name=login_ip,json=loginIp,proto3,oneof" json:"login_ip"` // 登录IP(可选，格式校验)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoginByPasswordReq) Reset() {
+	*x = LoginByPasswordReq{}
+	mi := &file_sso_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoginByPasswordReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginByPasswordReq) ProtoMessage() {}
+
+func (x *LoginByPasswordReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginByPasswordReq.ProtoReflect.Descriptor instead.
+func (*LoginByPasswordReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *LoginByPasswordReq) GetAccount() string {
+	if x != nil {
+		return x.Account
+	}
+	return ""
+}
+
+func (x *LoginByPasswordReq) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *LoginByPasswordReq) GetDeviceType() string {
+	if x != nil && x.DeviceType != nil {
+		return *x.DeviceType
+	}
+	return ""
+}
+
+func (x *LoginByPasswordReq) GetDeviceId() string {
+	if x != nil && x.DeviceId != nil {
+		return *x.DeviceId
+	}
+	return ""
+}
+
+func (x *LoginByPasswordReq) GetLoginIp() string {
+	if x != nil && x.LoginIp != nil {
+		return *x.LoginIp
+	}
+	return ""
+}
+
+// 第三方平台登录请求
+type LoginByThirdPartyReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"platform"
+	Platform string `protobuf:"bytes,1,opt,name=platform,proto3" json:"platform"` // 第三方平台(必填，支持: wechat/qq/alipay)
+	// @inject_tag: json:"open_id"
+	OpenId string `protobuf:"bytes,2,opt,name=open_id,json=openId,proto3" json:"open_id"` // 平台openId(必填)
+	// @inject_tag: json:"union_id"
+	UnionId *string `protobuf:"bytes,3,opt,name=union_id,json=unionId,proto3,oneof" json:"union_id"` // 跨应用统一标识(如微信UnionID，可选)
+	// @inject_tag: json:"device_type"
+	DeviceType *string `protobuf:"bytes,4,opt,name=device_type,json=deviceType,proto3,oneof" json:"device_type"` // 设备类型: app/pc/h5(可选)
+	// @inject_tag: json:"device_id"
+	DeviceId *string `protobuf:"bytes,5,opt,name=device_id,json=deviceId,proto3,oneof" json:"device_id"` // 设备唯一标识(可选)
+	// @inject_tag: json:"login_ip"
+	LoginIp       *string `protobuf:"bytes,6,opt,name=login_ip,json=loginIp,proto3,oneof" json:"login_ip"` // 登录IP(可选，格式校验)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoginByThirdPartyReq) Reset() {
+	*x = LoginByThirdPartyReq{}
+	mi := &file_sso_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoginByThirdPartyReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginByThirdPartyReq) ProtoMessage() {}
+
+func (x *LoginByThirdPartyReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginByThirdPartyReq.ProtoReflect.Descriptor instead.
+func (*LoginByThirdPartyReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *LoginByThirdPartyReq) GetPlatform() string {
+	if x != nil {
+		return x.Platform
+	}
+	return ""
+}
+
+func (x *LoginByThirdPartyReq) GetOpenId() string {
+	if x != nil {
+		return x.OpenId
+	}
+	return ""
+}
+
+func (x *LoginByThirdPartyReq) GetUnionId() string {
+	if x != nil && x.UnionId != nil {
+		return *x.UnionId
+	}
+	return ""
+}
+
+func (x *LoginByThirdPartyReq) GetDeviceType() string {
+	if x != nil && x.DeviceType != nil {
+		return *x.DeviceType
+	}
+	return ""
+}
+
+func (x *LoginByThirdPartyReq) GetDeviceId() string {
+	if x != nil && x.DeviceId != nil {
+		return *x.DeviceId
+	}
+	return ""
+}
+
+func (x *LoginByThirdPartyReq) GetLoginIp() string {
+	if x != nil && x.LoginIp != nil {
+		return *x.LoginIp
+	}
+	return ""
+}
+
 var File_sso_proto protoreflect.FileDescriptor
 
 const file_sso_proto_rawDesc = "" +
@@ -2074,10 +2457,12 @@ const file_sso_proto_rawDesc = "" +
 	"\n" +
 	"_device_idB\v\n" +
 	"\t_login_ipB\v\n" +
-	"\t_is_quick\"F\n" +
-	"\tLoginResp\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"C\n" +
+	"\t_is_quick\"\xb5\x01\n" +
+	"\tLoginResp\x12!\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12.\n" +
+	"\x13access_token_expire\x18\x02 \x01(\x03R\x11accessTokenExpire\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\x120\n" +
+	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\"C\n" +
 	"\tQrcodeReq\x12\x1b\n" +
 	"\tdevice_id\x18\x01 \x01(\tR\bdeviceId\x12\x19\n" +
 	"\blogin_ip\x18\x02 \x01(\tR\aloginIp\";\n" +
@@ -2139,10 +2524,12 @@ const file_sso_proto_rawDesc = "" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"6\n" +
 	"\x0fRefreshTokenReq\x12#\n" +
-	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"M\n" +
-	"\x10RefreshTokenResp\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\">\n" +
+	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"\xbc\x01\n" +
+	"\x10RefreshTokenResp\x12!\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12.\n" +
+	"\x13access_token_expire\x18\x02 \x01(\x03R\x11accessTokenExpire\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\x120\n" +
+	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\">\n" +
 	"\x10SendEmailCodeReq\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x14\n" +
 	"\x05scene\x18\x02 \x01(\tR\x05scene\"n\n" +
@@ -2190,15 +2577,54 @@ const file_sso_proto_rawDesc = "" +
 	"\vRegisterReq\x12\x16\n" +
 	"\x06mobile\x18\x01 \x01(\tR\x06mobile\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x19\n" +
-	"\bsms_code\x18\x03 \x01(\tR\asmsCode\"I\n" +
-	"\fRegisterResp\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"D\n" +
+	"\bsms_code\x18\x03 \x01(\tR\asmsCode\"\xb8\x01\n" +
+	"\fRegisterResp\x12!\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12.\n" +
+	"\x13access_token_expire\x18\x02 \x01(\x03R\x11accessTokenExpire\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\x120\n" +
+	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\"D\n" +
 	"\x0fUnbindMobileReq\x12\x16\n" +
 	"\x06mobile\x18\x01 \x01(\tR\x06mobile\x12\x19\n" +
-	"\bsms_code\x18\x02 \x01(\tR\asmsCode2\xa6\b\n" +
-	"\x04auth\x12&\n" +
-	"\x05Login\x12\r.sso.LoginReq\x1a\x0e.sso.LoginResp\x121\n" +
+	"\bsms_code\x18\x02 \x01(\tR\asmsCode\"\xd8\x01\n" +
+	"\x10LoginByMobileReq\x12\x16\n" +
+	"\x06mobile\x18\x01 \x01(\tR\x06mobile\x12\x19\n" +
+	"\bsms_code\x18\x02 \x01(\tR\asmsCode\x12$\n" +
+	"\vdevice_type\x18\x03 \x01(\tH\x00R\n" +
+	"deviceType\x88\x01\x01\x12 \n" +
+	"\tdevice_id\x18\x04 \x01(\tH\x01R\bdeviceId\x88\x01\x01\x12\x1e\n" +
+	"\blogin_ip\x18\x05 \x01(\tH\x02R\aloginIp\x88\x01\x01B\x0e\n" +
+	"\f_device_typeB\f\n" +
+	"\n" +
+	"_device_idB\v\n" +
+	"\t_login_ip\"\xdd\x01\n" +
+	"\x12LoginByPasswordReq\x12\x18\n" +
+	"\aaccount\x18\x01 \x01(\tR\aaccount\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12$\n" +
+	"\vdevice_type\x18\x03 \x01(\tH\x00R\n" +
+	"deviceType\x88\x01\x01\x12 \n" +
+	"\tdevice_id\x18\x04 \x01(\tH\x01R\bdeviceId\x88\x01\x01\x12\x1e\n" +
+	"\blogin_ip\x18\x05 \x01(\tH\x02R\aloginIp\x88\x01\x01B\x0e\n" +
+	"\f_device_typeB\f\n" +
+	"\n" +
+	"_device_idB\v\n" +
+	"\t_login_ip\"\x8b\x02\n" +
+	"\x14LoginByThirdPartyReq\x12\x1a\n" +
+	"\bplatform\x18\x01 \x01(\tR\bplatform\x12\x17\n" +
+	"\aopen_id\x18\x02 \x01(\tR\x06openId\x12\x1e\n" +
+	"\bunion_id\x18\x03 \x01(\tH\x00R\aunionId\x88\x01\x01\x12$\n" +
+	"\vdevice_type\x18\x04 \x01(\tH\x01R\n" +
+	"deviceType\x88\x01\x01\x12 \n" +
+	"\tdevice_id\x18\x05 \x01(\tH\x02R\bdeviceId\x88\x01\x01\x12\x1e\n" +
+	"\blogin_ip\x18\x06 \x01(\tH\x03R\aloginIp\x88\x01\x01B\v\n" +
+	"\t_union_idB\x0e\n" +
+	"\f_device_typeB\f\n" +
+	"\n" +
+	"_device_idB\v\n" +
+	"\t_login_ip2\xb2\t\n" +
+	"\x04auth\x126\n" +
+	"\rLoginByMobile\x12\x15.sso.LoginByMobileReq\x1a\x0e.sso.LoginResp\x12:\n" +
+	"\x0fLoginByPassword\x12\x17.sso.LoginByPasswordReq\x1a\x0e.sso.LoginResp\x12>\n" +
+	"\x11LoginByThirdParty\x12\x19.sso.LoginByThirdPartyReq\x1a\x0e.sso.LoginResp\x121\n" +
 	"\x0eGenerateQrcode\x12\x0e.sso.QrcodeReq\x1a\x0f.sso.QrcodeResp\x12@\n" +
 	"\x11CheckQrcodeStatus\x12\x14.sso.QrcodeStatusReq\x1a\x15.sso.QrcodeStatusResp\x12;\n" +
 	"\x12ConfirmQrcodeLogin\x12\x15.sso.QrcodeConfirmReq\x1a\x0e.sso.LoginResp\x12.\n" +
@@ -2231,7 +2657,7 @@ func file_sso_proto_rawDescGZIP() []byte {
 }
 
 var file_sso_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
+var file_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 38)
 var file_sso_proto_goTypes = []any{
 	(QrcodeStatusResp_Status)(0),     // 0: sso.QrcodeStatusResp.Status
 	(*LoginReq)(nil),                 // 1: sso.LoginReq
@@ -2269,47 +2695,54 @@ var file_sso_proto_goTypes = []any{
 	(*RegisterReq)(nil),              // 33: sso.RegisterReq
 	(*RegisterResp)(nil),             // 34: sso.RegisterResp
 	(*UnbindMobileReq)(nil),          // 35: sso.UnbindMobileReq
+	(*LoginByMobileReq)(nil),         // 36: sso.LoginByMobileReq
+	(*LoginByPasswordReq)(nil),       // 37: sso.LoginByPasswordReq
+	(*LoginByThirdPartyReq)(nil),     // 38: sso.LoginByThirdPartyReq
 }
 var file_sso_proto_depIdxs = []int32{
 	0,  // 0: sso.QrcodeStatusResp.status:type_name -> sso.QrcodeStatusResp.Status
-	1,  // 1: sso.auth.Login:input_type -> sso.LoginReq
-	3,  // 2: sso.auth.GenerateQrcode:input_type -> sso.QrcodeReq
-	5,  // 3: sso.auth.CheckQrcodeStatus:input_type -> sso.QrcodeStatusReq
-	7,  // 4: sso.auth.ConfirmQrcodeLogin:input_type -> sso.QrcodeConfirmReq
-	8,  // 5: sso.auth.VerifyToken:input_type -> sso.VerifyReq
-	10, // 6: sso.auth.Logout:input_type -> sso.LogoutReq
-	33, // 7: sso.auth.Register:input_type -> sso.RegisterReq
-	12, // 8: sso.auth.SendSmsCode:input_type -> sso.SendSmsCodeReq
-	14, // 9: sso.auth.ResetPassword:input_type -> sso.ResetPasswordReq
-	18, // 10: sso.auth.RefreshToken:input_type -> sso.RefreshTokenReq
-	20, // 11: sso.auth.SendEmailCode:input_type -> sso.SendEmailCodeReq
-	15, // 12: sso.auth.ResetPasswordByEmail:input_type -> sso.ResetPasswordByEmailReq
-	22, // 13: sso.auth.BindMobile:input_type -> sso.BindMobileReq
-	23, // 14: sso.auth.BindEmail:input_type -> sso.BindEmailReq
-	35, // 15: sso.auth.UnbindMobile:input_type -> sso.UnbindMobileReq
-	32, // 16: sso.auth.UnbindEmail:input_type -> sso.UnbindEmailReq
-	30, // 17: sso.auth.UnbindThirdParty:input_type -> sso.UnbindThirdPartyReq
-	31, // 18: sso.auth.BindThirdParty:input_type -> sso.BindThirdPartyReq
-	2,  // 19: sso.auth.Login:output_type -> sso.LoginResp
-	4,  // 20: sso.auth.GenerateQrcode:output_type -> sso.QrcodeResp
-	6,  // 21: sso.auth.CheckQrcodeStatus:output_type -> sso.QrcodeStatusResp
-	2,  // 22: sso.auth.ConfirmQrcodeLogin:output_type -> sso.LoginResp
-	9,  // 23: sso.auth.VerifyToken:output_type -> sso.VerifyResp
-	11, // 24: sso.auth.Logout:output_type -> sso.LogoutResp
-	34, // 25: sso.auth.Register:output_type -> sso.RegisterResp
-	13, // 26: sso.auth.SendSmsCode:output_type -> sso.SendSmsCodeResp
-	16, // 27: sso.auth.ResetPassword:output_type -> sso.ResetPasswordResp
-	19, // 28: sso.auth.RefreshToken:output_type -> sso.RefreshTokenResp
-	21, // 29: sso.auth.SendEmailCode:output_type -> sso.SendEmailCodeResp
-	17, // 30: sso.auth.ResetPasswordByEmail:output_type -> sso.ResetPasswordByEmailResp
-	24, // 31: sso.auth.BindMobile:output_type -> sso.BindMobileResp
-	25, // 32: sso.auth.BindEmail:output_type -> sso.BindEmailResp
-	26, // 33: sso.auth.UnbindMobile:output_type -> sso.UnbindMobileResp
-	27, // 34: sso.auth.UnbindEmail:output_type -> sso.UnbindEmailResp
-	28, // 35: sso.auth.UnbindThirdParty:output_type -> sso.UnbindThirdPartyResp
-	29, // 36: sso.auth.BindThirdParty:output_type -> sso.BindThirdPartyResp
-	19, // [19:37] is the sub-list for method output_type
-	1,  // [1:19] is the sub-list for method input_type
+	36, // 1: sso.auth.LoginByMobile:input_type -> sso.LoginByMobileReq
+	37, // 2: sso.auth.LoginByPassword:input_type -> sso.LoginByPasswordReq
+	38, // 3: sso.auth.LoginByThirdParty:input_type -> sso.LoginByThirdPartyReq
+	3,  // 4: sso.auth.GenerateQrcode:input_type -> sso.QrcodeReq
+	5,  // 5: sso.auth.CheckQrcodeStatus:input_type -> sso.QrcodeStatusReq
+	7,  // 6: sso.auth.ConfirmQrcodeLogin:input_type -> sso.QrcodeConfirmReq
+	8,  // 7: sso.auth.VerifyToken:input_type -> sso.VerifyReq
+	10, // 8: sso.auth.Logout:input_type -> sso.LogoutReq
+	33, // 9: sso.auth.Register:input_type -> sso.RegisterReq
+	12, // 10: sso.auth.SendSmsCode:input_type -> sso.SendSmsCodeReq
+	14, // 11: sso.auth.ResetPassword:input_type -> sso.ResetPasswordReq
+	18, // 12: sso.auth.RefreshToken:input_type -> sso.RefreshTokenReq
+	20, // 13: sso.auth.SendEmailCode:input_type -> sso.SendEmailCodeReq
+	15, // 14: sso.auth.ResetPasswordByEmail:input_type -> sso.ResetPasswordByEmailReq
+	22, // 15: sso.auth.BindMobile:input_type -> sso.BindMobileReq
+	23, // 16: sso.auth.BindEmail:input_type -> sso.BindEmailReq
+	35, // 17: sso.auth.UnbindMobile:input_type -> sso.UnbindMobileReq
+	32, // 18: sso.auth.UnbindEmail:input_type -> sso.UnbindEmailReq
+	30, // 19: sso.auth.UnbindThirdParty:input_type -> sso.UnbindThirdPartyReq
+	31, // 20: sso.auth.BindThirdParty:input_type -> sso.BindThirdPartyReq
+	2,  // 21: sso.auth.LoginByMobile:output_type -> sso.LoginResp
+	2,  // 22: sso.auth.LoginByPassword:output_type -> sso.LoginResp
+	2,  // 23: sso.auth.LoginByThirdParty:output_type -> sso.LoginResp
+	4,  // 24: sso.auth.GenerateQrcode:output_type -> sso.QrcodeResp
+	6,  // 25: sso.auth.CheckQrcodeStatus:output_type -> sso.QrcodeStatusResp
+	2,  // 26: sso.auth.ConfirmQrcodeLogin:output_type -> sso.LoginResp
+	9,  // 27: sso.auth.VerifyToken:output_type -> sso.VerifyResp
+	11, // 28: sso.auth.Logout:output_type -> sso.LogoutResp
+	34, // 29: sso.auth.Register:output_type -> sso.RegisterResp
+	13, // 30: sso.auth.SendSmsCode:output_type -> sso.SendSmsCodeResp
+	16, // 31: sso.auth.ResetPassword:output_type -> sso.ResetPasswordResp
+	19, // 32: sso.auth.RefreshToken:output_type -> sso.RefreshTokenResp
+	21, // 33: sso.auth.SendEmailCode:output_type -> sso.SendEmailCodeResp
+	17, // 34: sso.auth.ResetPasswordByEmail:output_type -> sso.ResetPasswordByEmailResp
+	24, // 35: sso.auth.BindMobile:output_type -> sso.BindMobileResp
+	25, // 36: sso.auth.BindEmail:output_type -> sso.BindEmailResp
+	26, // 37: sso.auth.UnbindMobile:output_type -> sso.UnbindMobileResp
+	27, // 38: sso.auth.UnbindEmail:output_type -> sso.UnbindEmailResp
+	28, // 39: sso.auth.UnbindThirdParty:output_type -> sso.UnbindThirdPartyResp
+	29, // 40: sso.auth.BindThirdParty:output_type -> sso.BindThirdPartyResp
+	21, // [21:41] is the sub-list for method output_type
+	1,  // [1:21] is the sub-list for method input_type
 	1,  // [1:1] is the sub-list for extension type_name
 	1,  // [1:1] is the sub-list for extension extendee
 	0,  // [0:1] is the sub-list for field type_name
@@ -2321,13 +2754,16 @@ func file_sso_proto_init() {
 		return
 	}
 	file_sso_proto_msgTypes[0].OneofWrappers = []any{}
+	file_sso_proto_msgTypes[35].OneofWrappers = []any{}
+	file_sso_proto_msgTypes[36].OneofWrappers = []any{}
+	file_sso_proto_msgTypes[37].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_sso_proto_rawDesc), len(file_sso_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   35,
+			NumMessages:   38,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

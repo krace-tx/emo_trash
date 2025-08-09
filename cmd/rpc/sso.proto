@@ -6,7 +6,14 @@ option go_package = "./pb";
 
 service auth {
   // 用户登录
-  rpc Login(LoginReq) returns (LoginResp);
+  // 手机号验证码登录
+  rpc LoginByMobile(LoginByMobileReq) returns (LoginResp);
+
+  // 账号密码登录
+  rpc LoginByPassword(LoginByPasswordReq) returns (LoginResp);
+
+  // 第三方平台登录
+  rpc LoginByThirdParty(LoginByThirdPartyReq) returns (LoginResp);
 
   // 生成登录二维码(PC端)
   rpc GenerateQrcode(QrcodeReq) returns (QrcodeResp);
@@ -95,24 +102,38 @@ message LoginReq {
 
 // 登录响应
 message LoginResp {
-  string token = 1;            // JWT Token
-  string refresh_token = 2;    // 刷新Token
+  // @inject_tag: json:"access_token"
+  string access_token = 1;          // 访问Token
+
+  // @inject_tag: json:"access_token_expire"
+  int64 access_token_expire = 2;    // 访问Token过期时间
+
+  // @inject_tag: json:"refresh_token"
+  string refresh_token = 3;         // 刷新Token
+
+  // @inject_tag: json:"refresh_token_expire"
+  int64 refresh_token_expire = 4;   // 刷新Token过期时间
 }
 
 // 二维码生成请求
 message QrcodeReq {
-  string device_id = 1;        // PC设备ID
+  // @inject_tag: json:"device_id"
+  string device_id = 1;        // 设备唯一标识
+  // @inject_tag: json:"login_ip"
   string login_ip = 2;         // 登录IP
 }
 
 // 二维码生成响应
 message QrcodeResp {
+  // @inject_tag: json:"qid"
   string qid = 1;              // 二维码唯一ID
+  // @inject_tag: json:"image_url"
   string image_url = 2;        // 二维码图片URL
 }
 
 // 二维码状态请求
 message QrcodeStatusReq {
+  // @inject_tag: json:"qid"
   string qid = 1;              // 二维码ID
 }
 
@@ -124,157 +145,219 @@ message QrcodeStatusResp {
     CONFIRMED = 2;             // 已确认(手机端已确认登录)
     EXPIRED = 3;               // 已过期
   }
-  Status status = 1;
+  // @inject_tag: json:"status"
+  Status status = 1;           // 二维码状态
+  // @inject_tag: json:"token"
   string token = 2;            // 登录成功的Token(当状态为CONFIRMED时返回)
 }
 
 // 二维码确认请求
 message QrcodeConfirmReq {
+  // @inject_tag: json:"qid"
   string qid = 1;              // 二维码ID
+  // @inject_tag: json:"app_token"
   string app_token = 2;        // 手机端Token
 }
 
 // 会话验证请求
 message VerifyReq {
+  // @inject_tag: json:"token"
   string token = 1;            // 待验证的Token
+  // @inject_tag: json:"device_type"
   string device_type = 2;      // 设备类型
 }
 
 // 会话验证响应
 message VerifyResp {
+  // @inject_tag: json:"user_id"
   int64 user_id = 1;           // 用户ID
+  // @inject_tag: json:"device_type"
   string device_type = 2;      // 设备类型
+  // @inject_tag: json:"device_id"
   string device_id = 3;        // 设备ID
 }
 
 // 登出请求
 message LogoutReq {
+  // @inject_tag: json:"token"
   string token = 1;            // 当前Token
+  // @inject_tag: json:"device_type"
   string device_type = 2;      // 设备类型
 }
 
 message LogoutResp {
+  // @inject_tag: json:"success"
   bool success = 1; // 登出结果
+  // @inject_tag: json:"message"
   string message = 2; // 提示信息(如"账号已在其他设备登录")
 }
 
 // 短信验证码请求
 message SendSmsCodeReq {
+  // @inject_tag: json:"mobile"
   string mobile = 1; // 手机号(必填)
+  // @inject_tag: json:"scene"
   string scene = 2; // 场景: register/login/reset_pwd
 }
 
 // 短信验证码响应
 message SendSmsCodeResp {
+  // @inject_tag: json:"success"
   bool success = 1;
+  // @inject_tag: json:"message"
   string message = 2;
+  // @inject_tag: json:"expire_seconds"
   int32 expire_seconds = 3; // 验证码有效期(秒)
 }
 
 // 密码重置请求(手机号)
 message ResetPasswordReq {
+  // @inject_tag: json:"mobile"
   string mobile = 1; // 手机号(必填)
+  // @inject_tag: json:"sms_code"
   string sms_code = 2; // 短信验证码(必填)
+  // @inject_tag: json:"new_password"
   string new_password = 3; // 新密码(必填，8-32位字母/数字/特殊字符)
 }
 
 // 邮箱重置密码请求
 message ResetPasswordByEmailReq {
+  // @inject_tag: json:"email"
   string email = 1; // 邮箱(必填)
+  // @inject_tag: json:"email_code"
   string email_code = 2; // 邮箱验证码(必填)
+  // @inject_tag: json:"new_password"
   string new_password = 3; // 新密码(同手机号重置规则)
 }
 
 // 密码重置响应(通用)
 message ResetPasswordResp {
+  // @inject_tag: json:"success"
   bool success = 1;
+  // @inject_tag: json:"message"
   string message = 2;
 }
 
 message ResetPasswordByEmailResp {
+  // @inject_tag: json:"success"
   bool success = 1; // 与ResetPasswordResp结构一致，便于复用
+  // @inject_tag: json:"message"
   string message = 2;
 }
 
 // 刷新Token请求
 message RefreshTokenReq {
+  // @inject_tag: json:"refresh_token"
   string refresh_token = 1; // 刷新Token(必填)
 }
 
 // 刷新Token响应
 message RefreshTokenResp {
-  string token = 1; // 新访问Token
-  string refresh_token = 2; // 新刷新Token(延长有效期)
+  // @inject_tag: json:"token"
+  string  access_token = 1; // 新访问Token
+  // @inject_tag: json:"access_token_expire"
+  int64 access_token_expire = 2; // 新访问Token有效期(秒)
+  // @inject_tag: json:"refresh_token"
+  string refresh_token = 3; // 新刷新Token(延长有效期)
+  // @inject_tag: json:"refresh_token_expire"
+  int64 refresh_token_expire = 4; // 新刷新Token有效期(秒)
 }
 
 // 邮箱验证码请求(同短信验证码结构)
 message SendEmailCodeReq {
+  // @inject_tag: json:"email"
   string email = 1; // 邮箱(必填)
+  // @inject_tag: json:"scene"
   string scene = 2; // 场景
 }
 
 // 邮箱验证码响应(同短信)
 message SendEmailCodeResp {
+  // @inject_tag: json:"success"
   bool success = 1;
+  // @inject_tag: json:"message"
   string message = 2;
+  // @inject_tag: json:"expire_seconds"
   int32 expire_seconds = 3;
 }
 
 // 第三方账号绑定请求
 // 绑定手机号请求
 message BindMobileReq {
+  // @inject_tag: json:"mobile"
   string mobile = 1; // 手机号(必填)
+  // @inject_tag: json:"sms_code"
   string sms_code = 2; // 验证码(必填)
 }
 
 // 绑定邮箱请求
 message BindEmailReq {
+  // @inject_tag: json:"email"
   string email = 1; // 邮箱(必填)
+  // @inject_tag: json:"email_code"
   string email_code = 2; // 验证码(必填)
 }
 
 // 绑定/解绑响应(通用结构)
 message BindMobileResp {
+  // @inject_tag: json:"success"
   bool success = 1; // 绑定结果
+  // @inject_tag: json:"message"
   string message = 2; // 提示信息(如"绑定成功"或"手机号已绑定")
 }
 
 message BindEmailResp {
+  // @inject_tag: json:"success"
   bool success = 1; // 绑定结果
+  // @inject_tag: json:"message"
   string message = 2; // 提示信息(如"绑定成功"或"邮箱已绑定")
 }
 
 message UnbindMobileResp {
+  // @inject_tag: json:"success"
   bool success = 1; // 解绑结果
+  // @inject_tag: json:"message"
   string message = 2; // 提示信息(如"解绑成功"或"手机号未绑定")
 }
 
 message UnbindEmailResp {
+  // @inject_tag: json:"success"
   bool success = 1; // 解绑结果
+  // @inject_tag: json:"message"
   string message = 2; // 提示信息(如"解绑成功"或"邮箱未绑定")
 }
 
 message UnbindThirdPartyResp {
+  // @inject_tag: json:"success"
   bool success = 1; // 解绑结果
+  // @inject_tag: json:"message"
   string message = 2; // 提示信息(如"解绑成功"或"第三方平台未绑定")
 }
 
 message BindThirdPartyResp {
+  // @inject_tag: json:"success"
   bool success = 1; // 绑定结果
+  // @inject_tag: json:"message"
   string message = 2; // 提示信息(如"绑定成功"或"第三方平台已绑定")
 }
 
 // 解绑第三方平台请求
 message UnbindThirdPartyReq {
+  // @inject_tag: json:"platform"
   string platform = 1; // 平台(必填，限制可选值)
+  // @inject_tag: json:"open_id"
   string open_id = 2; // 平台唯一标识(必填)
+  // @inject_tag: json:"union_id"
   string union_id = 3; // 可选，跨应用统一标识(如微信UnionID)
 }
 
 // 第三方平台绑定请求
 message BindThirdPartyReq {
+  // @inject_tag: json:"platform"
   string platform = 1; // 平台(必填)
+  // @inject_tag: json:"open_id"
   string open_id = 2; // OpenID(必填)
+  // @inject_tag: json:"union_id"
   string union_id = 3; // 可选，跨应用统一标识
 }
 
@@ -282,28 +365,96 @@ message BindThirdPartyReq {
 
 // 解绑邮箱请求（需验证验证码）
 message UnbindEmailReq {
+  // @inject_tag: json:"email"
   string email = 1; // 待解绑邮箱(必填)
+  // @inject_tag: json:"email_code"
   string email_code = 2; // 邮箱验证码(必填，验证邮箱归属)
 }
 
-
-
 // 注册请求
 message RegisterReq {
+  // @inject_tag: json:"mobile"
   string mobile = 1; // 手机号(必填，作为登录账号)
+  // @inject_tag: json:"password"
   string password = 2; // 密码(必填，8-32位字母/数字/特殊字符)
+  // @inject_tag: json:"sms_code"
   string sms_code = 3; // 短信验证码(必填，用于验证手机号归属)
 }
 
 // 注册响应（与登录响应结构一致，便于客户端统一处理）
 message RegisterResp {
-  string token = 1;            // JWT访问Token
-  string refresh_token = 2;    // 刷新Token
+  // @inject_tag: json:"token"
+  string  access_token = 1; // 新访问Token
+  // @inject_tag: json:"access_token_expire"
+  int64 access_token_expire = 2; // 新访问Token有效期(秒)
+  // @inject_tag: json:"refresh_token"
+  string refresh_token = 3; // 新刷新Token(延长有效期)
+  // @inject_tag: json:"refresh_token_expire"
+  int64 refresh_token_expire = 4; // 新刷新Token有效期(秒)
 }
 
 
 // 解绑手机号请求（需验证验证码防止误操作）
 message UnbindMobileReq {
+  // @inject_tag: json:"mobile"
   string mobile = 1; // 待解绑手机号(必填)
+  // @inject_tag: json:"sms_code"
   string sms_code = 2; // 短信验证码(必填，验证手机号归属)
+}
+
+// 登录请求
+message LoginByMobileReq {
+  // @inject_tag: json:"mobile"
+  string mobile = 1;          // 手机号(必填，格式校验)
+
+  // @inject_tag: json:"sms_code"
+  string sms_code = 2;        // 短信验证码(必填，6位数字)
+
+  // @inject_tag: json:"device_type"
+  optional string device_type = 3;      // 设备类型: app/pc/h5(可选)
+
+  // @inject_tag: json:"device_id"
+  optional string device_id = 4;        // 设备唯一标识(可选)
+
+  // @inject_tag: json:"login_ip"
+  optional string login_ip = 5;         // 登录IP(可选，格式校验)
+}
+
+// 账号密码登录请求
+message LoginByPasswordReq {
+  // @inject_tag: json:"account"
+  string account = 1;          // 账号(必填，支持手机号/邮箱格式)
+
+  // @inject_tag: json:"password"
+  string password = 2;         // 密码(必填，强密码策略校验)
+
+  // @inject_tag: json:"device_type"
+  optional string device_type = 3;      // 设备类型: app/pc/h5(可选)
+
+  // @inject_tag: json:"device_id"
+  optional string device_id = 4;        // 设备唯一标识(可选)
+
+  // @inject_tag: json:"login_ip"
+  optional string login_ip = 5;         // 登录IP(可选，格式校验)
+}
+
+// 第三方平台登录请求
+message LoginByThirdPartyReq {
+  // @inject_tag: json:"platform"
+  string platform = 1;         // 第三方平台(必填，支持: wechat/qq/alipay)
+
+  // @inject_tag: json:"open_id"
+  string open_id = 2;          // 平台openId(必填)
+
+  // @inject_tag: json:"union_id"
+  optional string union_id = 3;         // 跨应用统一标识(如微信UnionID，可选)
+
+  // @inject_tag: json:"device_type"
+  optional string device_type = 4;      // 设备类型: app/pc/h5(可选)
+
+  // @inject_tag: json:"device_id"
+  optional string device_id = 5;        // 设备唯一标识(可选)
+
+  // @inject_tag: json:"login_ip"
+  optional string login_ip = 6;         // 登录IP(可选，格式校验)
 }

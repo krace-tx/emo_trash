@@ -9,14 +9,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type LoginLogic struct {
+type LoginByMobileLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic {
-	return &LoginLogic{
+func NewLoginByMobileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginByMobileLogic {
+	return &LoginByMobileLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
@@ -24,8 +24,8 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 // 用户登录
-func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
+func (l *LoginByMobileLogic) LoginByMobile(in *pb.LoginByMobileReq) (*pb.LoginResp, error) {
 	// todo: add your logic here and delete this line
-	panic("implement me")
+
 	return &pb.LoginResp{}, nil
 }

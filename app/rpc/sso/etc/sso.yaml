@@ -1,6 +1,6 @@
 zrpc:
   Name: sso.rpc
-  ListenOn: 0.0.0.0:8080
+  ListenOn: 0.0.0.0:8100
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -67,3 +67,11 @@ service:
     Enable: false  # 是否启用
     Endpoint: http://pprof-collector:8080  # 性能数据上报端点
     Period: 60s  # 采样周期
+
+Mysql:
+  DSN: root:emoTrashMysql123!@tcp(127.0.0.1:3306)/emo_trash?charset=utf8mb4&parseTime=True&loc=Local
+  MaxOpenConns: 100        # 最大打开连接数
+  MaxIdleConns: 20         # 最大空闲连接数
+  ConnMaxLife: 30m         # 连接最大存活时间
+  LogLevel: info           # 日志级别：silent/error/warn/info
+  TablePrefix: sso_        # 表前缀

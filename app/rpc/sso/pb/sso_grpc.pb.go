@@ -19,7 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Auth_Login_FullMethodName                = "/sso.auth/Login"
+	Auth_LoginByMobile_FullMethodName        = "/sso.auth/LoginByMobile"
+	Auth_LoginByPassword_FullMethodName      = "/sso.auth/LoginByPassword"
+	Auth_LoginByThirdParty_FullMethodName    = "/sso.auth/LoginByThirdParty"
 	Auth_GenerateQrcode_FullMethodName       = "/sso.auth/GenerateQrcode"
 	Auth_CheckQrcodeStatus_FullMethodName    = "/sso.auth/CheckQrcodeStatus"
 	Auth_ConfirmQrcodeLogin_FullMethodName   = "/sso.auth/ConfirmQrcodeLogin"
@@ -44,7 +46,12 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthClient interface {
 	// 用户登录
-	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
+	// 手机号验证码登录
+	LoginByMobile(ctx context.Context, in *LoginByMobileReq, opts ...grpc.CallOption) (*LoginResp, error)
+	// 账号密码登录
+	LoginByPassword(ctx context.Context, in *LoginByPasswordReq, opts ...grpc.CallOption) (*LoginResp, error)
+	// 第三方平台登录
+	LoginByThirdParty(ctx context.Context, in *LoginByThirdPartyReq, opts ...grpc.CallOption) (*LoginResp, error)
 	// 生成登录二维码(PC端)
 	GenerateQrcode(ctx context.Context, in *QrcodeReq, opts ...grpc.CallOption) (*QrcodeResp, error)
 	// 检查二维码状态(PC端)
@@ -89,10 +96,30 @@ func NewAuthClient(cc grpc.ClientConnInterface) AuthClient {
 	return &authClient{cc}
 }
 
-func (c *authClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
+func (c *authClient) LoginByMobile(ctx context.Context, in *LoginByMobileReq, opts ...grpc.CallOption) (*LoginResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginResp)
-	err := c.cc.Invoke(ctx, Auth_Login_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Auth_LoginByMobile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) LoginByPassword(ctx context.Context, in *LoginByPasswordReq, opts ...grpc.CallOption) (*LoginResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoginResp)
+	err := c.cc.Invoke(ctx, Auth_LoginByPassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) LoginByThirdParty(ctx context.Context, in *LoginByThirdPartyReq, opts ...grpc.CallOption) (*LoginResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoginResp)
+	err := c.cc.Invoke(ctx, Auth_LoginByThirdParty_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -274,7 +301,12 @@ func (c *authClient) BindThirdParty(ctx context.Context, in *BindThirdPartyReq, 
 // for forward compatibility.
 type AuthServer interface {
 	// 用户登录
-	Login(context.Context, *LoginReq) (*LoginResp, error)
+	// 手机号验证码登录
+	LoginByMobile(context.Context, *LoginByMobileReq) (*LoginResp, error)
+	// 账号密码登录
+	LoginByPassword(context.Context, *LoginByPasswordReq) (*LoginResp, error)
+	// 第三方平台登录
+	LoginByThirdParty(context.Context, *LoginByThirdPartyReq) (*LoginResp, error)
 	// 生成登录二维码(PC端)
 	GenerateQrcode(context.Context, *QrcodeReq) (*QrcodeResp, error)
 	// 检查二维码状态(PC端)
@@ -319,8 +351,14 @@ type AuthServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAuthServer struct{}
 
-func (UnimplementedAuthServer) Login(context.Context, *LoginReq) (*LoginResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+func (UnimplementedAuthServer) LoginByMobile(context.Context, *LoginByMobileReq) (*LoginResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginByMobile not implemented")
+}
+func (UnimplementedAuthServer) LoginByPassword(context.Context, *LoginByPasswordReq) (*LoginResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginByPassword not implemented")
+}
+func (UnimplementedAuthServer) LoginByThirdParty(context.Context, *LoginByThirdPartyReq) (*LoginResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginByThirdParty not implemented")
 }
 func (UnimplementedAuthServer) GenerateQrcode(context.Context, *QrcodeReq) (*QrcodeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateQrcode not implemented")
@@ -394,20 +432,56 @@ func RegisterAuthServer(s grpc.ServiceRegistrar, srv AuthServer) {
 	s.RegisterService(&Auth_ServiceDesc, srv)
 }
 
-func _Auth_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginReq)
+func _Auth_LoginByMobile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginByMobileReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).Login(ctx, in)
+		return srv.(AuthServer).LoginByMobile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Auth_Login_FullMethodName,
+		FullMethod: Auth_LoginByMobile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).Login(ctx, req.(*LoginReq))
+		return srv.(AuthServer).LoginByMobile(ctx, req.(*LoginByMobileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_LoginByPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginByPasswordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).LoginByPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_LoginByPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).LoginByPassword(ctx, req.(*LoginByPasswordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_LoginByThirdParty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginByThirdPartyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).LoginByThirdParty(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_LoginByThirdParty_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).LoginByThirdParty(ctx, req.(*LoginByThirdPartyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -726,8 +800,16 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AuthServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Login",
-			Handler:    _Auth_Login_Handler,
+			MethodName: "LoginByMobile",
+			Handler:    _Auth_LoginByMobile_Handler,
+		},
+		{
+			MethodName: "LoginByPassword",
+			Handler:    _Auth_LoginByPassword_Handler,
+		},
+		{
+			MethodName: "LoginByThirdParty",
+			Handler:    _Auth_LoginByThirdParty_Handler,
 		},
 		{
 			MethodName: "GenerateQrcode",
