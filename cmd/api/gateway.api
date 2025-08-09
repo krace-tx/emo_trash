@@ -10,12 +10,9 @@ info (
 import "sso.api"
 
 @server (
-	group:      sso
-	prefix:     /v1/auth
-	middleware: Filter,Log
-	jwt:        Auth
-	cors:       true
-	timeout:    10s
+	group:   sso
+	prefix:  /sso/v1
+	timeout: 10s
 )
 service gateway {
 	@handler Login

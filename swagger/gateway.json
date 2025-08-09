@@ -15,7 +15,7 @@
   },
   "basePath": "/",
   "paths": {
-    "/v1/auth/auth/bind/email": {
+    "/sso/v1/auth/bind/email": {
       "post": {
         "consumes": [
           "application/json"
@@ -72,7 +72,7 @@
         }
       }
     },
-    "/v1/auth/auth/bind/mobile": {
+    "/sso/v1/auth/bind/mobile": {
       "post": {
         "consumes": [
           "application/json"
@@ -129,7 +129,7 @@
         }
       }
     },
-    "/v1/auth/auth/bind/thirdparty": {
+    "/sso/v1/auth/bind/thirdparty": {
       "post": {
         "consumes": [
           "application/json"
@@ -195,7 +195,7 @@
         }
       }
     },
-    "/v1/auth/auth/email/code": {
+    "/sso/v1/auth/email/code": {
       "post": {
         "consumes": [
           "application/json"
@@ -256,7 +256,7 @@
         }
       }
     },
-    "/v1/auth/auth/login": {
+    "/sso/v1/auth/login": {
       "post": {
         "consumes": [
           "application/json"
@@ -351,7 +351,7 @@
         }
       }
     },
-    "/v1/auth/auth/logout": {
+    "/sso/v1/auth/logout": {
       "post": {
         "consumes": [
           "application/json"
@@ -413,7 +413,7 @@
         }
       }
     },
-    "/v1/auth/auth/password/reset": {
+    "/sso/v1/auth/password/reset": {
       "post": {
         "consumes": [
           "application/json"
@@ -475,7 +475,7 @@
         }
       }
     },
-    "/v1/auth/auth/password/reset/email": {
+    "/sso/v1/auth/password/reset/email": {
       "post": {
         "consumes": [
           "application/json"
@@ -537,7 +537,7 @@
         }
       }
     },
-    "/v1/auth/auth/qrcode/confirm": {
+    "/sso/v1/auth/qrcode/confirm": {
       "post": {
         "consumes": [
           "application/json"
@@ -594,7 +594,7 @@
         }
       }
     },
-    "/v1/auth/auth/qrcode/generate": {
+    "/sso/v1/auth/qrcode/generate": {
       "post": {
         "consumes": [
           "application/json"
@@ -651,7 +651,7 @@
         }
       }
     },
-    "/v1/auth/auth/qrcode/status": {
+    "/sso/v1/auth/qrcode/status": {
       "post": {
         "consumes": [
           "application/json"
@@ -703,7 +703,7 @@
         }
       }
     },
-    "/v1/auth/auth/register": {
+    "/sso/v1/auth/register": {
       "post": {
         "consumes": [
           "application/json"
@@ -765,7 +765,7 @@
         }
       }
     },
-    "/v1/auth/auth/sms/code": {
+    "/sso/v1/auth/sms/code": {
       "post": {
         "consumes": [
           "application/json"
@@ -831,7 +831,7 @@
         }
       }
     },
-    "/v1/auth/auth/token/refresh": {
+    "/sso/v1/auth/token/refresh": {
       "post": {
         "consumes": [
           "application/json"
@@ -883,7 +883,7 @@
         }
       }
     },
-    "/v1/auth/auth/token/verify": {
+    "/sso/v1/auth/token/verify": {
       "post": {
         "consumes": [
           "application/json"
@@ -949,7 +949,7 @@
         }
       }
     },
-    "/v1/auth/auth/unbind/email": {
+    "/sso/v1/auth/unbind/email": {
       "post": {
         "consumes": [
           "application/json"
@@ -1006,7 +1006,7 @@
         }
       }
     },
-    "/v1/auth/auth/unbind/mobile": {
+    "/sso/v1/auth/unbind/mobile": {
       "post": {
         "consumes": [
           "application/json"
@@ -1063,7 +1063,7 @@
         }
       }
     },
-    "/v1/auth/auth/unbind/thirdparty": {
+    "/sso/v1/auth/unbind/thirdparty": {
       "post": {
         "consumes": [
           "application/json"
@@ -1130,7 +1130,7 @@
       }
     }
   },
-  "x-date": "2025-08-07 23:44:30",
+  "x-date": "2025-08-09 12:35:17",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

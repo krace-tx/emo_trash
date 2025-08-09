@@ -15,103 +15,99 @@ import (
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.Filter, serverCtx.Log},
-			[]rest.Route{
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/bind/email",
-					Handler: sso.BindEmailHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/bind/mobile",
-					Handler: sso.BindMobileHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/bind/thirdparty",
-					Handler: sso.BindThirdPartyHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/email/code",
-					Handler: sso.SendEmailCodeHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/login",
-					Handler: sso.LoginHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/logout",
-					Handler: sso.LogoutHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/password/reset",
-					Handler: sso.ResetPasswordHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/password/reset/email",
-					Handler: sso.ResetPasswordByEmailHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/qrcode/confirm",
-					Handler: sso.ConfirmQrcodeLoginHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/qrcode/generate",
-					Handler: sso.GenerateQrcodeHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/qrcode/status",
-					Handler: sso.CheckQrcodeStatusHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/register",
-					Handler: sso.RegisterHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/sms/code",
-					Handler: sso.SendSmsCodeHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/token/refresh",
-					Handler: sso.RefreshTokenHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/token/verify",
-					Handler: sso.VerifyTokenHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/unbind/email",
-					Handler: sso.UnbindEmailHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/unbind/mobile",
-					Handler: sso.UnbindMobileHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/auth/unbind/thirdparty",
-					Handler: sso.UnbindThirdPartyHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
-		rest.WithPrefix("/v1/auth"),
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/bind/email",
+				Handler: sso.BindEmailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/bind/mobile",
+				Handler: sso.BindMobileHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/bind/thirdparty",
+				Handler: sso.BindThirdPartyHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/email/code",
+				Handler: sso.SendEmailCodeHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/login",
+				Handler: sso.LoginHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/logout",
+				Handler: sso.LogoutHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/password/reset",
+				Handler: sso.ResetPasswordHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/password/reset/email",
+				Handler: sso.ResetPasswordByEmailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/qrcode/confirm",
+				Handler: sso.ConfirmQrcodeLoginHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/qrcode/generate",
+				Handler: sso.GenerateQrcodeHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/qrcode/status",
+				Handler: sso.CheckQrcodeStatusHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/register",
+				Handler: sso.RegisterHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/sms/code",
+				Handler: sso.SendSmsCodeHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/token/refresh",
+				Handler: sso.RefreshTokenHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/token/verify",
+				Handler: sso.VerifyTokenHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/unbind/email",
+				Handler: sso.UnbindEmailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/unbind/mobile",
+				Handler: sso.UnbindMobileHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/unbind/thirdparty",
+				Handler: sso.UnbindThirdPartyHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/sso/v1"),
 		rest.WithTimeout(10000*time.Millisecond),
 	)
 }
