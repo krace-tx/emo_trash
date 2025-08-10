@@ -3,6 +3,7 @@ package authlogic
 import (
 	"context"
 	"errors"
+	"fmt" // 新增导入
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
@@ -10,6 +11,7 @@ import (
 	authx "github.com/krace-tx/emo_trash/pkg/auth"
 	"github.com/krace-tx/emo_trash/pkg/db/rdb"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 type LoginByPasswordLogic struct {
@@ -85,6 +87,42 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *pb.LoginByPasswordReq) (*pb.L
 		})
 	if err != nil {
 		l.Logger.Errorf("生成刷新令牌失败: %v, account=%s", err, auth.Account)
+		return nil, errors.New("登录失败，请重试")
+	}
+
+	// 单点登录和同平台设备限制逻辑
+	// 平台类型默认为"unknown"
+	platform := "unknown"
+	if in.DeviceType != nil {
+		platform = *in.DeviceType
+	}
+
+	// 构建Redis键：用户ID:平台类型
+	redisKey := fmt.Sprintf("user:login:%d:%s", auth.UserID, platform)
+
+	// 检查该用户在该平台是否已有登录记录
+	oldToken, err := l.svcCtx.Redis.Get(redisKey)
+	if err != nil && err != redis.Nil {
+		l.Logger.Errorf("查询用户登录记录失败: %v, user_id=%d, platform=%s", err, auth.UserID, platform)
+		return nil, errors.New("登录失败，请重试")
+	}
+
+	// 如果存在旧令牌，将其加入黑名单
+	if oldToken != "" {
+		// 设置旧令牌为黑名单，有效期与原令牌一致
+		blacklistKey := fmt.Sprintf("token:blacklist:%s", oldToken)
+		err = l.svcCtx.Redis.Set(blacklistKey, "1")
+		if err != nil {
+			l.Logger.Errorf("添加旧令牌到黑名单失败: %v, user_id=%d, platform=%s", err, auth.UserID, platform)
+			return nil, errors.New("登录失败，请重试")
+		}
+		l.Logger.Infof("用户在同平台已有登录，已使旧令牌失效: user_id=%d, platform=%s", auth.UserID, platform)
+	}
+
+	// 存储新的登录信息到Redis
+	err = l.svcCtx.Redis.Set(redisKey, accessToken)
+	if err != nil {
+		l.Logger.Errorf("存储用户登录记录失败: %v, user_id=%d, platform=%s", err, auth.UserID, platform)
 		return nil, errors.New("登录失败，请重试")
 	}
 
