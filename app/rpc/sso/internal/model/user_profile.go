@@ -3,7 +3,7 @@ package model
 import "time"
 
 type UserProfile struct {
-	UserID    int64     `gorm:"primaryKey;column:user_id" json:"user_id"`   // 用户唯一标识（关联UserAuth）
+	UserID    uint64    `gorm:"primaryKey;column:user_id" json:"user_id"`   // 用户唯一标识（关联UserAuth）
 	Nickname  string    `gorm:"column:nickname;not null"  json:"nickname"`  // 用户昵称
 	Avatar    string    `gorm:"column:avatar"             json:"avatar"`    // 头像URL
 	Bio       string    `gorm:"column:bio"                json:"bio"`       // 个人简介(可选)

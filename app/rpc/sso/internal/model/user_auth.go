@@ -8,7 +8,7 @@ var (
 )
 
 type UserAuth struct {
-	UserID      int64     `gorm:"primaryKey;column:user_id" json:"user_id"`              // 用户唯一标识（关联UserProfile）
+	UserID      uint64    `gorm:"primaryKey;column:user_id" json:"user_id"`              // 用户唯一标识（关联UserProfile）
 	Mobile      string    `gorm:"column:mobile"             json:"mobile"`               // 手机号(可选)
 	Email       string    `gorm:"column:email"              json:"email"`                // 邮箱(可选)
 	Account     string    `gorm:"column:account"            json:"account"`              // 账号(可选)

@@ -2,10 +2,11 @@ package errx
 
 import (
 	"fmt"
-	"github.com/zeromicro/go-zero/core/logx"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 // errorx 结构体定义，包含错误码和错误信息
@@ -27,12 +28,12 @@ func ParseError(err error) *Err {
 	matches := re.FindStringSubmatch(errStr)
 
 	if len(matches) != 3 {
-		return &Err{Error.Code, fmt.Sprintf("无法解析错误字符串: %s", errStr)}
+		return &Err{ErrSystemInternal.Code, fmt.Sprintf("无法解析错误字符串: %s", errStr)}
 	}
 
 	code, err := strconv.Atoi(matches[1])
 	if err != nil {
-		return &Err{Error.Code, fmt.Sprintf("无效的错误代码: %s", matches[1])}
+		return &Err{ErrSystemInternal.Code, fmt.Sprintf("无效的错误代码: %s", matches[1])}
 	}
 
 	message := strings.TrimSpace(matches[2])
@@ -50,7 +51,7 @@ func New(code uint32, message string) *Err {
 func Errs(message string) *Err {
 	logx.Errorf(message)
 	return &Err{
-		Code:    Error.Code,
+		Code:    ErrSystemInternal.Code,
 		Message: message,
 	}
 }
@@ -58,7 +59,7 @@ func Errs(message string) *Err {
 func Errf(format string, v ...any) *Err {
 	logx.Errorf(format, v)
 	return &Err{
-		Code:    Error.Code,
+		Code:    ErrSystemInternal.Code,
 		Message: fmt.Sprintf(format, v),
 	}
 }

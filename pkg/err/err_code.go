@@ -1,41 +1,71 @@
 package errx
 
-// 定义业务状态码常量
+const (
+	// ===== 模块编号 =====
+	ModuleAuth   = 10 // 通用认证
+	ModuleSSO    = 11 // 单点登录
+	ModuleOAuth  = 12 // 第三方 OAuth
+	ModuleCAS    = 13 // CAS 协议
+	ModuleDB     = 20 // 数据库
+	ModuleUser   = 30 // 用户业务
+	ModuleSystem = 50 // 系统
+	ModuleCache  = 60 // 缓存
+)
+
+// NewErr 统一创建错误码
+func NewErr(module, code int, msg string) *Err {
+	return New(uint32(module*1000+code), msg)
+}
+
 var (
-	// 业务状态码 1xx
-	ServerNullData               = New(101, "当前暂无数据或查询信息并不存在")
-	ServerNotFoundNowTerm        = New(102, "无当前学期数据")
-	ServerErrorParam             = New(103, "参数有误")
-	ServerDormitoryInfoException = New(104, "学生寝室信息异常")
-	ServerNoDormitoryInformation = New(105, "暂无宿舍信息")
-	ServerParamNotNull           = New(106, "参数不能为空")
+	// ====== 通用认证模块 (10xxx) ======
+	ErrAuthUnauthorized        = NewErr(ModuleAuth, 1, "用户未授权")       // 10001
+	ErrAuthForbidden           = NewErr(ModuleAuth, 2, "令牌过期或无效")     // 10002
+	ErrAuthTokenRequired       = NewErr(ModuleAuth, 3, "令牌不能为空")      // 10003
+	ErrAuthLoginExpired        = NewErr(ModuleAuth, 4, "登录状态已过期")     // 10004
+	ErrAuthRateLimit           = NewErr(ModuleAuth, 5, "接口限流，请稍后再试")  // 10005
+	ErrAuthPasswordIncorrect   = NewErr(ModuleAuth, 6, "账号或密码错误")     // 10006
+	ErrAuthPasswordVerifyError = NewErr(ModuleAuth, 7, "密码验证异常")      // 10007
+	ErrAuthGenAccessTokenFail  = NewErr(ModuleAuth, 8, "生成访问令牌失败")    // 10008
+	ErrAuthGenRefreshTokenFail = NewErr(ModuleAuth, 9, "生成刷新令牌失败")    // 10009
+	ErrAuthSSOCheckFail        = NewErr(ModuleAuth, 10, "单点登录状态检查失败") // 10010
+	ErrAuthTokenBlacklistFail  = NewErr(ModuleAuth, 11, "旧令牌加入黑名单失败") // 10011
+	ErrAuthSaveLoginRecordFail = NewErr(ModuleAuth, 12, "保存登录状态失败")   // 10012
 
-	// 客户端错误状态码 4xx
-	AuthUnauthorized = New(401, "权限模块：用户未授权")
-	AuthForbidden    = New(402, "权限模块：令牌已过期或验证不正确!")
-	AuthTokenNotNull = New(403, "权限模块：令牌不能为空")
-	AuthLoginExpire  = New(404, "权限模块：登录状态已过期，请重新登录")
-	AuthTokenFail    = New(405, "权限模块：令牌验证失败，请尝试重新登录")
-	AuthFlushFail    = New(406, "权限模块: 权限刷新失败，请重新登录")
-	AuthNoPermission = New(407, "权限模块: 没有接口的访问权限!")
-	AuthRequestLimit = New(408, "接口限流: 收到请求过多!请稍后再试!")
-	AuthUnauth       = New(401, "权限模块：用户未授权")
+	// ====== SSO 单点登录模块 (11xxx) ======
+	ErrSSOTicketInvalid   = NewErr(ModuleSSO, 1, "票据无效")      // 11001
+	ErrSSOTicketExpired   = NewErr(ModuleSSO, 2, "票据已过期")     // 11002
+	ErrSSOServiceInvalid  = NewErr(ModuleSSO, 3, "非法服务标识")    // 11003
+	ErrSSOTokenExchange   = NewErr(ModuleSSO, 4, "令牌交换失败")    // 11004
+	ErrSSOSessionNotFound = NewErr(ModuleSSO, 5, "会话不存在或已失效") // 11005
+	ErrSSOLogoutFailed    = NewErr(ModuleSSO, 6, "单点登出失败")    // 11006
 
-	// 服务器错误状态码 5xx
-	Error       = New(500, "系统内部错误")
-	ErrAbnormal = New(501, "请求数据异常")
-	ErrDB       = New(503, "数据库异常")
-	ErrNotFound = New(504, "没有找到该数据")
-	ErrVerify   = New(505, "敏感内容，审核未通过")
-	ErrSearch   = New(506, "全局搜索异常")
+	// ====== OAuth2 模块 (12xxx) ======
+	ErrOAuthCodeInvalid   = NewErr(ModuleOAuth, 1, "授权码无效")   // 12001
+	ErrOAuthCodeExpired   = NewErr(ModuleOAuth, 2, "授权码已过期")  // 12002
+	ErrOAuthClientInvalid = NewErr(ModuleOAuth, 3, "非法客户端")   // 12003
+	ErrOAuthScopeDenied   = NewErr(ModuleOAuth, 4, "授权范围不足")  // 12004
+	ErrOAuthTokenInvalid  = NewErr(ModuleOAuth, 5, "第三方令牌无效") // 12005
 
-	// Redis 相关状态码 6xx
-	ErrorNotInfo = New(60000, "错误，没有解码数据")
-	ErrorDecode  = New(60001, "解码失败: 参数已失效!")
+	// ====== CAS 模块 (13xxx) ======
+	ErrCASTicketInvalid = NewErr(ModuleCAS, 1, "CAS 票据无效")    // 13001
+	ErrCASServiceDenied = NewErr(ModuleCAS, 2, "服务未注册或被禁止访问") // 13002
 
-	// 社区业务错误码 7xx
-	CommunityNotRegister        = New(701, "用户不存在或未注册")
-	CommunityUserAbnormality    = New(702, "用户信息异常")
-	CommunityRegistrationFailed = New(703, "用户注册失败")
-	CommunityHasRegistered      = New(704, "用户已注册")
+	// ====== 数据库模块 (20xxx) ======
+	ErrDBConnectFailed = NewErr(ModuleDB, 0, "数据库连接失败") // 20000
+	ErrDBQueryFailed   = NewErr(ModuleDB, 1, "数据库查询错误") // 20001
+
+	// ====== 用户模块 (30xxx) ======
+	ErrUserNotFound       = NewErr(ModuleUser, 1, "用户不存在")      // 30001
+	ErrUserDisabled       = NewErr(ModuleUser, 2, "用户已被禁用")     // 30002
+	ErrUserProfileFailed  = NewErr(ModuleUser, 3, "获取用户资料失败")   // 30003
+	ErrUserProfileInvalid = NewErr(ModuleUser, 4, "用户资料不完整")    // 30004
+	ErrUserSearchEmpty    = NewErr(ModuleUser, 5, "未找到符合条件的用户") // 30005
+
+	// ====== 系统模块 (50xxx) ======
+	ErrSystemInternal   = NewErr(ModuleSystem, 0, "系统内部错误") // 50000
+	ErrSystemArgInvalid = NewErr(ModuleSystem, 1, "参数错误")   // 50001
+
+	// ====== 缓存模块 (60xxx) ======
+	ErrCacheNoData = NewErr(ModuleCache, 0, "缓存中无数据") // 60000
 )

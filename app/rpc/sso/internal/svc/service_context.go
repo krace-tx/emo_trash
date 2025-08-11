@@ -9,6 +9,7 @@ import (
 type ServiceContext struct {
 	Config config.Config
 	Redis  *redis.Redis
+	//Mongo *mongo.Client
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -19,5 +20,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 		Redis:  redis.MustNewRedis(c.ZrpcConf.Redis.RedisConf),
+		//Mongo: mongo.MustNewClient(c.MongoConf),
 	}
 }
