@@ -19,6 +19,7 @@ RUN apk add --no-cache \
     curl \
     gcc \
     musl-dev \
+    ncurses-terminfo \
     && rm -rf /var/cache/apk/*
 
 # 安装Go环境

@@ -4,7 +4,7 @@ GOZERO := goctl
 MKDIR := mkdir -p
 RM := rm -rf
 TOUCH := touch
-ECHO := echo
+ECHO := echo -e
 SED := sed
 
 # 项目配置
@@ -56,18 +56,12 @@ init:
 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	@go install github.com/envoyproxy/protoc-gen-validate@latest
 	@go install github.com/favadi/protoc-go-inject-tag@latest
-
 	# 检查GOPATH配置
-	@$(ECHO) "$(YELLOW)Verifying GOPATH configuration...$(NC)"
-	@if [ -z "$$GOPATH" ]; then \
-		$(ECHO) "$(YELLOW)GOPATH is not set, defaulting to ~/go$(NC)"; \
-		GOPATH=$$HOME/go; \
-	fi
-	@if ! echo "$$PATH" | grep -q "$$GOPATH/bin"; then \
-		$(ECHO) "$(YELLOW)Warning: GOPATH/bin not found in PATH. Please add to your shell config:$(NC)"; \
-		$(ECHO) "  export GOPATH=$$GOPATH"; \
-		$(ECHO) "  export PATH=\$$PATH:\$$GOPATH/bin"; \
-	fi
+	@echo 'export PATH=$PATH:/go/bin' >> ~/.bashrc
+	@source ~/.bashrc
+
+	# 检查goctl是否可以执行
+	@goctl env check --install --verbose --force || (echo "$(RED)Error: goctl is not found in PATH$(NC) && exit 1")
 
 # API代码生成
 api: $(API_TARGETS)
