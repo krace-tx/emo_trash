@@ -1,0 +1,15 @@
+services:
+  go-dev:
+    build: .
+    container_name: emo_trash_dev
+    volumes:
+      - ../../:/app  # 将当前项目根目录挂载到容器的/app目录
+      - go-mod-cache:/go/pkg/mod  # 持久化Go模块缓存
+    environment:
+      - GOPROXY=https://goproxy.cn,direct  # 配置国内Go代理
+      - GO111MODULE=on
+    tty: true  # 保持终端连接
+    stdin_open: true  # 开启标准输入
+
+volumes:
+  go-mod-cache:  # 定义Go模块缓存卷

@@ -27,7 +27,7 @@ const (
 )
 
 // 通用数据库配置
-type DBConfig struct {
+type DBConf struct {
 	DSN          string          `json:"dsn"`
 	MaxOpenConns int             `json:"max_open_conns,optional"`
 	MaxIdleConns int             `json:"max_idle_conns,optional"`
@@ -37,21 +37,21 @@ type DBConfig struct {
 }
 
 // 初始化MySQL数据库
-func InitMySQL(cfg DBConfig) error {
+func InitMySQL(cfg DBConf) error {
 	return initDB(mysql.Open(cfg.DSN), cfg, DBTypeMySQL)
 }
 
 // 初始化PostgreSQL数据库
-func InitPostgres(cfg DBConfig) error {
+func InitPostgres(cfg DBConf) error {
 	return initDB(postgres.Open(cfg.DSN), cfg, DBTypePostgres)
 }
 
-func InitTinyDB(cfg DBConfig) error {
+func InitTinyDB(cfg DBConf) error {
 	return initDB(sqlite.Open(cfg.DSN), cfg, DBTypeTinyDB)
 }
 
 // 通用数据库初始化逻辑
-func initDB(dialector gorm.Dialector, cfg DBConfig, dbType DBType) error {
+func initDB(dialector gorm.Dialector, cfg DBConf, dbType DBType) error {
 	// 设置默认值
 	setDefaults(&cfg)
 
@@ -139,7 +139,7 @@ func Close() (err error) {
 }
 
 // 设置配置默认值
-func setDefaults(cfg *DBConfig) {
+func setDefaults(cfg *DBConf) {
 	if cfg.MaxOpenConns <= 0 {
 		cfg.MaxOpenConns = 100
 	}

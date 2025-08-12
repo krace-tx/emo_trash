@@ -423,19 +423,22 @@ message LoginByMobileReq {
 // 账号密码登录请求
 message LoginByPasswordReq {
   // @inject_tag: json:"account"
-  string account = 1;          // 账号(必填，支持手机号/邮箱格式)
+  string account = 1;          // 账号
 
   // @inject_tag: json:"password"
-  string password = 2;         // 密码(必填，强密码策略校验)
+  string password = 2;         // 密码
 
   // @inject_tag: json:"device_type"
-  optional string device_type = 3;      // 设备类型: app/pc/h5(可选)
+  string device_type = 3;      // 设备类型: app/pc/h5
 
   // @inject_tag: json:"device_id"
-  optional string device_id = 4;        // 设备唯一标识(可选)
+  string device_id = 4;        // 设备唯一标识
 
   // @inject_tag: json:"login_ip"
-  optional string login_ip = 5;         // 登录IP(可选，格式校验)
+  string login_ip = 5;         // 登录IP
+
+  // @inject_tag: json:"agent"
+  string agent = 6;           // 客户端信息(可选)
 }
 
 // 第三方平台登录请求

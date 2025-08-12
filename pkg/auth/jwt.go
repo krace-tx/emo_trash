@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-type JWTConfig struct {
+type JWTConf struct {
 	AccessSecret  string `json:"AccessSecret"`
 	AccessExpire  int64  `json:"AccessExpire"`
 	RefreshSecret string `json:"RefreshSecret"`
