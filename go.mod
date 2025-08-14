@@ -4,13 +4,13 @@ go 1.24.5
 
 require (
 	github.com/Lofanmi/pinyin-golang v0.0.0-20250305082105-87d20ae3d695
-	github.com/cloudwego/eino v0.4.3
+	github.com/cloudwego/eino v0.4.4
 	github.com/cloudwego/eino-ext/components/model/ollama v0.1.0
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/golang/protobuf v1.5.4
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/nacos-group/nacos-sdk-go v1.1.5
+	github.com/nacos-group/nacos-sdk-go v1.1.6
 	github.com/ollama/ollama v0.11.4
 	github.com/redis/go-redis/v9 v9.12.1
 	github.com/streadway/amqp v1.1.0
