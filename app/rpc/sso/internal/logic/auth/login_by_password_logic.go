@@ -91,8 +91,8 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *pb.LoginByPasswordReq) (*pb.L
 
 	// 单点登录和同平台设备限制逻辑
 	platform := "unknown"
-	if in.DeviceType != nil {
-		platform = *in.DeviceType
+	if in.DeviceType != "" {
+		platform = in.DeviceType
 	}
 
 	redisKey := fmt.Sprintf("user:login:%d:%s", auth.UserID, platform)

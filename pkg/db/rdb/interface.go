@@ -14,9 +14,6 @@ type EngineInterface[T any] interface {
 	// DB 返回原始gorm.DB实例，用于自定义查询
 	DB() *gorm.DB
 
-	// Transaction 开启事务并执行回调函数
-	Transaction(ctx context.Context, fn func(EngineInterface[T]) error) error
-
 	// Create 插入单条记录（基于GORM的Create方法）
 	Create(ctx context.Context, entity *T) error
 
@@ -293,4 +290,65 @@ func WithLocking(lockType string) QueryOption {
 		}
 		return db
 	}
+}
+
+// TransactionOption 事务选项类型
+type TransactionOption func(*gorm.DB) *gorm.DB
+
+// ===== 事务隔离级别类型与常量定义 =====
+
+// IsolationLevel 事务隔离级别类型
+type IsolationLevel string
+
+const (
+	// ReadUncommitted 读未提交隔离级别
+	ReadUncommitted IsolationLevel = "READ UNCOMMITTED"
+	// ReadCommitted 读已提交隔离级别（默认）
+	ReadCommitted IsolationLevel = "READ COMMITTED"
+	// RepeatableRead 可重复读隔离级别
+	RepeatableRead IsolationLevel = "REPEATABLE READ"
+	// Serializable 串行化隔离级别
+	Serializable IsolationLevel = "SERIALIZABLE"
+)
+
+// WithIsolationLevel 设置事务隔离级别
+// 仅接受预定义的IsolationLevel类型常量
+func WithIsolationLevel(level IsolationLevel) TransactionOption {
+	return func(db *gorm.DB) *gorm.DB {
+		if level != "" {
+			return db.Exec("SET TRANSACTION ISOLATION LEVEL " + string(level))
+		}
+		return db
+	}
+}
+
+// Transaction 开启事务并执行回调函数
+// db: gorm.DB实例
+// fn: 事务内执行的业务逻辑（参数为事务内的EngineInterface实例）
+// opts: 事务选项（如隔离级别等）
+// 实现逻辑：基于GORM的Transaction方法，自动处理事务提交/回滚
+type TransactionFunc[T any] func(engine EngineInterface[T]) error
+
+func Transaction[T any](ctx context.Context, db *gorm.DB, fn TransactionFunc[T], opts ...TransactionOption) error {
+	// 应用事务选项：创建应用选项后的事务DB实例
+	transDB := db.WithContext(ctx)
+	for _, opt := range opts {
+		transDB = opt(transDB)
+	}
+
+	// 执行事务：通过GORM原生事务函数开启事务
+	return transDB.Transaction(func(tx *gorm.DB) error {
+		// 创建事务内的Engine实例（绑定事务连接tx）
+		engine := NewEngine[T](tx)
+		return fn(engine) // 执行用户定义的事务逻辑
+	})
+}
+
+// 非泛型事务函数（用于无特定主要实体的场景）
+func TransactionWithoutEntity(ctx context.Context, db *gorm.DB, fn func(*gorm.DB) error, opts ...TransactionOption) error {
+	txDB := db.WithContext(ctx)
+	for _, opt := range opts {
+		txDB = opt(txDB)
+	}
+	return txDB.Transaction(fn)
 }

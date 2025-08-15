@@ -203,17 +203,6 @@ func (e *Engine[T]) GetByIDWithPreloads(ctx context.Context, id any, preloads ..
 	return &entity, nil
 }
 
-// Transaction 开启事务并执行回调函数
-// fn: 事务内执行的业务逻辑（参数为事务内的EngineInterface实例）
-// 实现逻辑：基于GORM的Transaction方法，自动处理事务提交/回滚
-func (e *Engine[T]) Transaction(ctx context.Context, fn func(EngineInterface[T]) error) error {
-	return e.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// 创建事务内的Engine实例（使用事务连接tx）
-		engine := NewEngine[T](tx)
-		return fn(engine) // 执行事务逻辑
-	})
-}
-
 // getUpdateAssignments 获取Upsert时需更新的字段（排除冲突字段和创建时间）
 // 内部使用反射解析实体字段，并缓存结构体信息提升性能
 var typeCache sync.Map // 缓存结构体字段信息（key: 结构体类型路径，value: []fieldInfo）
