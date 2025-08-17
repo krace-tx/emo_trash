@@ -36,7 +36,7 @@ RPC_TARGETS := $(patsubst $(RPC_SRC_DIR)/%.proto,$(RPC_DEST_DIR)/%/.,$(PROTO_FIL
 # 默认目标
 .DEFAULT_GOAL := help
 
-.PHONY: all init api rpc check mod clean swagger docker-compose help
+.PHONY: all init api rpc check mod clean swagger docker-compose wsl help
 
 all: api rpc
 	@$(ECHO) "$(GREEN)All code generated successfully!$(NC)"
@@ -85,6 +85,17 @@ $(API_DEST_DIR)/%/. : $(API_SRC_DIR)/%.api
 rpc: $(RPC_TARGETS)
 
 $(RPC_DEST_DIR)/%/. : $(RPC_SRC_DIR)/%.proto
+	@PROTOC_OUTPUT=$$(cd $(RPC_SRC_DIR) && \
+	protoc $(notdir $<) \
+	--proto_path=. \
+	--proto_path=../../third_party \
+	--validate_out=paths=source_relative,lang=go,template=validator_zh.yaml:../../$(RPC_DEST_DIR)/$(notdir $(basename $<))/pb \
+	 2>&1); \
+	PROTOC_RET=$$?; \
+	if [ $$PROTOC_RET -ne 0 ]; then \
+		$(ECHO) "$(RED)Failed to generate protobuf code: $$PROTOC_OUTPUT$(NC)"; \
+		exit 1; \
+	fi
 	@$(ECHO) "$(YELLOW)Generating RPC code for $<...$(NC)"
 	@# 捕获命令输出和返回码，支持跳过 "rpc service not found" 错误
 	@OUTPUT=$$(cd $(RPC_SRC_DIR) && \
@@ -154,6 +165,9 @@ docker-compose:
 		docker compose up -d --build --force-recreate; \
 	  fi && \
 	  $(ECHO) "$(GREEN)=== Docker Compose services started successfully ==="$(NC)
+
+wsl:
+	docker exec -it emo_trash_dev bash
 
 # 帮助信息
 help:

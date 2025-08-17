@@ -4,6 +4,8 @@ package sso;
 
 option go_package = "./pb";
 
+import "validate/validate.proto";
+
 service auth {
   // 用户登录
   // 手机号验证码登录
@@ -371,14 +373,30 @@ message UnbindEmailReq {
   string email_code = 2; // 邮箱验证码(必填，验证邮箱归属)
 }
 
-// 注册请求
 message RegisterReq {
   // @inject_tag: json:"mobile"
-  string mobile = 1; // 手机号(必填，作为登录账号)
+  string mobile = 1 [
+    (validate.rules).string = {
+      pattern: "^1[3-9]\\d{9}$",
+      len: 11
+    }
+  ];
+
   // @inject_tag: json:"password"
-  string password = 2; // 密码(必填，8-32位字母/数字/特殊字符)
+  string password = 2 [
+    (validate.rules).string = {
+      min_len: 8,
+      max_len: 32,
+    }
+  ];
+
   // @inject_tag: json:"sms_code"
-  string sms_code = 3; // 短信验证码(必填，用于验证手机号归属)
+  string sms_code = 3 [
+    (validate.rules).string = {
+      min_len: 4,
+      max_len: 6,
+    }
+  ];
 }
 
 // 注册响应（与登录响应结构一致，便于客户端统一处理）

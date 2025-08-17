@@ -6,6 +6,7 @@ require (
 	github.com/Lofanmi/pinyin-golang v0.0.0-20250305082105-87d20ae3d695
 	github.com/cloudwego/eino v0.4.4
 	github.com/cloudwego/eino-ext/components/model/ollama v0.1.0
+	github.com/envoyproxy/protoc-gen-validate v1.2.1
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/golang/protobuf v1.5.4
 	github.com/hashicorp/go-uuid v1.0.3

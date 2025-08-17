@@ -7,6 +7,7 @@
 package pb
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1980,15 +1981,14 @@ func (x *UnbindEmailReq) GetEmailCode() string {
 	return ""
 }
 
-// 注册请求
 type RegisterReq struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// @inject_tag: json:"mobile"
-	Mobile string `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile"` // 手机号(必填，作为登录账号)
+	Mobile string `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile"`
 	// @inject_tag: json:"password"
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password"` // 密码(必填，8-32位字母/数字/特殊字符)
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password"`
 	// @inject_tag: json:"sms_code"
-	SmsCode       string `protobuf:"bytes,3,opt,name=sms_code,json=smsCode,proto3" json:"sms_code"` // 短信验证码(必填，用于验证手机号归属)
+	SmsCode       string `protobuf:"bytes,3,opt,name=sms_code,json=smsCode,proto3" json:"sms_code"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2440,7 +2440,7 @@ var File_sso_proto protoreflect.FileDescriptor
 
 const file_sso_proto_rawDesc = "" +
 	"\n" +
-	"\tsso.proto\x12\x03sso\"\xd0\x03\n" +
+	"\tsso.proto\x12\x03sso\x1a\x17validate/validate.proto\"\xd0\x03\n" +
 	"\bLoginReq\x12\x1b\n" +
 	"\x06mobile\x18\x01 \x01(\tH\x00R\x06mobile\x88\x01\x01\x12\x1e\n" +
 	"\bsms_code\x18\x02 \x01(\tH\x01R\asmsCode\x88\x01\x01\x12\x1f\n" +
@@ -2582,11 +2582,11 @@ const file_sso_proto_rawDesc = "" +
 	"\x0eUnbindEmailReq\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1d\n" +
 	"\n" +
-	"email_code\x18\x02 \x01(\tR\temailCode\"\\\n" +
-	"\vRegisterReq\x12\x16\n" +
-	"\x06mobile\x18\x01 \x01(\tR\x06mobile\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x19\n" +
-	"\bsms_code\x18\x03 \x01(\tR\asmsCode\"\xb8\x01\n" +
+	"email_code\x18\x02 \x01(\tR\temailCode\"\x8b\x01\n" +
+	"\vRegisterReq\x12/\n" +
+	"\x06mobile\x18\x01 \x01(\tB\x17\xfaB\x14r\x122\r^1[3-9]\\d{9}$\x98\x01\vR\x06mobile\x12%\n" +
+	"\bpassword\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\b\x18 R\bpassword\x12$\n" +
+	"\bsms_code\x18\x03 \x01(\tB\t\xfaB\x06r\x04\x10\x04\x18\x06R\asmsCode\"\xb8\x01\n" +
 	"\fRegisterResp\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12.\n" +
 	"\x13access_token_expire\x18\x02 \x01(\x03R\x11accessTokenExpire\x12#\n" +
