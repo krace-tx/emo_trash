@@ -8,6 +8,10 @@ import "google/protobuf/descriptor.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
+extend google.protobuf.FieldOptions {
+    optional string error_msg = 50000;
+}
+
 // Validation rules applied at the message level
 extend google.protobuf.MessageOptions {
     // Disabled nullifies any validation rules for this message, including any

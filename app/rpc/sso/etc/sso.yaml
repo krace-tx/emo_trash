@@ -76,6 +76,13 @@ Mysql:
   LogLevel: info           # 日志级别：silent/error/warn/info
   TablePrefix: sso_        # 表前缀
 
+Mongo:
+  URI: "mongodb://root:emoTrashMongo123!@127.0.0.1:27017/emo_trash?authSource=admin"
+  Database: "emo_trash"
+  Timeout: 5
+  MaxPool: 100
+  MinPool: 10
+
 JWT:
   # 访问令牌密钥（32位随机字符串，生产环境建议通过环境变量注入）
   AccessSecret: "xY9L3pQ7sT2vB5mK8jH0gF4dS1aZ6cV2bN"

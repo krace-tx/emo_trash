@@ -34,7 +34,10 @@ func main() {
 	})
 
 	// 添加一元拦截器
-	s.AddUnaryInterceptors(interceptor.UnaryRecoverInterceptor)
+	s.AddUnaryInterceptors(
+		interceptor.UnaryRecoverInterceptor,
+		interceptor.UnaryValidatorInterceptor,
+	)
 	interceptor.SignalInterceptor()
 
 	defer s.Stop()

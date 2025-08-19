@@ -41,9 +41,9 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 // 返回结果：组装并返回注册成功响应
 func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	// 1. 参数验证
-	if err := l.validateParams(in); err != nil {
-		return nil, err
-	}
+	//if err := l.validateParams(in); err != nil {
+	//	return nil, err
+	//}
 
 	// 2. 验证短信验证码
 	if err := l.verifySmsCode(in.Mobile, in.SmsCode); err != nil {

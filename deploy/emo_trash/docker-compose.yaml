@@ -108,8 +108,8 @@ services:
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
     volumes:
-      - /home/krace/.docker/desktop/docker.sock:/var/run/docker.sock  # 切换到自己的docker.sock
-
+#      - /home/krace/.docker/desktop/docker.sock:/var/run/docker.sock  # 切换到自己的docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock  # 切换到自己的docker.sock
     networks:
       - emo-trash-network  # 加入现有网络以与其他服务通信
 

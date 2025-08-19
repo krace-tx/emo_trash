@@ -85,12 +85,18 @@ $(API_DEST_DIR)/%/. : $(API_SRC_DIR)/%.api
 rpc: $(RPC_TARGETS)
 
 $(RPC_DEST_DIR)/%/. : $(RPC_SRC_DIR)/%.proto
-	@PROTOC_OUTPUT=$$(cd $(RPC_SRC_DIR) && \
+	@mkdir -p $(RPC_DEST_DIR)/$(notdir $(basename $<))/pb
+	@echo "Generating protobuf code for $<"
+	@cd $(RPC_SRC_DIR) && \
 	protoc $(notdir $<) \
 	--proto_path=. \
 	--proto_path=../../third_party \
-	--validate_out=paths=source_relative,lang=go,template=validator_zh.yaml:../../$(RPC_DEST_DIR)/$(notdir $(basename $<))/pb \
-	 2>&1); \
+	--go_out=../../$(RPC_DEST_DIR)/$(notdir $(basename $<))/pb \
+	--go_opt=paths=source_relative \
+	--go-grpc_out=../../$(RPC_DEST_DIR)/$(notdir $(basename $<))/pb \
+	--go-grpc_opt=paths=source_relative \
+	--validate_out=paths=source_relative,lang=go:../../$(RPC_DEST_DIR)/$(notdir $(basename $<))/pb \
+	2>&1; \
 	PROTOC_RET=$$?; \
 	if [ $$PROTOC_RET -ne 0 ]; then \
 		$(ECHO) "$(RED)Failed to generate protobuf code: $$PROTOC_OUTPUT$(NC)"; \
