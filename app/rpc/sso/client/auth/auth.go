@@ -23,7 +23,6 @@ type (
 	LoginByMobileReq         = pb.LoginByMobileReq
 	LoginByPasswordReq       = pb.LoginByPasswordReq
 	LoginByThirdPartyReq     = pb.LoginByThirdPartyReq
-	LoginReq                 = pb.LoginReq
 	LoginResp                = pb.LoginResp
 	LogoutReq                = pb.LogoutReq
 	LogoutResp               = pb.LogoutResp

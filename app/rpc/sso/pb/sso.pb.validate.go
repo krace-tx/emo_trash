@@ -35,50 +35,60 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on LoginReq with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *LoginReq) Validate() error {
+// Validate checks the field values on LoginByMobileReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *LoginByMobileReq) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on LoginReq with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in LoginReqMultiError, or nil
-// if none found.
-func (m *LoginReq) ValidateAll() error {
+// ValidateAll checks the field values on LoginByMobileReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// LoginByMobileReqMultiError, or nil if none found.
+func (m *LoginByMobileReq) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *LoginReq) validate(all bool) error {
+func (m *LoginByMobileReq) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	if m.Mobile != nil {
-		// no validation rules for Mobile
+	if utf8.RuneCountInString(m.GetMobile()) != 11 {
+		err := LoginByMobileReqValidationError{
+			field:  "Mobile",
+			reason: "value length must be 11 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
 	}
 
-	if m.SmsCode != nil {
-		// no validation rules for SmsCode
+	if !_LoginByMobileReq_Mobile_Pattern.MatchString(m.GetMobile()) {
+		err := LoginByMobileReqValidationError{
+			field:  "Mobile",
+			reason: "value does not match regex pattern \"^1[3-9]\\\\d{9}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
-	if m.Platform != nil {
-		// no validation rules for Platform
-	}
-
-	if m.OpenId != nil {
-		// no validation rules for OpenId
-	}
-
-	if m.Account != nil {
-		// no validation rules for Account
-	}
-
-	if m.Password != nil {
-		// no validation rules for Password
+	if l := utf8.RuneCountInString(m.GetSmsCode()); l < 4 || l > 6 {
+		err := LoginByMobileReqValidationError{
+			field:  "SmsCode",
+			reason: "value length must be between 4 and 6 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if m.DeviceType != nil {
@@ -90,26 +100,34 @@ func (m *LoginReq) validate(all bool) error {
 	}
 
 	if m.LoginIp != nil {
-		// no validation rules for LoginIp
-	}
 
-	if m.IsQuick != nil {
-		// no validation rules for IsQuick
+		if ip := net.ParseIP(m.GetLoginIp()); ip == nil || ip.To4() == nil {
+			err := LoginByMobileReqValidationError{
+				field:  "LoginIp",
+				reason: "value must be a valid IPv4 address",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
-		return LoginReqMultiError(errors)
+		return LoginByMobileReqMultiError(errors)
 	}
 
 	return nil
 }
 
-// LoginReqMultiError is an error wrapping multiple validation errors returned
-// by LoginReq.ValidateAll() if the designated constraints aren't met.
-type LoginReqMultiError []error
+// LoginByMobileReqMultiError is an error wrapping multiple validation errors
+// returned by LoginByMobileReq.ValidateAll() if the designated constraints
+// aren't met.
+type LoginByMobileReqMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m LoginReqMultiError) Error() string {
+func (m LoginByMobileReqMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -118,11 +136,11 @@ func (m LoginReqMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m LoginReqMultiError) AllErrors() []error { return m }
+func (m LoginByMobileReqMultiError) AllErrors() []error { return m }
 
-// LoginReqValidationError is the validation error returned by
-// LoginReq.Validate if the designated constraints aren't met.
-type LoginReqValidationError struct {
+// LoginByMobileReqValidationError is the validation error returned by
+// LoginByMobileReq.Validate if the designated constraints aren't met.
+type LoginByMobileReqValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -130,22 +148,22 @@ type LoginReqValidationError struct {
 }
 
 // Field function returns field value.
-func (e LoginReqValidationError) Field() string { return e.field }
+func (e LoginByMobileReqValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e LoginReqValidationError) Reason() string { return e.reason }
+func (e LoginByMobileReqValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e LoginReqValidationError) Cause() error { return e.cause }
+func (e LoginByMobileReqValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e LoginReqValidationError) Key() bool { return e.key }
+func (e LoginByMobileReqValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e LoginReqValidationError) ErrorName() string { return "LoginReqValidationError" }
+func (e LoginByMobileReqValidationError) ErrorName() string { return "LoginByMobileReqValidationError" }
 
 // Error satisfies the builtin error interface
-func (e LoginReqValidationError) Error() string {
+func (e LoginByMobileReqValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -157,14 +175,14 @@ func (e LoginReqValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sLoginReq.%s: %s%s",
+		"invalid %sLoginByMobileReq.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = LoginReqValidationError{}
+var _ error = LoginByMobileReqValidationError{}
 
 var _ interface {
 	Field() string
@@ -172,7 +190,307 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = LoginReqValidationError{}
+} = LoginByMobileReqValidationError{}
+
+var _LoginByMobileReq_Mobile_Pattern = regexp.MustCompile("^1[3-9]\\d{9}$")
+
+// Validate checks the field values on LoginByPasswordReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *LoginByPasswordReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LoginByPasswordReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// LoginByPasswordReqMultiError, or nil if none found.
+func (m *LoginByPasswordReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LoginByPasswordReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if l := utf8.RuneCountInString(m.GetAccount()); l < 4 || l > 20 {
+		err := LoginByPasswordReqValidationError{
+			field:  "Account",
+			reason: "value length must be between 4 and 20 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetPassword()); l < 8 || l > 32 {
+		err := LoginByPasswordReqValidationError{
+			field:  "Password",
+			reason: "value length must be between 8 and 32 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for DeviceType
+
+	// no validation rules for DeviceId
+
+	if ip := net.ParseIP(m.GetLoginIp()); ip == nil || ip.To4() == nil {
+		err := LoginByPasswordReqValidationError{
+			field:  "LoginIp",
+			reason: "value must be a valid IPv4 address",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Agent
+
+	if len(errors) > 0 {
+		return LoginByPasswordReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// LoginByPasswordReqMultiError is an error wrapping multiple validation errors
+// returned by LoginByPasswordReq.ValidateAll() if the designated constraints
+// aren't met.
+type LoginByPasswordReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LoginByPasswordReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LoginByPasswordReqMultiError) AllErrors() []error { return m }
+
+// LoginByPasswordReqValidationError is the validation error returned by
+// LoginByPasswordReq.Validate if the designated constraints aren't met.
+type LoginByPasswordReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LoginByPasswordReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LoginByPasswordReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LoginByPasswordReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LoginByPasswordReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LoginByPasswordReqValidationError) ErrorName() string {
+	return "LoginByPasswordReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e LoginByPasswordReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLoginByPasswordReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LoginByPasswordReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LoginByPasswordReqValidationError{}
+
+// Validate checks the field values on LoginByThirdPartyReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *LoginByThirdPartyReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LoginByThirdPartyReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// LoginByThirdPartyReqMultiError, or nil if none found.
+func (m *LoginByThirdPartyReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LoginByThirdPartyReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if _, ok := _LoginByThirdPartyReq_Platform_InLookup[m.GetPlatform()]; !ok {
+		err := LoginByThirdPartyReqValidationError{
+			field:  "Platform",
+			reason: "value must be in list [wechat qq alipay]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetOpenId()) < 10 {
+		err := LoginByThirdPartyReqValidationError{
+			field:  "OpenId",
+			reason: "value length must be at least 10 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.UnionId != nil {
+		// no validation rules for UnionId
+	}
+
+	if m.DeviceType != nil {
+		// no validation rules for DeviceType
+	}
+
+	if m.DeviceId != nil {
+		// no validation rules for DeviceId
+	}
+
+	if m.LoginIp != nil {
+
+		if ip := net.ParseIP(m.GetLoginIp()); ip == nil || ip.To4() == nil {
+			err := LoginByThirdPartyReqValidationError{
+				field:  "LoginIp",
+				reason: "value must be a valid IPv4 address",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return LoginByThirdPartyReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// LoginByThirdPartyReqMultiError is an error wrapping multiple validation
+// errors returned by LoginByThirdPartyReq.ValidateAll() if the designated
+// constraints aren't met.
+type LoginByThirdPartyReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LoginByThirdPartyReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LoginByThirdPartyReqMultiError) AllErrors() []error { return m }
+
+// LoginByThirdPartyReqValidationError is the validation error returned by
+// LoginByThirdPartyReq.Validate if the designated constraints aren't met.
+type LoginByThirdPartyReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LoginByThirdPartyReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LoginByThirdPartyReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LoginByThirdPartyReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LoginByThirdPartyReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LoginByThirdPartyReqValidationError) ErrorName() string {
+	return "LoginByThirdPartyReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e LoginByThirdPartyReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLoginByThirdPartyReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LoginByThirdPartyReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LoginByThirdPartyReqValidationError{}
+
+var _LoginByThirdPartyReq_Platform_InLookup = map[string]struct{}{
+	"wechat": {},
+	"qq":     {},
+	"alipay": {},
+}
 
 // Validate checks the field values on LoginResp with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -1211,6 +1529,259 @@ var _ interface {
 	ErrorName() string
 } = LogoutRespValidationError{}
 
+// Validate checks the field values on RegisterReq with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *RegisterReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RegisterReq with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RegisterReqMultiError, or
+// nil if none found.
+func (m *RegisterReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RegisterReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetMobile()) != 11 {
+		err := RegisterReqValidationError{
+			field:  "Mobile",
+			reason: "value length must be 11 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if !_RegisterReq_Mobile_Pattern.MatchString(m.GetMobile()) {
+		err := RegisterReqValidationError{
+			field:  "Mobile",
+			reason: "value does not match regex pattern \"^1[3-9]\\\\d{9}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetPassword()); l < 8 || l > 32 {
+		err := RegisterReqValidationError{
+			field:  "Password",
+			reason: "value length must be between 8 and 32 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetSmsCode()); l < 4 || l > 6 {
+		err := RegisterReqValidationError{
+			field:  "SmsCode",
+			reason: "value length must be between 4 and 6 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return RegisterReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// RegisterReqMultiError is an error wrapping multiple validation errors
+// returned by RegisterReq.ValidateAll() if the designated constraints aren't met.
+type RegisterReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RegisterReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RegisterReqMultiError) AllErrors() []error { return m }
+
+// RegisterReqValidationError is the validation error returned by
+// RegisterReq.Validate if the designated constraints aren't met.
+type RegisterReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RegisterReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RegisterReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RegisterReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RegisterReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RegisterReqValidationError) ErrorName() string { return "RegisterReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RegisterReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRegisterReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RegisterReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RegisterReqValidationError{}
+
+var _RegisterReq_Mobile_Pattern = regexp.MustCompile("^1[3-9]\\d{9}$")
+
+// Validate checks the field values on RegisterResp with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *RegisterResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RegisterResp with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RegisterRespMultiError, or
+// nil if none found.
+func (m *RegisterResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RegisterResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for AccessToken
+
+	// no validation rules for AccessTokenExpire
+
+	// no validation rules for RefreshToken
+
+	// no validation rules for RefreshTokenExpire
+
+	if len(errors) > 0 {
+		return RegisterRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// RegisterRespMultiError is an error wrapping multiple validation errors
+// returned by RegisterResp.ValidateAll() if the designated constraints aren't met.
+type RegisterRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RegisterRespMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RegisterRespMultiError) AllErrors() []error { return m }
+
+// RegisterRespValidationError is the validation error returned by
+// RegisterResp.Validate if the designated constraints aren't met.
+type RegisterRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RegisterRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RegisterRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RegisterRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RegisterRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RegisterRespValidationError) ErrorName() string { return "RegisterRespValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RegisterRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRegisterResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RegisterRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RegisterRespValidationError{}
+
 // Validate checks the field values on SendSmsCodeReq with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -1233,9 +1804,39 @@ func (m *SendSmsCodeReq) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Mobile
+	if utf8.RuneCountInString(m.GetMobile()) != 11 {
+		err := SendSmsCodeReqValidationError{
+			field:  "Mobile",
+			reason: "value length must be 11 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 
-	// no validation rules for Scene
+	}
+
+	if !_SendSmsCodeReq_Mobile_Pattern.MatchString(m.GetMobile()) {
+		err := SendSmsCodeReqValidationError{
+			field:  "Mobile",
+			reason: "value does not match regex pattern \"^1[3-9]\\\\d{9}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _SendSmsCodeReq_Scene_InLookup[m.GetScene()]; !ok {
+		err := SendSmsCodeReqValidationError{
+			field:  "Scene",
+			reason: "value must be in list [register login reset_pwd]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return SendSmsCodeReqMultiError(errors)
@@ -1314,6 +1915,14 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SendSmsCodeReqValidationError{}
+
+var _SendSmsCodeReq_Mobile_Pattern = regexp.MustCompile("^1[3-9]\\d{9}$")
+
+var _SendSmsCodeReq_Scene_InLookup = map[string]struct{}{
+	"register":  {},
+	"login":     {},
+	"reset_pwd": {},
+}
 
 // Validate checks the field values on SendSmsCodeResp with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -1421,6 +2030,295 @@ var _ interface {
 	ErrorName() string
 } = SendSmsCodeRespValidationError{}
 
+// Validate checks the field values on SendEmailCodeReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SendEmailCodeReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SendEmailCodeReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SendEmailCodeReqMultiError, or nil if none found.
+func (m *SendEmailCodeReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SendEmailCodeReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateEmail(m.GetEmail()); err != nil {
+		err = SendEmailCodeReqValidationError{
+			field:  "Email",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _SendEmailCodeReq_Scene_InLookup[m.GetScene()]; !ok {
+		err := SendEmailCodeReqValidationError{
+			field:  "Scene",
+			reason: "value must be in list [register login reset_pwd bind unbind]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return SendEmailCodeReqMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *SendEmailCodeReq) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *SendEmailCodeReq) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
+}
+
+// SendEmailCodeReqMultiError is an error wrapping multiple validation errors
+// returned by SendEmailCodeReq.ValidateAll() if the designated constraints
+// aren't met.
+type SendEmailCodeReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SendEmailCodeReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SendEmailCodeReqMultiError) AllErrors() []error { return m }
+
+// SendEmailCodeReqValidationError is the validation error returned by
+// SendEmailCodeReq.Validate if the designated constraints aren't met.
+type SendEmailCodeReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SendEmailCodeReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SendEmailCodeReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SendEmailCodeReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SendEmailCodeReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SendEmailCodeReqValidationError) ErrorName() string { return "SendEmailCodeReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SendEmailCodeReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSendEmailCodeReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SendEmailCodeReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SendEmailCodeReqValidationError{}
+
+var _SendEmailCodeReq_Scene_InLookup = map[string]struct{}{
+	"register":  {},
+	"login":     {},
+	"reset_pwd": {},
+	"bind":      {},
+	"unbind":    {},
+}
+
+// Validate checks the field values on SendEmailCodeResp with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SendEmailCodeResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SendEmailCodeResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SendEmailCodeRespMultiError, or nil if none found.
+func (m *SendEmailCodeResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SendEmailCodeResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	// no validation rules for Message
+
+	// no validation rules for ExpireSeconds
+
+	if len(errors) > 0 {
+		return SendEmailCodeRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// SendEmailCodeRespMultiError is an error wrapping multiple validation errors
+// returned by SendEmailCodeResp.ValidateAll() if the designated constraints
+// aren't met.
+type SendEmailCodeRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SendEmailCodeRespMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SendEmailCodeRespMultiError) AllErrors() []error { return m }
+
+// SendEmailCodeRespValidationError is the validation error returned by
+// SendEmailCodeResp.Validate if the designated constraints aren't met.
+type SendEmailCodeRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SendEmailCodeRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SendEmailCodeRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SendEmailCodeRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SendEmailCodeRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SendEmailCodeRespValidationError) ErrorName() string {
+	return "SendEmailCodeRespValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SendEmailCodeRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSendEmailCodeResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SendEmailCodeRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SendEmailCodeRespValidationError{}
+
 // Validate checks the field values on ResetPasswordReq with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -1443,11 +2341,50 @@ func (m *ResetPasswordReq) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Mobile
+	if utf8.RuneCountInString(m.GetMobile()) != 11 {
+		err := ResetPasswordReqValidationError{
+			field:  "Mobile",
+			reason: "value length must be 11 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 
-	// no validation rules for SmsCode
+	}
 
-	// no validation rules for NewPassword
+	if !_ResetPasswordReq_Mobile_Pattern.MatchString(m.GetMobile()) {
+		err := ResetPasswordReqValidationError{
+			field:  "Mobile",
+			reason: "value does not match regex pattern \"^1[3-9]\\\\d{9}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetSmsCode()); l < 4 || l > 6 {
+		err := ResetPasswordReqValidationError{
+			field:  "SmsCode",
+			reason: "value length must be between 4 and 6 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetNewPassword()); l < 8 || l > 32 {
+		err := ResetPasswordReqValidationError{
+			field:  "NewPassword",
+			reason: "value length must be between 8 and 32 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ResetPasswordReqMultiError(errors)
@@ -1527,6 +2464,8 @@ var _ interface {
 	ErrorName() string
 } = ResetPasswordReqValidationError{}
 
+var _ResetPasswordReq_Mobile_Pattern = regexp.MustCompile("^1[3-9]\\d{9}$")
+
 // Validate checks the field values on ResetPasswordByEmailReq with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -1549,17 +2488,95 @@ func (m *ResetPasswordByEmailReq) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Email
+	if err := m._validateEmail(m.GetEmail()); err != nil {
+		err = ResetPasswordByEmailReqValidationError{
+			field:  "Email",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for EmailCode
+	if l := utf8.RuneCountInString(m.GetEmailCode()); l < 4 || l > 6 {
+		err := ResetPasswordByEmailReqValidationError{
+			field:  "EmailCode",
+			reason: "value length must be between 4 and 6 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for NewPassword
+	if l := utf8.RuneCountInString(m.GetNewPassword()); l < 8 || l > 32 {
+		err := ResetPasswordByEmailReqValidationError{
+			field:  "NewPassword",
+			reason: "value length must be between 8 and 32 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ResetPasswordByEmailReqMultiError(errors)
 	}
 
 	return nil
+}
+
+func (m *ResetPasswordByEmailReq) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ResetPasswordByEmailReq) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
 }
 
 // ResetPasswordByEmailReqMultiError is an error wrapping multiple validation
@@ -2057,218 +3074,6 @@ var _ interface {
 	ErrorName() string
 } = RefreshTokenRespValidationError{}
 
-// Validate checks the field values on SendEmailCodeReq with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *SendEmailCodeReq) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on SendEmailCodeReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// SendEmailCodeReqMultiError, or nil if none found.
-func (m *SendEmailCodeReq) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *SendEmailCodeReq) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Email
-
-	// no validation rules for Scene
-
-	if len(errors) > 0 {
-		return SendEmailCodeReqMultiError(errors)
-	}
-
-	return nil
-}
-
-// SendEmailCodeReqMultiError is an error wrapping multiple validation errors
-// returned by SendEmailCodeReq.ValidateAll() if the designated constraints
-// aren't met.
-type SendEmailCodeReqMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m SendEmailCodeReqMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m SendEmailCodeReqMultiError) AllErrors() []error { return m }
-
-// SendEmailCodeReqValidationError is the validation error returned by
-// SendEmailCodeReq.Validate if the designated constraints aren't met.
-type SendEmailCodeReqValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e SendEmailCodeReqValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e SendEmailCodeReqValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e SendEmailCodeReqValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e SendEmailCodeReqValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e SendEmailCodeReqValidationError) ErrorName() string { return "SendEmailCodeReqValidationError" }
-
-// Error satisfies the builtin error interface
-func (e SendEmailCodeReqValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sSendEmailCodeReq.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = SendEmailCodeReqValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = SendEmailCodeReqValidationError{}
-
-// Validate checks the field values on SendEmailCodeResp with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *SendEmailCodeResp) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on SendEmailCodeResp with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// SendEmailCodeRespMultiError, or nil if none found.
-func (m *SendEmailCodeResp) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *SendEmailCodeResp) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Success
-
-	// no validation rules for Message
-
-	// no validation rules for ExpireSeconds
-
-	if len(errors) > 0 {
-		return SendEmailCodeRespMultiError(errors)
-	}
-
-	return nil
-}
-
-// SendEmailCodeRespMultiError is an error wrapping multiple validation errors
-// returned by SendEmailCodeResp.ValidateAll() if the designated constraints
-// aren't met.
-type SendEmailCodeRespMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m SendEmailCodeRespMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m SendEmailCodeRespMultiError) AllErrors() []error { return m }
-
-// SendEmailCodeRespValidationError is the validation error returned by
-// SendEmailCodeResp.Validate if the designated constraints aren't met.
-type SendEmailCodeRespValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e SendEmailCodeRespValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e SendEmailCodeRespValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e SendEmailCodeRespValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e SendEmailCodeRespValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e SendEmailCodeRespValidationError) ErrorName() string {
-	return "SendEmailCodeRespValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e SendEmailCodeRespValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sSendEmailCodeResp.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = SendEmailCodeRespValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = SendEmailCodeRespValidationError{}
-
 // Validate checks the field values on BindMobileReq with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -2291,9 +3096,39 @@ func (m *BindMobileReq) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Mobile
+	if utf8.RuneCountInString(m.GetMobile()) != 11 {
+		err := BindMobileReqValidationError{
+			field:  "Mobile",
+			reason: "value length must be 11 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 
-	// no validation rules for SmsCode
+	}
+
+	if !_BindMobileReq_Mobile_Pattern.MatchString(m.GetMobile()) {
+		err := BindMobileReqValidationError{
+			field:  "Mobile",
+			reason: "value does not match regex pattern \"^1[3-9]\\\\d{9}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetSmsCode()); l < 4 || l > 6 {
+		err := BindMobileReqValidationError{
+			field:  "SmsCode",
+			reason: "value length must be between 4 and 6 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return BindMobileReqMultiError(errors)
@@ -2373,6 +3208,8 @@ var _ interface {
 	ErrorName() string
 } = BindMobileReqValidationError{}
 
+var _BindMobileReq_Mobile_Pattern = regexp.MustCompile("^1[3-9]\\d{9}$")
+
 // Validate checks the field values on BindEmailReq with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -2395,15 +3232,84 @@ func (m *BindEmailReq) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Email
+	if err := m._validateEmail(m.GetEmail()); err != nil {
+		err = BindEmailReqValidationError{
+			field:  "Email",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for EmailCode
+	if l := utf8.RuneCountInString(m.GetEmailCode()); l < 4 || l > 6 {
+		err := BindEmailReqValidationError{
+			field:  "EmailCode",
+			reason: "value length must be between 4 and 6 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return BindEmailReqMultiError(errors)
 	}
 
 	return nil
+}
+
+func (m *BindEmailReq) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *BindEmailReq) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
 }
 
 // BindEmailReqMultiError is an error wrapping multiple validation errors
@@ -2475,6 +3381,138 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = BindEmailReqValidationError{}
+
+// Validate checks the field values on BindThirdPartyReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *BindThirdPartyReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BindThirdPartyReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BindThirdPartyReqMultiError, or nil if none found.
+func (m *BindThirdPartyReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BindThirdPartyReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if _, ok := _BindThirdPartyReq_Platform_InLookup[m.GetPlatform()]; !ok {
+		err := BindThirdPartyReqValidationError{
+			field:  "Platform",
+			reason: "value must be in list [wechat qq alipay]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetOpenId()) < 10 {
+		err := BindThirdPartyReqValidationError{
+			field:  "OpenId",
+			reason: "value length must be at least 10 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for UnionId
+
+	if len(errors) > 0 {
+		return BindThirdPartyReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// BindThirdPartyReqMultiError is an error wrapping multiple validation errors
+// returned by BindThirdPartyReq.ValidateAll() if the designated constraints
+// aren't met.
+type BindThirdPartyReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BindThirdPartyReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BindThirdPartyReqMultiError) AllErrors() []error { return m }
+
+// BindThirdPartyReqValidationError is the validation error returned by
+// BindThirdPartyReq.Validate if the designated constraints aren't met.
+type BindThirdPartyReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BindThirdPartyReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BindThirdPartyReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BindThirdPartyReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BindThirdPartyReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BindThirdPartyReqValidationError) ErrorName() string {
+	return "BindThirdPartyReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BindThirdPartyReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBindThirdPartyReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BindThirdPartyReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BindThirdPartyReqValidationError{}
+
+var _BindThirdPartyReq_Platform_InLookup = map[string]struct{}{
+	"wechat": {},
+	"qq":     {},
+	"alipay": {},
+}
 
 // Validate checks the field values on BindMobileResp with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -2683,6 +3721,553 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = BindEmailRespValidationError{}
+
+// Validate checks the field values on BindThirdPartyResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *BindThirdPartyResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BindThirdPartyResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BindThirdPartyRespMultiError, or nil if none found.
+func (m *BindThirdPartyResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BindThirdPartyResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	// no validation rules for Message
+
+	if len(errors) > 0 {
+		return BindThirdPartyRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// BindThirdPartyRespMultiError is an error wrapping multiple validation errors
+// returned by BindThirdPartyResp.ValidateAll() if the designated constraints
+// aren't met.
+type BindThirdPartyRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BindThirdPartyRespMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BindThirdPartyRespMultiError) AllErrors() []error { return m }
+
+// BindThirdPartyRespValidationError is the validation error returned by
+// BindThirdPartyResp.Validate if the designated constraints aren't met.
+type BindThirdPartyRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BindThirdPartyRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BindThirdPartyRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BindThirdPartyRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BindThirdPartyRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BindThirdPartyRespValidationError) ErrorName() string {
+	return "BindThirdPartyRespValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BindThirdPartyRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBindThirdPartyResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BindThirdPartyRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BindThirdPartyRespValidationError{}
+
+// Validate checks the field values on UnbindMobileReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UnbindMobileReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnbindMobileReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UnbindMobileReqMultiError, or nil if none found.
+func (m *UnbindMobileReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnbindMobileReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetMobile()) != 11 {
+		err := UnbindMobileReqValidationError{
+			field:  "Mobile",
+			reason: "value length must be 11 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if !_UnbindMobileReq_Mobile_Pattern.MatchString(m.GetMobile()) {
+		err := UnbindMobileReqValidationError{
+			field:  "Mobile",
+			reason: "value does not match regex pattern \"^1[3-9]\\\\d{9}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetSmsCode()); l < 4 || l > 6 {
+		err := UnbindMobileReqValidationError{
+			field:  "SmsCode",
+			reason: "value length must be between 4 and 6 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return UnbindMobileReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnbindMobileReqMultiError is an error wrapping multiple validation errors
+// returned by UnbindMobileReq.ValidateAll() if the designated constraints
+// aren't met.
+type UnbindMobileReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnbindMobileReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnbindMobileReqMultiError) AllErrors() []error { return m }
+
+// UnbindMobileReqValidationError is the validation error returned by
+// UnbindMobileReq.Validate if the designated constraints aren't met.
+type UnbindMobileReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnbindMobileReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnbindMobileReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnbindMobileReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnbindMobileReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnbindMobileReqValidationError) ErrorName() string { return "UnbindMobileReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UnbindMobileReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnbindMobileReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnbindMobileReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnbindMobileReqValidationError{}
+
+var _UnbindMobileReq_Mobile_Pattern = regexp.MustCompile("^1[3-9]\\d{9}$")
+
+// Validate checks the field values on UnbindEmailReq with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UnbindEmailReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnbindEmailReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UnbindEmailReqMultiError,
+// or nil if none found.
+func (m *UnbindEmailReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnbindEmailReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateEmail(m.GetEmail()); err != nil {
+		err = UnbindEmailReqValidationError{
+			field:  "Email",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetEmailCode()); l < 4 || l > 6 {
+		err := UnbindEmailReqValidationError{
+			field:  "EmailCode",
+			reason: "value length must be between 4 and 6 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return UnbindEmailReqMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *UnbindEmailReq) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UnbindEmailReq) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
+}
+
+// UnbindEmailReqMultiError is an error wrapping multiple validation errors
+// returned by UnbindEmailReq.ValidateAll() if the designated constraints
+// aren't met.
+type UnbindEmailReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnbindEmailReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnbindEmailReqMultiError) AllErrors() []error { return m }
+
+// UnbindEmailReqValidationError is the validation error returned by
+// UnbindEmailReq.Validate if the designated constraints aren't met.
+type UnbindEmailReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnbindEmailReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnbindEmailReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnbindEmailReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnbindEmailReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnbindEmailReqValidationError) ErrorName() string { return "UnbindEmailReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UnbindEmailReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnbindEmailReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnbindEmailReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnbindEmailReqValidationError{}
+
+// Validate checks the field values on UnbindThirdPartyReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UnbindThirdPartyReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnbindThirdPartyReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UnbindThirdPartyReqMultiError, or nil if none found.
+func (m *UnbindThirdPartyReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnbindThirdPartyReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if _, ok := _UnbindThirdPartyReq_Platform_InLookup[m.GetPlatform()]; !ok {
+		err := UnbindThirdPartyReqValidationError{
+			field:  "Platform",
+			reason: "value must be in list [wechat qq alipay]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetOpenId()) < 10 {
+		err := UnbindThirdPartyReqValidationError{
+			field:  "OpenId",
+			reason: "value length must be at least 10 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for UnionId
+
+	if len(errors) > 0 {
+		return UnbindThirdPartyReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnbindThirdPartyReqMultiError is an error wrapping multiple validation
+// errors returned by UnbindThirdPartyReq.ValidateAll() if the designated
+// constraints aren't met.
+type UnbindThirdPartyReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnbindThirdPartyReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnbindThirdPartyReqMultiError) AllErrors() []error { return m }
+
+// UnbindThirdPartyReqValidationError is the validation error returned by
+// UnbindThirdPartyReq.Validate if the designated constraints aren't met.
+type UnbindThirdPartyReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnbindThirdPartyReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnbindThirdPartyReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnbindThirdPartyReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnbindThirdPartyReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnbindThirdPartyReqValidationError) ErrorName() string {
+	return "UnbindThirdPartyReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UnbindThirdPartyReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnbindThirdPartyReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnbindThirdPartyReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnbindThirdPartyReqValidationError{}
+
+var _UnbindThirdPartyReq_Platform_InLookup = map[string]struct{}{
+	"wechat": {},
+	"qq":     {},
+	"alipay": {},
+}
 
 // Validate checks the field values on UnbindMobileResp with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -2997,1138 +4582,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UnbindThirdPartyRespValidationError{}
-
-// Validate checks the field values on BindThirdPartyResp with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *BindThirdPartyResp) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on BindThirdPartyResp with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// BindThirdPartyRespMultiError, or nil if none found.
-func (m *BindThirdPartyResp) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *BindThirdPartyResp) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Success
-
-	// no validation rules for Message
-
-	if len(errors) > 0 {
-		return BindThirdPartyRespMultiError(errors)
-	}
-
-	return nil
-}
-
-// BindThirdPartyRespMultiError is an error wrapping multiple validation errors
-// returned by BindThirdPartyResp.ValidateAll() if the designated constraints
-// aren't met.
-type BindThirdPartyRespMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m BindThirdPartyRespMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m BindThirdPartyRespMultiError) AllErrors() []error { return m }
-
-// BindThirdPartyRespValidationError is the validation error returned by
-// BindThirdPartyResp.Validate if the designated constraints aren't met.
-type BindThirdPartyRespValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e BindThirdPartyRespValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e BindThirdPartyRespValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e BindThirdPartyRespValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e BindThirdPartyRespValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e BindThirdPartyRespValidationError) ErrorName() string {
-	return "BindThirdPartyRespValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e BindThirdPartyRespValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sBindThirdPartyResp.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = BindThirdPartyRespValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = BindThirdPartyRespValidationError{}
-
-// Validate checks the field values on UnbindThirdPartyReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UnbindThirdPartyReq) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UnbindThirdPartyReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UnbindThirdPartyReqMultiError, or nil if none found.
-func (m *UnbindThirdPartyReq) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UnbindThirdPartyReq) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Platform
-
-	// no validation rules for OpenId
-
-	// no validation rules for UnionId
-
-	if len(errors) > 0 {
-		return UnbindThirdPartyReqMultiError(errors)
-	}
-
-	return nil
-}
-
-// UnbindThirdPartyReqMultiError is an error wrapping multiple validation
-// errors returned by UnbindThirdPartyReq.ValidateAll() if the designated
-// constraints aren't met.
-type UnbindThirdPartyReqMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UnbindThirdPartyReqMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UnbindThirdPartyReqMultiError) AllErrors() []error { return m }
-
-// UnbindThirdPartyReqValidationError is the validation error returned by
-// UnbindThirdPartyReq.Validate if the designated constraints aren't met.
-type UnbindThirdPartyReqValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UnbindThirdPartyReqValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UnbindThirdPartyReqValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UnbindThirdPartyReqValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UnbindThirdPartyReqValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UnbindThirdPartyReqValidationError) ErrorName() string {
-	return "UnbindThirdPartyReqValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UnbindThirdPartyReqValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUnbindThirdPartyReq.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UnbindThirdPartyReqValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UnbindThirdPartyReqValidationError{}
-
-// Validate checks the field values on BindThirdPartyReq with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *BindThirdPartyReq) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on BindThirdPartyReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// BindThirdPartyReqMultiError, or nil if none found.
-func (m *BindThirdPartyReq) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *BindThirdPartyReq) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Platform
-
-	// no validation rules for OpenId
-
-	// no validation rules for UnionId
-
-	if len(errors) > 0 {
-		return BindThirdPartyReqMultiError(errors)
-	}
-
-	return nil
-}
-
-// BindThirdPartyReqMultiError is an error wrapping multiple validation errors
-// returned by BindThirdPartyReq.ValidateAll() if the designated constraints
-// aren't met.
-type BindThirdPartyReqMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m BindThirdPartyReqMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m BindThirdPartyReqMultiError) AllErrors() []error { return m }
-
-// BindThirdPartyReqValidationError is the validation error returned by
-// BindThirdPartyReq.Validate if the designated constraints aren't met.
-type BindThirdPartyReqValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e BindThirdPartyReqValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e BindThirdPartyReqValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e BindThirdPartyReqValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e BindThirdPartyReqValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e BindThirdPartyReqValidationError) ErrorName() string {
-	return "BindThirdPartyReqValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e BindThirdPartyReqValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sBindThirdPartyReq.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = BindThirdPartyReqValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = BindThirdPartyReqValidationError{}
-
-// Validate checks the field values on UnbindEmailReq with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *UnbindEmailReq) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UnbindEmailReq with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UnbindEmailReqMultiError,
-// or nil if none found.
-func (m *UnbindEmailReq) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UnbindEmailReq) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Email
-
-	// no validation rules for EmailCode
-
-	if len(errors) > 0 {
-		return UnbindEmailReqMultiError(errors)
-	}
-
-	return nil
-}
-
-// UnbindEmailReqMultiError is an error wrapping multiple validation errors
-// returned by UnbindEmailReq.ValidateAll() if the designated constraints
-// aren't met.
-type UnbindEmailReqMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UnbindEmailReqMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UnbindEmailReqMultiError) AllErrors() []error { return m }
-
-// UnbindEmailReqValidationError is the validation error returned by
-// UnbindEmailReq.Validate if the designated constraints aren't met.
-type UnbindEmailReqValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UnbindEmailReqValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UnbindEmailReqValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UnbindEmailReqValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UnbindEmailReqValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UnbindEmailReqValidationError) ErrorName() string { return "UnbindEmailReqValidationError" }
-
-// Error satisfies the builtin error interface
-func (e UnbindEmailReqValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUnbindEmailReq.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UnbindEmailReqValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UnbindEmailReqValidationError{}
-
-// Validate checks the field values on RegisterReq with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *RegisterReq) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on RegisterReq with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in RegisterReqMultiError, or
-// nil if none found.
-func (m *RegisterReq) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *RegisterReq) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if utf8.RuneCountInString(m.GetMobile()) != 11 {
-		err := RegisterReqValidationError{
-			field:  "Mobile",
-			reason: "value length must be 11 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-
-	}
-
-	if !_RegisterReq_Mobile_Pattern.MatchString(m.GetMobile()) {
-		err := RegisterReqValidationError{
-			field:  "Mobile",
-			reason: "value does not match regex pattern \"^1[3-9]\\\\d{9}$\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if l := utf8.RuneCountInString(m.GetPassword()); l < 8 || l > 32 {
-		err := RegisterReqValidationError{
-			field:  "Password",
-			reason: "value length must be between 8 and 32 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if l := utf8.RuneCountInString(m.GetSmsCode()); l < 4 || l > 6 {
-		err := RegisterReqValidationError{
-			field:  "SmsCode",
-			reason: "value length must be between 4 and 6 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(errors) > 0 {
-		return RegisterReqMultiError(errors)
-	}
-
-	return nil
-}
-
-// RegisterReqMultiError is an error wrapping multiple validation errors
-// returned by RegisterReq.ValidateAll() if the designated constraints aren't met.
-type RegisterReqMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m RegisterReqMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m RegisterReqMultiError) AllErrors() []error { return m }
-
-// RegisterReqValidationError is the validation error returned by
-// RegisterReq.Validate if the designated constraints aren't met.
-type RegisterReqValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e RegisterReqValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e RegisterReqValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e RegisterReqValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e RegisterReqValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e RegisterReqValidationError) ErrorName() string { return "RegisterReqValidationError" }
-
-// Error satisfies the builtin error interface
-func (e RegisterReqValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sRegisterReq.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = RegisterReqValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = RegisterReqValidationError{}
-
-var _RegisterReq_Mobile_Pattern = regexp.MustCompile("^1[3-9]\\d{9}$")
-
-// Validate checks the field values on RegisterResp with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *RegisterResp) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on RegisterResp with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in RegisterRespMultiError, or
-// nil if none found.
-func (m *RegisterResp) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *RegisterResp) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for AccessToken
-
-	// no validation rules for AccessTokenExpire
-
-	// no validation rules for RefreshToken
-
-	// no validation rules for RefreshTokenExpire
-
-	if len(errors) > 0 {
-		return RegisterRespMultiError(errors)
-	}
-
-	return nil
-}
-
-// RegisterRespMultiError is an error wrapping multiple validation errors
-// returned by RegisterResp.ValidateAll() if the designated constraints aren't met.
-type RegisterRespMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m RegisterRespMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m RegisterRespMultiError) AllErrors() []error { return m }
-
-// RegisterRespValidationError is the validation error returned by
-// RegisterResp.Validate if the designated constraints aren't met.
-type RegisterRespValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e RegisterRespValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e RegisterRespValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e RegisterRespValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e RegisterRespValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e RegisterRespValidationError) ErrorName() string { return "RegisterRespValidationError" }
-
-// Error satisfies the builtin error interface
-func (e RegisterRespValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sRegisterResp.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = RegisterRespValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = RegisterRespValidationError{}
-
-// Validate checks the field values on UnbindMobileReq with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *UnbindMobileReq) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UnbindMobileReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UnbindMobileReqMultiError, or nil if none found.
-func (m *UnbindMobileReq) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UnbindMobileReq) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Mobile
-
-	// no validation rules for SmsCode
-
-	if len(errors) > 0 {
-		return UnbindMobileReqMultiError(errors)
-	}
-
-	return nil
-}
-
-// UnbindMobileReqMultiError is an error wrapping multiple validation errors
-// returned by UnbindMobileReq.ValidateAll() if the designated constraints
-// aren't met.
-type UnbindMobileReqMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UnbindMobileReqMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UnbindMobileReqMultiError) AllErrors() []error { return m }
-
-// UnbindMobileReqValidationError is the validation error returned by
-// UnbindMobileReq.Validate if the designated constraints aren't met.
-type UnbindMobileReqValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UnbindMobileReqValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UnbindMobileReqValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UnbindMobileReqValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UnbindMobileReqValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UnbindMobileReqValidationError) ErrorName() string { return "UnbindMobileReqValidationError" }
-
-// Error satisfies the builtin error interface
-func (e UnbindMobileReqValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUnbindMobileReq.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UnbindMobileReqValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UnbindMobileReqValidationError{}
-
-// Validate checks the field values on LoginByMobileReq with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *LoginByMobileReq) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on LoginByMobileReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// LoginByMobileReqMultiError, or nil if none found.
-func (m *LoginByMobileReq) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *LoginByMobileReq) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Mobile
-
-	// no validation rules for SmsCode
-
-	if m.DeviceType != nil {
-		// no validation rules for DeviceType
-	}
-
-	if m.DeviceId != nil {
-		// no validation rules for DeviceId
-	}
-
-	if m.LoginIp != nil {
-		// no validation rules for LoginIp
-	}
-
-	if len(errors) > 0 {
-		return LoginByMobileReqMultiError(errors)
-	}
-
-	return nil
-}
-
-// LoginByMobileReqMultiError is an error wrapping multiple validation errors
-// returned by LoginByMobileReq.ValidateAll() if the designated constraints
-// aren't met.
-type LoginByMobileReqMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m LoginByMobileReqMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m LoginByMobileReqMultiError) AllErrors() []error { return m }
-
-// LoginByMobileReqValidationError is the validation error returned by
-// LoginByMobileReq.Validate if the designated constraints aren't met.
-type LoginByMobileReqValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e LoginByMobileReqValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e LoginByMobileReqValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e LoginByMobileReqValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e LoginByMobileReqValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e LoginByMobileReqValidationError) ErrorName() string { return "LoginByMobileReqValidationError" }
-
-// Error satisfies the builtin error interface
-func (e LoginByMobileReqValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sLoginByMobileReq.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = LoginByMobileReqValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = LoginByMobileReqValidationError{}
-
-// Validate checks the field values on LoginByPasswordReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *LoginByPasswordReq) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on LoginByPasswordReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// LoginByPasswordReqMultiError, or nil if none found.
-func (m *LoginByPasswordReq) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *LoginByPasswordReq) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Account
-
-	// no validation rules for Password
-
-	// no validation rules for DeviceType
-
-	// no validation rules for DeviceId
-
-	// no validation rules for LoginIp
-
-	// no validation rules for Agent
-
-	if len(errors) > 0 {
-		return LoginByPasswordReqMultiError(errors)
-	}
-
-	return nil
-}
-
-// LoginByPasswordReqMultiError is an error wrapping multiple validation errors
-// returned by LoginByPasswordReq.ValidateAll() if the designated constraints
-// aren't met.
-type LoginByPasswordReqMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m LoginByPasswordReqMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m LoginByPasswordReqMultiError) AllErrors() []error { return m }
-
-// LoginByPasswordReqValidationError is the validation error returned by
-// LoginByPasswordReq.Validate if the designated constraints aren't met.
-type LoginByPasswordReqValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e LoginByPasswordReqValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e LoginByPasswordReqValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e LoginByPasswordReqValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e LoginByPasswordReqValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e LoginByPasswordReqValidationError) ErrorName() string {
-	return "LoginByPasswordReqValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e LoginByPasswordReqValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sLoginByPasswordReq.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = LoginByPasswordReqValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = LoginByPasswordReqValidationError{}
-
-// Validate checks the field values on LoginByThirdPartyReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *LoginByThirdPartyReq) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on LoginByThirdPartyReq with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// LoginByThirdPartyReqMultiError, or nil if none found.
-func (m *LoginByThirdPartyReq) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *LoginByThirdPartyReq) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Platform
-
-	// no validation rules for OpenId
-
-	if m.UnionId != nil {
-		// no validation rules for UnionId
-	}
-
-	if m.DeviceType != nil {
-		// no validation rules for DeviceType
-	}
-
-	if m.DeviceId != nil {
-		// no validation rules for DeviceId
-	}
-
-	if m.LoginIp != nil {
-		// no validation rules for LoginIp
-	}
-
-	if len(errors) > 0 {
-		return LoginByThirdPartyReqMultiError(errors)
-	}
-
-	return nil
-}
-
-// LoginByThirdPartyReqMultiError is an error wrapping multiple validation
-// errors returned by LoginByThirdPartyReq.ValidateAll() if the designated
-// constraints aren't met.
-type LoginByThirdPartyReqMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m LoginByThirdPartyReqMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m LoginByThirdPartyReqMultiError) AllErrors() []error { return m }
-
-// LoginByThirdPartyReqValidationError is the validation error returned by
-// LoginByThirdPartyReq.Validate if the designated constraints aren't met.
-type LoginByThirdPartyReqValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e LoginByThirdPartyReqValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e LoginByThirdPartyReqValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e LoginByThirdPartyReqValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e LoginByThirdPartyReqValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e LoginByThirdPartyReqValidationError) ErrorName() string {
-	return "LoginByThirdPartyReqValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e LoginByThirdPartyReqValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sLoginByThirdPartyReq.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = LoginByThirdPartyReqValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = LoginByThirdPartyReqValidationError{}
