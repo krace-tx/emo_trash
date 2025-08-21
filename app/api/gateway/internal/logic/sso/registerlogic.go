@@ -33,7 +33,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.CommonResp
 
 	if err != nil {
 		l.Logger.Errorf("Register failed, err: %v", err)
-		return types.Error(err), err
+		return types.Error(err), nil
 	}
 
 	return types.Success(data), nil

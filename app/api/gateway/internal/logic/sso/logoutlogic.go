@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,14 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 }
 
 func (l *LogoutLogic) Logout(req *types.LogoutReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
+	data, err := l.svcCtx.Auth.Logout(l.ctx, &auth.LogoutReq{
+		Token:      req.Token,
+		DeviceType: req.Device_type,
+	})
+	if err != nil {
+		l.Logger.Errorf("Logout failed, err: %v", err)
+		return types.Error(err), nil
+	}
 
-	return
+	return types.Success(data), nil
 }

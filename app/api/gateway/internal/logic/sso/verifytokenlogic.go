@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,14 @@ func NewVerifyTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Verif
 }
 
 func (l *VerifyTokenLogic) VerifyToken(req *types.VerifyReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
+	data, err := l.svcCtx.Auth.VerifyToken(l.ctx, &auth.VerifyReq{
+		Token:      req.Token,
+		DeviceType: req.DeviceType,
+	})
+	if err != nil {
+		l.Logger.Errorf("VerifyToken failed, err: %v", err)
+		return types.Error(err), nil
+	}
 
-	return
+	return types.Success(data), nil
 }

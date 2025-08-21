@@ -4,19 +4,19 @@
 package types
 
 type BindEmailReq struct {
-	Email      string `json:"email,required,email"`                      // 邮箱(必填)
-	Email_code string `json:"email_code,required,len=6,regexp=^\\d{6}$"` // 邮箱验证码(必填)
+	Email     string `json:"email,required,email"`                      // 邮箱(必填)
+	EmailCode string `json:"email_code,required,len=6,regexp=^\\d{6}$"` // 邮箱验证码(必填)
 }
 
 type BindMobileReq struct {
-	Mobile   string `json:"mobile,required,len=11,regexp=^1[3-9]\\d{9}$"` // 手机号(必填)
-	Sms_code string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`      // 短信验证码(必填)
+	Mobile  string `json:"mobile,required,len=11,regexp=^1[3-9]\\d{9}$"` // 手机号(必填)
+	SmsCode string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`      // 短信验证码(必填)
 }
 
 type BindThirdPartyReq struct {
 	Platform string `json:"platform,required,options=wechat|qq|alipay"` // 平台(必填)
-	Open_id  string `json:"open_id,required,min=1"`                     // OpenID(必填)
-	Union_id string `json:"union_id,optional,min=1"`                    // UnionID(可选)
+	OpenId   string `json:"open_id,required,min=1"`                     // OpenID(必填)
+	UnionId  string `json:"union_id,optional,min=1"`                    // UnionID(可选)
 }
 
 type CommonResp struct {
@@ -27,31 +27,31 @@ type CommonResp struct {
 }
 
 type LoginReq struct {
-	Mobile      string `json:"mobile,optional,len=11,regexp=^1[3-9]\\d{9}$"`                                                           // 手机号(可选)
-	Sms_code    string `json:"sms_code,optional,len=6,regexp=^\\d{6}$"`                                                                // 短信验证码(可选)
-	Platform    string `json:"platform,optional,options=wechat|qq|alipay"`                                                             // 第三方平台(可选)
-	Open_id     string `json:"open_id,optional,min=1,max=100"`                                                                         // 第三方OpenID(可选)
-	Account     string `json:"account,optional,min=4,max=20,regexp=^[a-zA-Z0-9_]{4,20}$"`                                              // 账号(可选)
-	Password    string `json:"password,optional,min=8,max=32,regexp=^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*])[A-Za-z\\d@#$%^&*]{8,32}$"` // 密码(可选)
-	Device_type string `json:"device_type,optional,options=app|pc|h5"`                                                                 // 设备类型(可选)
-	Device_id   string `json:"device_id,optional,min=10,max=64"`                                                                       // 设备ID(可选)
-	Login_ip    string `json:"login_ip,optional,regexp=^(\\d{1,3}\\.){3}\\d{1,3}$|^[0-9a-fA-F:]+$"`                                    // IP地址(可选)
-	Is_quick    bool   `json:"is_quick,optional"`                                                                                      // 是否快捷登录(可选)
+	Mobile     string `json:"mobile,optional,len=11,regexp=^1[3-9]\\d{9}$"`                                                           // 手机号(可选)
+	SmsCode    string `json:"sms_code,optional,len=6,regexp=^\\d{6}$"`                                                                // 短信验证码(可选)
+	Platform   string `json:"platform,optional,options=wechat|qq|alipay"`                                                             // 第三方平台(可选)
+	OpenId     string `json:"open_id,optional,min=1,max=100"`                                                                         // 第三方OpenID(可选)
+	Account    string `json:"account,optional,min=4,max=20,regexp=^[a-zA-Z0-9_]{4,20}$"`                                              // 账号(可选)
+	Password   string `json:"password,optional,min=8,max=32,regexp=^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*])[A-Za-z\\d@#$%^&*]{8,32}$"` // 密码(可选)
+	DeviceType string `json:"device_type,optional,options=app|pc|h5"`                                                                 // 设备类型(可选)
+	DeviceId   string `json:"device_id,optional,min=10,max=64"`                                                                       // 设备ID(可选)
+	LoginIp    string `json:"login_ip,optional,regexp=^(\\d{1,3}\\.){3}\\d{1,3}$|^[0-9a-fA-F:]+$"`                                    // IP地址(可选)
+	IsQuick    bool   `json:"is_quick,optional"`                                                                                      // 是否快捷登录(可选)
 }
 
 type LogoutReq struct {
-	Token       string `json:"token,required,min=1"`                   // 当前Token(必填)
-	Device_type string `json:"device_type,required,options=app|pc|h5"` // 设备类型(必填)
+	Token      string `json:"token,required,min=1"`                   // 当前Token(必填)
+	DeviceType string `json:"device_type,required,options=app|pc|h5"` // 设备类型(必填)
 }
 
 type QrcodeConfirmReq struct {
-	Qid       string `json:"qid,required,min=1"`       // 二维码ID(必填)
-	App_token string `json:"app_token,required,min=1"` // 手机端Token(必填)
+	Qid      string `json:"qid,required,min=1"`       // 二维码ID(必填)
+	AppToken string `json:"app_token,required,min=1"` // 手机端Token(必填)
 }
 
 type QrcodeReq struct {
-	Device_id string `json:"device_id,required,min=10,max=64"`                                    // 设备ID(必填)
-	Login_ip  string `json:"login_ip,required,regexp=^(\\d{1,3}\\.){3}\\d{1,3}$|^[0-9a-fA-F:]+$"` // 登录IP(必填)
+	DeviceId string `json:"device_id,required,min=10,max=64"`                                    // 设备ID(必填)
+	LoginIp  string `json:"login_ip,required,regexp=^(\\d{1,3}\\.){3}\\d{1,3}$|^[0-9a-fA-F:]+$"` // 登录IP(必填)
 }
 
 type QrcodeStatusReq struct {
@@ -59,25 +59,25 @@ type QrcodeStatusReq struct {
 }
 
 type RefreshTokenReq struct {
-	Refresh_token string `json:"refresh_token,required,min=1"` // 刷新Token(必填)
+	RefreshToken string `json:"refresh_token,required,min=1"` // 刷新Token(必填)
 }
 
 type RegisterReq struct {
 	Mobile   string `json:"mobile,required,len=11,regexp=^1[3-9]\\d{9}$"`                                                           // 手机号(必填)
 	Password string `json:"password,required,min=8,max=32,regexp=^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*])[A-Za-z\\d@#$%^&*]{8,32}$"` // 密码(必填)
-	Sms_code string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`                                                                // 短信验证码(必填)
+	SmsCode  string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`                                                                // 短信验证码(必填)
 }
 
 type ResetPasswordByEmailReq struct {
-	Email        string `json:"email,required,email"`                                                                                       // 邮箱(必填)
-	Email_code   string `json:"email_code,required,len=6,regexp=^\\d{6}$"`                                                                  // 邮箱验证码(必填)
-	New_password string `json:"new_password,required,min=8,max=32,regexp=^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*])[A-Za-z\\d@#$%^&*]{8,32}$"` // 新密码(必填)
+	Email       string `json:"email,required,email"`                                                                                       // 邮箱(必填)
+	EmailCode   string `json:"email_code,required,len=6,regexp=^\\d{6}$"`                                                                  // 邮箱验证码(必填)
+	NewPassword string `json:"new_password,required,min=8,max=32,regexp=^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*])[A-Za-z\\d@#$%^&*]{8,32}$"` // 新密码(必填)
 }
 
 type ResetPasswordReq struct {
-	Mobile       string `json:"mobile,required,len=11,regexp=^1[3-9]\\d{9}$"`                                                               // 手机号(必填)
-	Sms_code     string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`                                                                    // 短信验证码(必填)
-	New_password string `json:"new_password,required,min=8,max=32,regexp=^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*])[A-Za-z\\d@#$%^&*]{8,32}$"` // 新密码(必填)
+	Mobile      string `json:"mobile,required,len=11,regexp=^1[3-9]\\d{9}$"`                                                               // 手机号(必填)
+	SmsCode     string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`                                                                    // 短信验证码(必填)
+	NewPassword string `json:"new_password,required,min=8,max=32,regexp=^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*])[A-Za-z\\d@#$%^&*]{8,32}$"` // 新密码(必填)
 }
 
 type SendEmailCodeReq struct {
@@ -91,22 +91,22 @@ type SendSmsCodeReq struct {
 }
 
 type UnbindEmailReq struct {
-	Email      string `json:"email,required,email"`                      // 邮箱(必填)
-	Email_code string `json:"email_code,required,len=6,regexp=^\\d{6}$"` // 邮箱验证码(必填)
+	Email     string `json:"email,required,email"`                      // 邮箱(必填)
+	EmailCode string `json:"email_code,required,len=6,regexp=^\\d{6}$"` // 邮箱验证码(必填)
 }
 
 type UnbindMobileReq struct {
-	Mobile   string `json:"mobile,required,len=11,regexp=^1[3-9]\\d{9}$"` // 手机号(必填)
-	Sms_code string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`      // 短信验证码(必填)
+	Mobile  string `json:"mobile,required,len=11,regexp=^1[3-9]\\d{9}$"` // 手机号(必填)
+	SmsCode string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`      // 短信验证码(必填)
 }
 
 type UnbindThirdPartyReq struct {
 	Platform string `json:"platform,required,options=wechat|qq|alipay"` // 平台(必填)
-	Open_id  string `json:"open_id,required,min=1"`                     // OpenID(必填)
-	Union_id string `json:"union_id,optional,min=1"`                    // UnionID(可选)
+	OpenId   string `json:"open_id,required,min=1"`                     // OpenID(必填)
+	UnionId  string `json:"union_id,optional,min=1"`                    // UnionID(可选)
 }
 
 type VerifyReq struct {
-	Token       string `json:"token,required,min=1"`                   // 待验证Token(必填)
-	Device_type string `json:"device_type,required,options=app|pc|h5"` // 设备类型(必填)
+	Token      string `json:"token,required,min=1"`                   // 待验证Token(必填)
+	DeviceType string `json:"device_type,required,options=app|pc|h5"` // 设备类型(必填)
 }

@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,13 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
+	data, err := l.svcCtx.Auth.RefreshToken(l.ctx, &auth.RefreshTokenReq{
+		RefreshToken: req.Refresh_token,
+	})
+	if err != nil {
+		l.Logger.Errorf("RefreshToken failed, err: %v", err)
+		return types.Error(err), nil
+	}
 
-	return
+	return types.Success(data), nil
 }

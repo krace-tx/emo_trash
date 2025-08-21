@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,16 @@ func NewUnbindThirdPartyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *UnbindThirdPartyLogic) UnbindThirdParty(req *types.UnbindThirdPartyReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
 
-	return
+	data, err := l.svcCtx.Auth.UnbindThirdParty(l.ctx, &auth.UnbindThirdPartyReq{
+		Platform: req.Platform,
+		OpenId:   req.OpenId,
+		UnionId:  req.UnionId,
+	})
+	if err != nil {
+		l.Logger.Errorf("UnbindThirdParty failed, err: %v", err)
+		return types.Error(err), nil
+	}
+
+	return types.Success(data), nil
 }

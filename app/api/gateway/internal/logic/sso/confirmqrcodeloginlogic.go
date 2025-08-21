@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,14 @@ func NewConfirmQrcodeLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *ConfirmQrcodeLoginLogic) ConfirmQrcodeLogin(req *types.QrcodeConfirmReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
+	data, err := l.svcCtx.Auth.ConfirmQrcodeLogin(l.ctx, &auth.QrcodeConfirmReq{
+		Qid:      req.Qid,
+		AppToken: req.AppToken,
+	})
+	if err != nil {
+		l.Logger.Errorf("ConfirmQrcodeLogin failed, err: %v", err)
+		return types.Error(err), nil
+	}
 
-	return
+	return types.Success(data), nil
 }

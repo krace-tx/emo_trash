@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,15 @@ func NewUnbindEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unbin
 }
 
 func (l *UnbindEmailLogic) UnbindEmail(req *types.UnbindEmailReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
 
-	return
+	data, err := l.svcCtx.Auth.UnbindEmail(l.ctx, &auth.UnbindEmailReq{
+		Email:     req.Email,
+		EmailCode: req.EmailCode,
+	})
+	if err != nil {
+		l.Logger.Errorf("UnbindEmail failed, err: %v", err)
+		return types.Error(err), nil
+	}
+
+	return types.Success(data), nil
 }

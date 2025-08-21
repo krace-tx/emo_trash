@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,13 @@ func NewCheckQrcodeStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *CheckQrcodeStatusLogic) CheckQrcodeStatus(req *types.QrcodeStatusReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
+	data, err := l.svcCtx.Auth.CheckQrcodeStatus(l.ctx, &auth.QrcodeStatusReq{
+		Qid: req.Qid,
+	})
+	if err != nil {
+		l.Logger.Errorf("CheckQrcodeStatus failed, err: %v", err)
+		return types.Error(err), nil
+	}
 
-	return
+	return types.Success(data), nil
 }

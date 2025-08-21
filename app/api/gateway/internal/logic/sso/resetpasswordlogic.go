@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,16 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 }
 
 func (l *ResetPasswordLogic) ResetPassword(req *types.ResetPasswordReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
 
-	return
+	data, err := l.svcCtx.Auth.ResetPassword(l.ctx, &auth.ResetPasswordReq{
+		Mobile:      req.Mobile,
+		SmsCode:     req.SmsCode,
+		NewPassword: req.NewPassword,
+	})
+	if err != nil {
+		l.Logger.Errorf("ResetPassword failed, err: %v", err)
+		return types.Error(err), nil
+	}
+
+	return types.Success(data), nil
 }

@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,15 @@ func NewUnbindMobileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unbi
 }
 
 func (l *UnbindMobileLogic) UnbindMobile(req *types.UnbindMobileReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
 
-	return
+	data, err := l.svcCtx.Auth.UnbindMobile(l.ctx, &auth.UnbindMobileReq{
+		Mobile:  req.Mobile,
+		SmsCode: req.SmsCode,
+	})
+	if err != nil {
+		l.Logger.Errorf("UnbindMobile failed, err: %v", err)
+		return types.Error(err), nil
+	}
+
+	return types.Success(data), nil
 }

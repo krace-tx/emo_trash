@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,15 @@ func NewBindThirdPartyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bi
 }
 
 func (l *BindThirdPartyLogic) BindThirdParty(req *types.BindThirdPartyReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
+	data, err := l.svcCtx.Auth.BindThirdParty(l.ctx, &auth.BindThirdPartyReq{
+		Platform: req.Platform,
+		OpenId:   req.OpenId,
+		UnionId:  req.UnionId,
+	})
+	if err != nil {
+		l.Logger.Errorf("BindThirdParty failed, err: %v", err)
+		return types.Error(err), nil
+	}
 
-	return
+	return types.Success(data), nil
 }

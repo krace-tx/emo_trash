@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -24,7 +25,14 @@ func NewGenerateQrcodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 }
 
 func (l *GenerateQrcodeLogic) GenerateQrcode(req *types.QrcodeReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
+	data, err := l.svcCtx.Auth.GenerateQrcode(l.ctx, &auth.QrcodeReq{
+		DeviceId: req.DeviceId,
+		LoginIp:  req.LoginIp,
+	})
+	if err != nil {
+		l.Logger.Errorf("GenerateQrcode failed, err: %v", err)
+		return types.Error(err), nil
+	}
 
-	return
+	return types.Success(data), nil
 }
