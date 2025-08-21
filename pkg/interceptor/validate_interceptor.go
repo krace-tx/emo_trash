@@ -27,8 +27,8 @@ type MultiValidationError interface {
 func UnaryValidatorInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	if validator, ok := req.(Validator); ok {
 		if err := validator.Validate(); err != nil {
-			if err := translateValidationError(req, err); err != nil {
-				return nil, err
+			if transErr := translateValidationError(req, err); transErr != nil {
+				return nil, transErr
 			}
 			return nil, errx.ErrSystemArgInvalid
 		}
@@ -44,7 +44,13 @@ func translateValidationError(req any, err error) error {
 
 	// 处理多字段验证错误
 	if multiErr, ok := err.(MultiValidationError); ok {
-		return translateMultiValidationError(req, multiErr)
+		transErr := translateMultiValidationError(req, multiErr)
+		if transErr != nil {
+			return errx.New(
+				errx.ErrSystemArgInvalid.Code,
+				transErr.Error(),
+			)
+		}
 	}
 
 	return nil
@@ -62,7 +68,6 @@ func translateMultiValidationError(req any, multiErr MultiValidationError) error
 		return translateValidationError(req, cause)
 	}
 
-	// 获取字段和原因并翻译
 	field := multiErr.Field()
 
 	translatedReason := translateReason(req, field)
@@ -75,7 +80,7 @@ func translateMultiValidationError(req any, multiErr MultiValidationError) error
 	return fmt.Errorf(strings.Join(errorMsgs, "; "))
 }
 
-// translateReason 根据错误原因和字段名生成中文错误描述
+// translateReason
 func translateReason(req any, field string) error {
 	pb, ok := req.(proto.Message)
 	if !ok {
