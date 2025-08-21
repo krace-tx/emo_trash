@@ -26,7 +26,7 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *types.CommonResp, err error) {
 	data, err := l.svcCtx.Auth.RefreshToken(l.ctx, &auth.RefreshTokenReq{
-		RefreshToken: req.Refresh_token,
+		RefreshToken: req.RefreshToken,
 	})
 	if err != nil {
 		l.Logger.Errorf("RefreshToken failed, err: %v", err)

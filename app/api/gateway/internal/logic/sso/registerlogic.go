@@ -28,7 +28,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.CommonResp
 	data, err := l.svcCtx.Auth.Register(l.ctx, &auth.RegisterReq{
 		Mobile:   req.Mobile,
 		Password: req.Password,
-		SmsCode:  req.Sms_code,
+		SmsCode:  req.SmsCode,
 	})
 
 	if err != nil {
