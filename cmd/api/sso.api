@@ -11,7 +11,9 @@ info(
 type (
     // 通用响应结构
     CommonResp {
+        code uint32 `json:"code"`  // 状态码
         success bool   `json:"success"`  // 操作结果
+        data interface{} `json:"data"`  // 响应数据
         message string `json:"message"`  // 提示信息
     }
 
@@ -29,33 +31,15 @@ type (
         is_quick   bool   `json:"is_quick,optional"`                                 // 是否快捷登录(可选)
     }
 
-    // 登录响应
-    LoginResp {
-        token         string `json:"token"`          // JWT访问令牌
-        refresh_token string `json:"refresh_token"`  // 刷新令牌
-    }
-
     // 二维码生成请求
     QrcodeReq {
         device_id string `json:"device_id,required,min=10,max=64"`  // 设备ID(必填)
         login_ip  string `json:"login_ip,required,regexp=^(\\d{1,3}\\.){3}\\d{1,3}$|^[0-9a-fA-F:]+$"`  // 登录IP(必填)
     }
 
-    // 二维码生成响应
-    QrcodeResp {
-        qid       string `json:"qid"`        // 二维码唯一ID
-        image_url string `json:"image_url"`  // 二维码图片URL
-    }
-
     // 二维码状态请求
     QrcodeStatusReq {
         qid string `json:"qid,required,min=1"`  // 二维码ID(必填)
-    }
-
-    // 二维码状态响应
-    QrcodeStatusResp {
-        status int32  `json:"status"`  // 状态(0:等待扫描,1:已扫描,2:已确认,3:已过期)
-        token  string `json:"token"`   // 登录Token(状态为2时返回)
     }
 
     // 二维码确认登录请求
@@ -68,13 +52,6 @@ type (
     VerifyReq {
         token       string `json:"token,required,min=1"`  // 待验证Token(必填)
         device_type string `json:"device_type,required,options=app|pc|h5"`  // 设备类型(必填)
-    }
-
-    // 会话验证响应
-    VerifyResp {
-        user_id    int64  `json:"user_id"`     // 用户ID
-        device_type string `json:"device_type"` // 设备类型
-        device_id  string `json:"device_id"`   // 设备ID
     }
 
     // 登出请求
@@ -90,23 +67,10 @@ type (
         sms_code   string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`          // 短信验证码(必填)
     }
 
-    // 注册响应（同登录响应）
-    RegisterResp {
-        token         string `json:"token"`          // JWT访问令牌
-        refresh_token string `json:"refresh_token"`  // 刷新令牌
-    }
-
     // 发送短信验证码请求
     SendSmsCodeReq {
         mobile string `json:"mobile,required,len=11,regexp=^1[3-9]\\d{9}$"`  // 手机号(必填)
         scene  string `json:"scene,required,options=register|login|reset_pwd"`  // 场景(必填)
-    }
-
-    // 发送短信验证码响应
-    SendSmsCodeResp {
-        success       bool   `json:"success"`        // 发送结果
-        message       string `json:"message"`        // 提示信息
-        expire_seconds int32 `json:"expire_seconds"`  // 验证码有效期(秒)
     }
 
     // 手机号重置密码请求
@@ -119,12 +83,6 @@ type (
     // 刷新Token请求
     RefreshTokenReq {
         refresh_token string `json:"refresh_token,required,min=1"`  // 刷新Token(必填)
-    }
-
-    // 刷新Token响应
-    RefreshTokenResp {
-        token         string `json:"token"`          // 新访问Token
-        refresh_token string `json:"refresh_token"`  // 新刷新Token
     }
 
     // 发送邮件验证码请求

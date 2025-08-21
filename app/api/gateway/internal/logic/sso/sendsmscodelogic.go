@@ -23,7 +23,7 @@ func NewSendSmsCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendS
 	}
 }
 
-func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeReq) (resp *types.SendSmsCodeResp, err error) {
+func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeReq) (resp *types.CommonResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

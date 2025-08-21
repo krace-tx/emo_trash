@@ -23,7 +23,7 @@ func NewCheckQrcodeStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *CheckQrcodeStatusLogic) CheckQrcodeStatus(req *types.QrcodeStatusReq) (resp *types.QrcodeStatusResp, err error) {
+func (l *CheckQrcodeStatusLogic) CheckQrcodeStatus(req *types.QrcodeStatusReq) (resp *types.CommonResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

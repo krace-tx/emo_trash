@@ -16,34 +16,34 @@ import "sso.api"
 )
 service gateway {
 	@handler Login
-	post /auth/login (LoginReq) returns (LoginResp)
+	post /auth/login (LoginReq) returns (CommonResp)
 
 	@handler GenerateQrcode
-	post /auth/qrcode/generate (QrcodeReq) returns (QrcodeResp)
+	post /auth/qrcode/generate (QrcodeReq) returns (CommonResp)
 
 	@handler CheckQrcodeStatus
-	post /auth/qrcode/status (QrcodeStatusReq) returns (QrcodeStatusResp)
+	post /auth/qrcode/status (QrcodeStatusReq) returns (CommonResp)
 
 	@handler ConfirmQrcodeLogin
-	post /auth/qrcode/confirm (QrcodeConfirmReq) returns (LoginResp)
+	post /auth/qrcode/confirm (QrcodeConfirmReq) returns (CommonResp)
 
 	@handler VerifyToken
-	post /auth/token/verify (VerifyReq) returns (VerifyResp)
+	post /auth/token/verify (VerifyReq) returns (CommonResp)
 
 	@handler Logout
 	post /auth/logout (LogoutReq) returns (CommonResp)
 
 	@handler Register
-	post /auth/register (RegisterReq) returns (RegisterResp)
+	post /auth/register (RegisterReq) returns (CommonResp)
 
 	@handler SendSmsCode
-	post /auth/sms/code (SendSmsCodeReq) returns (SendSmsCodeResp)
+	post /auth/sms/code (SendSmsCodeReq) returns (CommonResp)
 
 	@handler ResetPassword
 	post /auth/password/reset (ResetPasswordReq) returns (CommonResp)
 
 	@handler RefreshToken
-	post /auth/token/refresh (RefreshTokenReq) returns (RefreshTokenResp)
+	post /auth/token/refresh (RefreshTokenReq) returns (CommonResp)
 
 	@handler SendEmailCode
 	post /auth/email/code (SendEmailCodeReq) returns (CommonResp)

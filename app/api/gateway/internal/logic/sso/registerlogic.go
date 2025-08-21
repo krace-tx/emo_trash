@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
@@ -23,8 +24,17 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterResp, err error) {
-	// todo: add your logic here and delete this line
+func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.CommonResp, err error) {
+	data, err := l.svcCtx.Auth.Register(l.ctx, &auth.RegisterReq{
+		Mobile:   req.Mobile,
+		Password: req.Password,
+		SmsCode:  req.Sms_code,
+	})
 
-	return
+	if err != nil {
+		l.Logger.Errorf("Register failed, err: %v", err)
+		return types.Error(err), err
+	}
+
+	return types.Success(data), nil
 }

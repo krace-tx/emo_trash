@@ -20,8 +20,10 @@ type BindThirdPartyReq struct {
 }
 
 type CommonResp struct {
-	Success bool   `json:"success"` // 操作结果
-	Message string `json:"message"` // 提示信息
+	Code    uint32      `json:"code"`    // 状态码
+	Success bool        `json:"success"` // 操作结果
+	Data    interface{} `json:"data"`    // 响应数据
+	Message string      `json:"message"` // 提示信息
 }
 
 type LoginReq struct {
@@ -35,11 +37,6 @@ type LoginReq struct {
 	Device_id   string `json:"device_id,optional,min=10,max=64"`                                                                       // 设备ID(可选)
 	Login_ip    string `json:"login_ip,optional,regexp=^(\\d{1,3}\\.){3}\\d{1,3}$|^[0-9a-fA-F:]+$"`                                    // IP地址(可选)
 	Is_quick    bool   `json:"is_quick,optional"`                                                                                      // 是否快捷登录(可选)
-}
-
-type LoginResp struct {
-	Token         string `json:"token"`         // JWT访问令牌
-	Refresh_token string `json:"refresh_token"` // 刷新令牌
 }
 
 type LogoutReq struct {
@@ -57,38 +54,18 @@ type QrcodeReq struct {
 	Login_ip  string `json:"login_ip,required,regexp=^(\\d{1,3}\\.){3}\\d{1,3}$|^[0-9a-fA-F:]+$"` // 登录IP(必填)
 }
 
-type QrcodeResp struct {
-	Qid       string `json:"qid"`       // 二维码唯一ID
-	Image_url string `json:"image_url"` // 二维码图片URL
-}
-
 type QrcodeStatusReq struct {
 	Qid string `json:"qid,required,min=1"` // 二维码ID(必填)
-}
-
-type QrcodeStatusResp struct {
-	Status int32  `json:"status"` // 状态(0:等待扫描,1:已扫描,2:已确认,3:已过期)
-	Token  string `json:"token"`  // 登录Token(状态为2时返回)
 }
 
 type RefreshTokenReq struct {
 	Refresh_token string `json:"refresh_token,required,min=1"` // 刷新Token(必填)
 }
 
-type RefreshTokenResp struct {
-	Token         string `json:"token"`         // 新访问Token
-	Refresh_token string `json:"refresh_token"` // 新刷新Token
-}
-
 type RegisterReq struct {
 	Mobile   string `json:"mobile,required,len=11,regexp=^1[3-9]\\d{9}$"`                                                           // 手机号(必填)
 	Password string `json:"password,required,min=8,max=32,regexp=^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*])[A-Za-z\\d@#$%^&*]{8,32}$"` // 密码(必填)
 	Sms_code string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`                                                                // 短信验证码(必填)
-}
-
-type RegisterResp struct {
-	Token         string `json:"token"`         // JWT访问令牌
-	Refresh_token string `json:"refresh_token"` // 刷新令牌
 }
 
 type ResetPasswordByEmailReq struct {
@@ -113,12 +90,6 @@ type SendSmsCodeReq struct {
 	Scene  string `json:"scene,required,options=register|login|reset_pwd"` // 场景(必填)
 }
 
-type SendSmsCodeResp struct {
-	Success        bool   `json:"success"`        // 发送结果
-	Message        string `json:"message"`        // 提示信息
-	Expire_seconds int32  `json:"expire_seconds"` // 验证码有效期(秒)
-}
-
 type UnbindEmailReq struct {
 	Email      string `json:"email,required,email"`                      // 邮箱(必填)
 	Email_code string `json:"email_code,required,len=6,regexp=^\\d{6}$"` // 邮箱验证码(必填)
@@ -138,10 +109,4 @@ type UnbindThirdPartyReq struct {
 type VerifyReq struct {
 	Token       string `json:"token,required,min=1"`                   // 待验证Token(必填)
 	Device_type string `json:"device_type,required,options=app|pc|h5"` // 设备类型(必填)
-}
-
-type VerifyResp struct {
-	User_id     int64  `json:"user_id"`     // 用户ID
-	Device_type string `json:"device_type"` // 设备类型
-	Device_id   string `json:"device_id"`   // 设备ID
 }

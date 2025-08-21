@@ -23,7 +23,7 @@ func NewGenerateQrcodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 	}
 }
 
-func (l *GenerateQrcodeLogic) GenerateQrcode(req *types.QrcodeReq) (resp *types.QrcodeResp, err error) {
+func (l *GenerateQrcodeLogic) GenerateQrcode(req *types.QrcodeReq) (resp *types.CommonResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

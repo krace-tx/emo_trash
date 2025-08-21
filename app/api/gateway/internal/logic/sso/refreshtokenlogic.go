@@ -23,7 +23,7 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 	}
 }
 
-func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *types.RefreshTokenResp, err error) {
+func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *types.CommonResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

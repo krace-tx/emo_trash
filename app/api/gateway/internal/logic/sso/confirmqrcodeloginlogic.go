@@ -23,7 +23,7 @@ func NewConfirmQrcodeLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *ConfirmQrcodeLoginLogic) ConfirmQrcodeLogin(req *types.QrcodeConfirmReq) (resp *types.LoginResp, err error) {
+func (l *ConfirmQrcodeLoginLogic) ConfirmQrcodeLogin(req *types.QrcodeConfirmReq) (resp *types.CommonResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

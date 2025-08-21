@@ -23,7 +23,7 @@ func NewVerifyTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Verif
 	}
 }
 
-func (l *VerifyTokenLogic) VerifyToken(req *types.VerifyReq) (resp *types.VerifyResp, err error) {
+func (l *VerifyTokenLogic) VerifyToken(req *types.VerifyReq) (resp *types.CommonResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return
