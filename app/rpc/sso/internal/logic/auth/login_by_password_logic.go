@@ -120,18 +120,15 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *pb.LoginByPasswordReq) (*pb.L
 
 	// 6. 记录登录日志
 	loginLog := &model.LoginLog{
-		UserID:   auth.UserID, // 假设auth.UserID为primitive.ObjectID类型
-		Account:  in.Account,
-		Platform: platform, // 已在前面定义的平台标识(web/ios/android等)
-		//DeviceID:   in.DeviceId,        	// 从请求中获取设备ID
-		//IP:         in.LoginIp,  			// 获取客户端IP
-		//UserAgent:  in.UserAgent, 	// 获取用户代理信息
+		UserID:     auth.UserID, // 假设auth.UserID为primitive.ObjectID类型
+		Account:    in.Account,
+		Platform:   platform,    // 已在前面定义的平台标识(web/ios/android等)
+		DeviceID:   in.DeviceId, // 从请求中获取设备ID
+		IP:         in.LoginIp,  // 获取客户端IP
 		LoginTime:  time.Now(),
 		Status:     "success",     // 登录状态：成功
 		ResultCode: http.StatusOK, // 成功状态码
 		ResultMsg:  "登录成功",
-		//TraceID:    in.TraceId,
-		//Extra:      in.Extra,
 	}
 
 	// 插入登录日志到MongoDB
