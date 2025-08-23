@@ -2,11 +2,14 @@ package authlogic
 
 import (
 	"context"
+	"time"
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/model"
 	authx "github.com/krace-tx/emo_trash/pkg/auth"
+	"github.com/krace-tx/emo_trash/pkg/db/no_sql"
 	"github.com/krace-tx/emo_trash/pkg/db/rdb"
 	errx "github.com/krace-tx/emo_trash/pkg/err"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
@@ -19,15 +22,17 @@ type RegisterLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	userModel *model.UserModel
+	userModel  *model.UserModel
+	tokenModel *model.TokenModel
 }
 
 func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegisterLogic {
 	return &RegisterLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		userModel: model.NewUserModel(ctx, svcCtx),
+		ctx:        ctx,
+		svcCtx:     svcCtx,
+		Logger:     logx.WithContext(ctx),
+		userModel:  model.NewUserModel(ctx, svcCtx),
+		tokenModel: model.NewTokenModel(ctx, svcCtx),
 	}
 }
 
@@ -40,23 +45,33 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 // 令牌生成：生成访问令牌和刷新令牌
 // 返回结果：组装并返回注册成功响应
 func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
-	// 1. lock
+	lockKey := no_sql.GenerateKey("register", in.Mobile)
+	lockID, ok, err := l.svcCtx.Redis.LockWithOptions(lockKey, 10*time.Second)
+	if err != nil {
+		return nil, errx.ErrSystemInternal
+	}
+	if !ok {
+		return nil, errx.ErrAuthMobileExists
+	}
+	defer func() {
+		if err := l.svcCtx.Redis.UnlockWithID(lockKey, lockID); err != nil {
+			logx.Error(err)
+			return
+		}
+	}()
 
 	// 2. Verify SMS code
 	if err := l.verifySmsCode(in.Mobile, in.SmsCode); err != nil {
-		return nil, err
+		//return nil, err
 	}
 
 	// 3. 检查手机号是否已注册
 	if exists, err := l.checkMobileExists(in.Mobile); err != nil {
 		l.Logger.Error(err)
-		return nil, errx.ErrAuthMobileExists
+		return nil, err
 	} else if exists {
 		return nil, errx.ErrAuthMobileExists
 	}
-
-	//4. 生成用户ID
-	userID := uint64(l.svcCtx.Snowflake.Generate())
 
 	//5. 生成盐值和加密密码
 	salt, encryptedPassword, err := l.encryptPassword(in.Password)
@@ -65,43 +80,49 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		return nil, err
 	}
 
-	auth, _, err := l.userModel.CreateUser(userID, in.Mobile, encryptedPassword, salt)
+	auth, _, err := l.userModel.CreateUser(in.Account, in.Mobile, encryptedPassword, salt)
 	if err != nil {
 		l.Logger.Error(err)
 		return nil, err
 	}
 
-	accessToken, accessExpire, refreshToken, refreshExpire := l.generateTokens(*auth)
+	token, err := l.tokenModel.GenerateTokens(*auth)
+	if err != nil {
+		l.Logger.Error(err)
+		return nil, err
+	}
 
 	return &pb.RegisterResp{
-		AccessToken:        accessToken,
-		AccessTokenExpire:  accessExpire,
-		RefreshToken:       refreshToken,
-		RefreshTokenExpire: refreshExpire,
+		AccessToken:        token.AccessToken,
+		AccessTokenExpire:  token.AccessExpire,
+		RefreshToken:       token.RefreshToken,
+		RefreshTokenExpire: token.RefreshExpire,
 	}, nil
 }
 
 // 验证短信验证码
 func (l *RegisterLogic) verifySmsCode(mobile, code string) error {
-	//cacheKey := fmt.Sprintf("sms:code:%s", mobile)
-	//storedCode, err := l.svcCtx.Redis.Get(cacheKey)
-	//if err != nil {
-	//	if err == redis.Nil {
-	//		return errx.ErrAuthSmsCodeInvalid
-	//	}
-	//	l.Logger.Error("Failed to get SMS code from cache:", err)
-	//	return errx.ErrSystemInternal
-	//}
-	//
-	//if storedCode != code {
-	//	return errx.ErrAuthSmsCodeInvalid
-	//}
-	//
-	//defer func() {
-	//	if _, err := l.svcCtx.Redis.Del(cacheKey); err != nil {
-	//		l.Logger.Error("Failed to delete SMS code cache:", err)
-	//	}
-	//}()
+	// 从缓存中获取短信验证码
+	cacheKey := no_sql.GenerateKey("sms:code", mobile)
+	var cacheCode string
+	err := l.svcCtx.Redis.Get(cacheKey, &cacheCode)
+	if err != nil {
+		if err == redis.Nil {
+			return errx.ErrAuthSmsCodeInvalid
+		}
+		l.Logger.Error("Failed to get SMS code from cache:", err)
+		return errx.ErrSystemInternal
+	}
+
+	// 比较验证码
+	if cacheCode != code {
+		return errx.ErrAuthSmsCodeInvalid
+	}
+
+	// 删除缓存中的验证码
+	if err := l.svcCtx.Redis.Del(cacheKey); err != nil {
+		l.Logger.Error("Failed to delete SMS code cache:", err)
+	}
 
 	return nil
 }
@@ -123,31 +144,4 @@ func (l *RegisterLogic) encryptPassword(password string) (string, string, error)
 	}
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password+salt), bcrypt.DefaultCost)
 	return salt, string(hashedPassword), nil
-}
-
-// Generate tokens
-func (l *RegisterLogic) generateTokens(auth model.UserAuth) (accessToken string, accessExpire int64, refreshToken string, refreshExpire int64) {
-	accessExpire = l.svcCtx.Config.JWT.AccessExpire
-	accessToken, _ = authx.GenJwtToken(
-		l.svcCtx.Config.JWT.AccessSecret,
-		l.svcCtx.Config.JWT.AccessExpire,
-		map[string]any{
-			"user_id":       auth.UserID,
-			"account":       auth.Account,
-			"platform":      auth.Platform,
-			"last_login_ip": auth.LastLoginIP,
-		},
-	)
-
-	refreshToken, _ = authx.GenJwtToken(
-		l.svcCtx.Config.JWT.RefreshSecret,
-		l.svcCtx.Config.JWT.RefreshExpire,
-		map[string]any{
-			"user_id":       auth.UserID,
-			"account":       auth.Account,
-			"platform":      auth.Platform,
-			"last_login_ip": auth.LastLoginIP,
-		},
-	)
-	return
 }

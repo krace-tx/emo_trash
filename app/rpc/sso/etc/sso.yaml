@@ -8,6 +8,7 @@ zrpc:
     Pass: emoTrashEtcd123!
     Key: sso.rpc
 
+  Timeout: 10000
   Middlewares:
     Trace: true
     Log: true
@@ -32,7 +33,7 @@ Service:
     ServiceName: sso.rpc  # 日志中标识的服务名（默认继承 Name）
     Mode: file  # 日志输出模式：file（文件）/console（控制台）
     Path: ./logs  # 日志文件路径（Mode=file 时生效）
-    Level: info  # 日志级别：debug/info/warn/error
+    Level: error  # 日志级别
     MaxSize: 100  # 单个日志文件大小（MB）
     MaxBackups: 10  # 日志文件最大备份数
     MaxAge: 30  # 日志文件保留天数
@@ -64,9 +65,8 @@ Mysql:
   DSN: root:emoTrashMysql123!@tcp(127.0.0.1:3306)/emo_trash?charset=utf8mb4&parseTime=True&loc=Local
   MaxOpenConns: 100        # 最大打开连接数
   MaxIdleConns: 20         # 最大空闲连接数
-  ConnMaxLife: 30m         # 连接最大存活时间
-  LogLevel: info           # 日志级别：silent/error/warn/info
-  TablePrefix: sso_        # 表前缀
+  ConnMaxLife: 10m         # 连接最大存活时间
+  LogLevel: 2              # 日志级别：silent:1 error:2  info:3 warn:4
 
 Mongo:
   URI: "mongodb://root:emoTrashMongo123!@127.0.0.1:27017/emo_trash?authSource=admin"

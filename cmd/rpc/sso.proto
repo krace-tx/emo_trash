@@ -282,7 +282,8 @@ message RegisterReq {
     (validate.rules).string = {
       min_len: 8,
       max_len: 32,
-    }
+    },
+    (validate.error_msg) = "密码长度必须在8-32位之间"
   ];
 
   // @inject_tag: json:"sms_code"
@@ -290,20 +291,31 @@ message RegisterReq {
     (validate.rules).string = {
       min_len: 4,
       max_len: 6,
-    }
+    },
+    (validate.error_msg) = "验证码格式错误"
   ];
+
+  // @inject_tag: json:"account"
+  string account = 4 [
+    (validate.rules).string = {
+      min_len: 4,
+      max_len: 16,
+      pattern: "^[a-zA-Z0-9]+$", // 账号只能包含字母、数字
+    },
+    (validate.error_msg) = "账号格式错误"
+  ]; // 账号
 }
 
 // 注册响应（与登录响应结构一致，便于客户端统一处理）
 message RegisterResp {
   // @inject_tag: json:"token"
-  string  access_token = 1; // 新访问Token
+  string access_token = 1; // 新访问Token
   // @inject_tag: json:"access_token_expire"
-  int64 access_token_expire = 2; // 新访问Token有效期(秒)
+  int64  access_token_expire = 2; // 新访问Token有效期(秒)
   // @inject_tag: json:"refresh_token"
   string refresh_token = 3; // 新刷新Token(延长有效期)
   // @inject_tag: json:"refresh_token_expire"
-  int64 refresh_token_expire = 4; // 新刷新Token有效期(秒)
+  int64  refresh_token_expire = 4; // 新刷新Token有效期(秒)
 }
 
 //==============================================验证码==============================================

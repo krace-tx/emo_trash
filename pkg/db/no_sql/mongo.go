@@ -9,15 +9,15 @@ import (
 )
 
 type MongoConf struct {
-	URI      string `json:"uri"`      // MongoDB连接URI (必填)
-	Database string `json:"database"` // 要使用的数据库名称 (必填)
-	Timeout  int    `json:"timeout"`  // 连接超时时间(秒) (可选，默认5)
-	MaxPool  uint64 `json:"maxPool"`  // 最大连接池大小 (可选，默认100)
-	MinPool  uint64 `json:"minPool"`  // 最小连接池大小 (可选，默认10)
+	URI      string // MongoDB连接URI (必填)
+	Database string // 要使用的数据库名称 (必填)
+	Timeout  int    `json:",optional"` // 连接超时时间(秒) (可选，默认5)
+	MaxPool  uint64 `json:",optional"` // 最大连接池大小 (可选，默认100)
+	MinPool  uint64 `json:",optional"` // 最小连接池大小 (可选，默认10)
 }
 
 // InitMongo 根据配置初始化MongoDB客户端和数据库实例
-func InitMongo(conf MongoConf) (*mongo.Client, error) {
+func InitMongo(conf MongoConf) (*mongo.Database, error) {
 	// 创建客户端选项
 	clientOpts := options.Client().ApplyURI(conf.URI)
 
@@ -53,13 +53,13 @@ func InitMongo(conf MongoConf) (*mongo.Client, error) {
 	}
 
 	// 返回客户端和指定数据库实例
-	return client, nil
+	return client.Database(conf.Database), nil
 }
 
-func MustInitMongo(conf MongoConf) *mongo.Client {
-	client, err := InitMongo(conf)
+func MustInitMongo(conf MongoConf) *mongo.Database {
+	db, err := InitMongo(conf)
 	if err != nil {
 		panic(err)
 	}
-	return client
+	return db
 }

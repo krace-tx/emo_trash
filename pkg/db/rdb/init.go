@@ -28,12 +28,11 @@ const (
 
 // 通用数据库配置
 type DBConf struct {
-	DSN          string          `json:"dsn"`
-	MaxOpenConns int             `json:"max_open_conns,optional"`
-	MaxIdleConns int             `json:"max_idle_conns,optional"`
-	ConnMaxLife  time.Duration   `json:"conn_max_life,optional"`
-	LogLevel     logger.LogLevel `json:"log_level,optional"`
-	TablePrefix  string          `json:"table_prefix,optional"`
+	DSN          string
+	MaxOpenConns int             `json:",optional"`
+	MaxIdleConns int             `json:",optional"`
+	ConnMaxLife  time.Duration   `json:",optional"`
+	LogLevel     logger.LogLevel `json:",optional"`
 }
 
 // 初始化MySQL数据库
@@ -77,7 +76,6 @@ func initDB(dialector gorm.Dialector, cfg DBConf, dbType DBType) error {
 	gormCfg := &gorm.Config{
 		Logger: logger.Default.LogMode(cfg.LogLevel),
 		NamingStrategy: schema.NamingStrategy{
-			TablePrefix:   cfg.TablePrefix,
 			SingularTable: true,
 		},
 	}

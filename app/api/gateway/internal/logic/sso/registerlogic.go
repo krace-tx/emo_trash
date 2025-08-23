@@ -2,6 +2,7 @@ package sso
 
 import (
 	"context"
+
 	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
@@ -28,6 +29,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.CommonResp
 	data, err := l.svcCtx.Auth.Register(l.ctx, &auth.RegisterReq{
 		Mobile:   req.Mobile,
 		Password: req.Password,
+		Account:  req.Account,
 		SmsCode:  req.SmsCode,
 	})
 

@@ -31,11 +31,6 @@ func NewLoginByPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 }
 
 func (l *LoginByPasswordLogic) LoginByPassword(in *pb.LoginByPasswordReq) (*pb.LoginResp, error) {
-	// 1. 基础参数校验
-	if in.Account == "" || in.Password == "" {
-		return nil, errx.ErrSystemArgInvalid
-	}
-
 	// 2. 查询用户认证信息
 	engine := rdb.NewEngine[model.UserAuth](rdb.M)
 	auth, err := engine.GetByCondition(l.ctx, rdb.WithConditions("account = ?", in.Account))
@@ -97,7 +92,8 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *pb.LoginByPasswordReq) (*pb.L
 
 	redisKey := fmt.Sprintf("user:login:%d:%s", auth.UserID, platform)
 
-	oldToken, err := l.svcCtx.Redis.Get(redisKey)
+	var oldToken string
+	err = l.svcCtx.Redis.Get(redisKey, &oldToken)
 	if err != nil && err != redis.Nil {
 		l.Logger.Errorf("查询用户登录记录失败: %v, user_id=%d, platform=%s", err, auth.UserID, platform)
 		return nil, errx.ErrAuthSSOCheckFail
@@ -105,7 +101,7 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *pb.LoginByPasswordReq) (*pb.L
 
 	if oldToken != "" {
 		blacklistKey := fmt.Sprintf("token:blacklist:%s", oldToken)
-		err = l.svcCtx.Redis.Set(blacklistKey, "1")
+		err = l.svcCtx.Redis.Set(blacklistKey, "1", 12*time.Hour)
 		if err != nil {
 			l.Logger.Errorf("添加旧令牌到黑名单失败: %v, user_id=%d, platform=%s", err, auth.UserID, platform)
 			return nil, errx.ErrAuthTokenBlacklistFail
@@ -113,7 +109,7 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *pb.LoginByPasswordReq) (*pb.L
 		l.Logger.Infof("用户在同平台已有登录，已使旧令牌失效: user_id=%d, platform=%s", auth.UserID, platform)
 	}
 
-	if err := l.svcCtx.Redis.Set(redisKey, accessToken); err != nil {
+	if err := l.svcCtx.Redis.Set(redisKey, accessToken, time.Hour); err != nil {
 		l.Logger.Errorf("存储用户登录记录失败: %v, user_id=%d, platform=%s", err, auth.UserID, platform)
 		return nil, errx.ErrAuthSaveLoginRecordFail
 	}
@@ -132,7 +128,7 @@ func (l *LoginByPasswordLogic) LoginByPassword(in *pb.LoginByPasswordReq) (*pb.L
 	}
 
 	// 插入登录日志到MongoDB
-	_, err = l.svcCtx.Mongo.Database("sso").Collection("login_logs").InsertOne(l.ctx, loginLog)
+	_, err = l.svcCtx.Mongo.Collection("login_logs").InsertOne(l.ctx, loginLog)
 	if err != nil {
 		// 日志记录失败不影响登录主流程，但需记录错误
 		l.Logger.Errorf("记录登录日志失败: %v, user_id=%s, account=%s", err, auth.UserID, in.Account)

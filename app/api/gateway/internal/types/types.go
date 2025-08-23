@@ -63,9 +63,10 @@ type RefreshTokenReq struct {
 }
 
 type RegisterReq struct {
-	Mobile   string `json:"mobile,required,len=11,regexp=^1[3-9]\\d{9}$"`                                                           // 手机号(必填)
-	Password string `json:"password,required,min=8,max=32,regexp=^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&*])[A-Za-z\\d@#$%^&*]{8,32}$"` // 密码(必填)
-	SmsCode  string `json:"sms_code,required,len=6,regexp=^\\d{6}$"`                                                                // 短信验证码(必填)
+	Account  string `json:"account"`  // 账号(必填)
+	Mobile   string `json:"mobile"`   // 手机号(必填)
+	Password string `json:"password"` // 密码(必填)
+	SmsCode  string `json:"sms_code"` // 短信验证码(必填)
 }
 
 type ResetPasswordByEmailReq struct {

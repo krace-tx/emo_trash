@@ -1596,6 +1596,28 @@ func (m *RegisterReq) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if l := utf8.RuneCountInString(m.GetAccount()); l < 4 || l > 16 {
+		err := RegisterReqValidationError{
+			field:  "Account",
+			reason: "value length must be between 4 and 16 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_RegisterReq_Account_Pattern.MatchString(m.GetAccount()) {
+		err := RegisterReqValidationError{
+			field:  "Account",
+			reason: "value does not match regex pattern \"^[a-zA-Z0-9]+$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return RegisterReqMultiError(errors)
 	}
@@ -1674,6 +1696,8 @@ var _ interface {
 } = RegisterReqValidationError{}
 
 var _RegisterReq_Mobile_Pattern = regexp.MustCompile("^1[3-9]\\d{9}$")
+
+var _RegisterReq_Account_Pattern = regexp.MustCompile("^[a-zA-Z0-9]+$")
 
 // Validate checks the field values on RegisterResp with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

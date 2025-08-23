@@ -9,9 +9,9 @@ import (
 
 // SnowflakeConf 雪花算法配置
 type SnowflakeConf struct {
-	WorkerID     int64 `json:"worker_id" yaml:"worker_id"`
-	DatacenterID int64 `json:"datacenter_id" yaml:"datacenter_id"`
-	Epoch        int64 `json:"epoch" yaml:"epoch"`
+	WorkerID     int64
+	DatacenterID int64
+	Epoch        int64
 }
 
 // Snowflake 结构体

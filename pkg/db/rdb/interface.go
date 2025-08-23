@@ -323,29 +323,7 @@ func WithIsolationLevel(level IsolationLevel) TransactionOption {
 }
 
 // Transaction 开启事务并执行回调函数
-// db: gorm.DB实例
-// fn: 事务内执行的业务逻辑（参数为事务内的EngineInterface实例）
-// opts: 事务选项（如隔离级别等）
-// 实现逻辑：基于GORM的Transaction方法，自动处理事务提交/回滚
-type TransactionFunc[T any] func(engine EngineInterface[T]) error
-
-func Transaction[T any](ctx context.Context, db *gorm.DB, fn TransactionFunc[T], opts ...TransactionOption) error {
-	// 应用事务选项：创建应用选项后的事务DB实例
-	transDB := db.WithContext(ctx)
-	for _, opt := range opts {
-		transDB = opt(transDB)
-	}
-
-	// 执行事务：通过GORM原生事务函数开启事务
-	return transDB.Transaction(func(tx *gorm.DB) error {
-		// 创建事务内的Engine实例（绑定事务连接tx）
-		engine := NewEngine[T](tx)
-		return fn(engine) // 执行用户定义的事务逻辑
-	})
-}
-
-// 非泛型事务函数（用于无特定主要实体的场景）
-func TransactionWithoutEntity(ctx context.Context, db *gorm.DB, fn func(*gorm.DB) error, opts ...TransactionOption) error {
+func Transaction(ctx context.Context, db *gorm.DB, fn func(tx *gorm.DB) error, opts ...TransactionOption) error {
 	txDB := db.WithContext(ctx)
 	for _, opt := range opts {
 		txDB = opt(txDB)

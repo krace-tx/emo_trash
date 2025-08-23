@@ -12,7 +12,7 @@ import (
 type ServiceContext struct {
 	Config    config.Config
 	Redis     *no_sql.Redis
-	Mongo     *mongo.Client
+	Mongo     *mongo.Database
 	Snowflake *snowflake.Snowflake
 }
 
