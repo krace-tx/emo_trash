@@ -2,19 +2,30 @@ package no_sql
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"github.com/redis/go-redis/v9"
-	"github.com/zeromicro/go-zero/core/jsonx"
-	"github.com/zeromicro/go-zero/core/logx"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Redis struct {
 	cli *redis.Client
 	ctx context.Context
 	logx.Logger
+}
+
+type RedisConf struct {
+	Addr         string // Redis服务器地址 (host:port)
+	Password     string `json:",optional"` // Redis认证密码
+	DB           int    `json:",optional"` // 数据库编号
+	PoolSize     int    `json:",optional"` // 连接池大小
+	MinIdleConns int    `json:",optional"` // 最小空闲连接数
+	MaxRetries   int    `json:",optional"` // 最大重试次数
 }
 
 // 拼接 Redis 键
@@ -25,11 +36,19 @@ func GenerateKey(prefix string, suffix ...string) string {
 }
 
 // NewRedisClient 创建一个新的Redis客户端实例
-func NewRedisClient(ctx context.Context, logger logx.Logger, client *redis.Client) *Redis {
+func NewRedisClient(conf RedisConf) *Redis {
+	client := redis.NewClient(&redis.Options{
+		Addr:         conf.Addr,
+		Password:     conf.Password,
+		DB:           conf.DB,
+		PoolSize:     conf.PoolSize,
+		MinIdleConns: conf.MinIdleConns,
+		MaxRetries:   conf.MaxRetries,
+	})
 	return &Redis{
 		cli:    client,
-		ctx:    ctx,
-		Logger: logger,
+		ctx:    context.Background(),
+		Logger: logx.WithContext(context.Background()),
 	}
 }
 
@@ -37,12 +56,12 @@ func (r *Redis) Close() error {
 	return r.cli.Close()
 }
 
-// SetCacheObject 缓存任意实体对象
-func (r *Redis) SetCacheObject(key string, value interface{}, expiration time.Duration) error {
+// Set 缓存任意实体对象
+func (r *Redis) Set(key string, value interface{}, expiration time.Duration) error {
 	if value == nil {
 		return fmt.Errorf("value is nil")
 	}
-	bytes, err := jsonx.Marshal(value)
+	bytes, err := json.Marshal(value)
 	if err != nil {
 		return err
 	}
@@ -54,22 +73,104 @@ func (r *Redis) SetCacheObject(key string, value interface{}, expiration time.Du
 	return r.cli.Set(r.ctx, key, bytes, expiration).Err()
 }
 
-// GetCacheObject 获得缓存的基本对象
-func (r *Redis) GetCacheObject(key string, target interface{}) error {
+// Get 获得缓存的基本对象
+func (r *Redis) Get(key string, target interface{}) error {
 	bytes, err := r.cli.Get(r.ctx, key).Bytes()
 	if err != nil {
 		return err
 	}
-	return jsonx.Unmarshal(bytes, target)
+	return json.Unmarshal(bytes, target)
 }
 
-// DeleteCacheObject 删除缓存
-func (r *Redis) DeleteCacheObject(key string) error {
+// 锁选项配置
+type lockOptions struct {
+	LockID    string // 锁持有者唯一标识
+	Reentrant bool   // 是否支持可重入
+}
+
+// LockOption 定义锁选项函数类型
+type LockOption func(*lockOptions)
+
+// WithLockID 指定自定义锁ID（用于追踪锁持有者）
+func WithLockID(id string) LockOption {
+	return func(o *lockOptions) {
+		o.LockID = id
+	}
+}
+
+// WithReentrant 启用可重入锁模式
+func WithReentrant() LockOption {
+	return func(o *lockOptions) {
+		o.Reentrant = true
+	}
+}
+
+// LockWithOptions 高级锁方法，支持多种场景配置
+// 返回值：(lockID, 是否获取成功, 错误)
+func (r *Redis) LockWithOptions(key string, expiration time.Duration, opts ...LockOption) (string, bool, error) {
+	options := &lockOptions{}
+	for _, opt := range opts {
+		opt(options)
+	}
+
+	// 生成默认锁ID（如未指定）
+	if options.LockID == "" {
+		options.LockID = uuid.New().String()
+	}
+
+	// 可重入锁逻辑：检查当前锁是否由同一持有者持有
+	if options.Reentrant {
+		currentVal, err := r.cli.Get(r.ctx, key).Result()
+		if err != nil && err != redis.Nil {
+			return "", false, fmt.Errorf("检查锁状态失败: %w", err)
+		}
+		// 已持有锁，延长过期时间并返回成功
+		if currentVal == options.LockID {
+			if err := r.cli.Expire(r.ctx, key, expiration).Err(); err != nil {
+				return options.LockID, false, fmt.Errorf("延长锁过期时间失败: %w", err)
+			}
+			return options.LockID, true, nil
+		}
+	}
+
+	// 基础锁逻辑：使用SetNX获取新锁
+	acquired, err := r.cli.SetNX(r.ctx, key, options.LockID, expiration).Result()
+	if err != nil {
+		return options.LockID, false, fmt.Errorf("获取锁失败: %w", err)
+	}
+
+	return options.LockID, acquired, nil
+}
+
+// 安全解锁Lua脚本（原子操作：检查锁持有者 -> 删除锁）
+const unlockScript = `
+if redis.call('get', KEYS[1]) == ARGV[1] then
+    return redis.call('del', KEYS[1])
+else
+    return 0
+end
+`
+
+// UnlockWithID 安全解锁方法（需验证锁持有者ID）
+func (r *Redis) UnlockWithID(key, lockID string) error {
+	result, err := r.cli.Eval(r.ctx, unlockScript, []string{key}, lockID).Result()
+	if err != nil {
+		return fmt.Errorf("解锁操作失败: %w", err)
+	}
+	// 验证脚本执行结果（0表示未解锁成功，1表示成功）
+	if res, ok := result.(int64); !ok || res == 0 {
+		return fmt.Errorf("解锁失败：锁不存在或持有者不匹配 (lockID=%s)", lockID)
+	}
+	return nil
+}
+
+// Del 删除缓存
+func (r *Redis) Del(key string) error {
 	return r.cli.Del(r.ctx, key).Err()
 }
 
-// DeleteCacheObjectByPrefix 删除具有指定前缀的所有键
-func (r *Redis) DeleteCacheObjectByPrefix(prefix string) error {
+// DelByPrefix 删除具有指定前缀的所有键
+func (r *Redis) DelByPrefix(prefix string) error {
 	if prefix == "" {
 		return fmt.Errorf("prefix cannot be empty")
 	}
@@ -118,14 +219,14 @@ func (r *Redis) Exists(key string) (bool, error) {
 	return exists > 0, nil
 }
 
-// SetCacheObjects 批量缓存对象
-func (r *Redis) SetCacheObjects(data map[string]interface{}, expiration time.Duration) error {
+// SetBatch 批量缓存对象
+func (r *Redis) SetBatch(data map[string]interface{}, expiration time.Duration) error {
 	pipe := r.cli.Pipeline()
 	for key, value := range data {
 		if value == nil {
 			continue
 		}
-		bytes, err := jsonx.Marshal(value)
+		bytes, err := json.Marshal(value)
 
 		if err != nil {
 			return err
@@ -140,8 +241,8 @@ func (r *Redis) SetCacheObjects(data map[string]interface{}, expiration time.Dur
 	return err
 }
 
-// GetCacheObjects 批量获取缓存对象
-func (r *Redis) GetCacheObjects(keys []string) (map[string]string, error) {
+// GetBatch 批量获取缓存对象
+func (r *Redis) GetBatch(keys []string) (map[string]string, error) {
 	result := make(map[string]string)
 	pipe := r.cli.Pipeline()
 	cmds := make([]*redis.StringCmd, len(keys))
@@ -208,7 +309,7 @@ func (r *Redis) LPush(key string, values ...interface{}) error {
 		if value == nil {
 			continue
 		}
-		marshal, _ := jsonx.Marshal(value)
+		marshal, _ := json.Marshal(value)
 		if string(marshal) == "null" || string(marshal) == "[]" {
 			continue
 		}
@@ -224,7 +325,7 @@ func (r *Redis) LPop(key string, model interface{}) error {
 	if err != nil {
 		return err
 	}
-	return jsonx.Unmarshal([]byte(result), model)
+	return json.Unmarshal([]byte(result), model)
 }
 
 // RPush 将一个或多个值推入列表的右侧
@@ -234,7 +335,7 @@ func (r *Redis) RPush(key string, values ...interface{}) error {
 		if value == nil {
 			continue
 		}
-		marshal, _ := jsonx.Marshal(value)
+		marshal, _ := json.Marshal(value)
 		if string(marshal) == "null" || string(marshal) == "[]" {
 			continue
 		}
@@ -250,7 +351,7 @@ func (r *Redis) RPop(key string, model *interface{}) error {
 	if err != nil {
 		return err
 	}
-	return jsonx.Unmarshal([]byte(result), model)
+	return json.Unmarshal([]byte(result), model)
 }
 
 // LRange 获取列表中指定范围的元素
@@ -320,7 +421,7 @@ func (r *Redis) ZAdd(key string, value interface{}, score float64) error {
 	if value == nil {
 		return fmt.Errorf("value is nil")
 	}
-	marshal, err := jsonx.Marshal(value)
+	marshal, err := json.Marshal(value)
 	if err != nil {
 		logx.Errorf("marshal err: %v", err)
 		return err
@@ -331,7 +432,7 @@ func (r *Redis) ZAdd(key string, value interface{}, score float64) error {
 	}
 
 	z := []redis.Z{
-		redis.Z{
+		{
 			Score:  score,
 			Member: marshal,
 		},

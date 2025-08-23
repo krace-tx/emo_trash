@@ -15,5 +15,6 @@ type Config struct {
 	MysqlConf     rdb.DBConf              `json:"Mysql"`
 	JWT           authx.JWTConf           `json:"JWT"`
 	MongoConf     no_sql.MongoConf        `json:"Mongo"`
+	RedisConf     no_sql.RedisConf        `json:"Redis"`
 	SnowflakeConf snowflake.SnowflakeConf `json:"Snowflake"`
 }

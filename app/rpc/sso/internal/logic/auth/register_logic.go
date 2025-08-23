@@ -2,13 +2,11 @@ package authlogic
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/model"
 	authx "github.com/krace-tx/emo_trash/pkg/auth"
 	"github.com/krace-tx/emo_trash/pkg/db/rdb"
 	errx "github.com/krace-tx/emo_trash/pkg/err"
-	"github.com/zeromicro/go-zero/core/stores/redis"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
@@ -42,6 +40,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 // 令牌生成：生成访问令牌和刷新令牌
 // 返回结果：组装并返回注册成功响应
 func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
+	// 1. lock
 
 	// 2. Verify SMS code
 	if err := l.verifySmsCode(in.Mobile, in.SmsCode); err != nil {
@@ -84,25 +83,25 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 
 // 验证短信验证码
 func (l *RegisterLogic) verifySmsCode(mobile, code string) error {
-	cacheKey := fmt.Sprintf("sms:code:%s", mobile)
-	storedCode, err := l.svcCtx.Redis.Get(cacheKey)
-	if err != nil {
-		if err == redis.Nil {
-			return errx.ErrAuthSmsCodeInvalid
-		}
-		l.Logger.Error("Failed to get SMS code from cache:", err)
-		return errx.ErrSystemInternal
-	}
-
-	if storedCode != code {
-		return errx.ErrAuthSmsCodeInvalid
-	}
-
-	defer func() {
-		if _, err := l.svcCtx.Redis.Del(cacheKey); err != nil {
-			l.Logger.Error("Failed to delete SMS code cache:", err)
-		}
-	}()
+	//cacheKey := fmt.Sprintf("sms:code:%s", mobile)
+	//storedCode, err := l.svcCtx.Redis.Get(cacheKey)
+	//if err != nil {
+	//	if err == redis.Nil {
+	//		return errx.ErrAuthSmsCodeInvalid
+	//	}
+	//	l.Logger.Error("Failed to get SMS code from cache:", err)
+	//	return errx.ErrSystemInternal
+	//}
+	//
+	//if storedCode != code {
+	//	return errx.ErrAuthSmsCodeInvalid
+	//}
+	//
+	//defer func() {
+	//	if _, err := l.svcCtx.Redis.Del(cacheKey); err != nil {
+	//		l.Logger.Error("Failed to delete SMS code cache:", err)
+	//	}
+	//}()
 
 	return nil
 }

@@ -8,14 +8,6 @@ zrpc:
     Pass: emoTrashEtcd123!
     Key: sso.rpc
 
-  Redis:
-    Host: 127.0.0.1:6379
-    Key: sso-rpc-token
-    Type: node
-    Pass: emoTrashRedis123!
-    NonBlock: true
-    PingTimeout: 3s
-
   Middlewares:
     Trace: true
     Log: true
@@ -82,6 +74,11 @@ Mongo:
   Timeout: 5
   MaxPool: 100
   MinPool: 10
+
+Redis:
+  Addr: 127.0.0.1:6379
+  Password: emoTrashRedis123!
+  DB: 0
 
 JWT:
   # 访问令牌密钥（32位随机字符串，生产环境建议通过环境变量注入）
