@@ -10,10 +10,10 @@ import (
 )
 
 type JWTConf struct {
-	AccessSecret  string `json:"AccessSecret"`
-	AccessExpire  int64  `json:"AccessExpire"`
-	RefreshSecret string `json:"RefreshSecret"`
-	RefreshExpire int64  `json:"RefreshExpire"`
+	AccessSecret  string `json:"access_secret" yaml:"access_secret"`
+	AccessExpire  int64  `json:"access_expire" yaml:"access_expire"`
+	RefreshSecret string `json:"refresh_secret" yaml:"refresh_secret"`
+	RefreshExpire int64  `json:"refresh_expire" yaml:"refresh_expire"`
 }
 
 // GenJwtToken 生成 JWT 令牌

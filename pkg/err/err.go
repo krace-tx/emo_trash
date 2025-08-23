@@ -28,7 +28,7 @@ func ParseError(err error) *Err {
 	matches := re.FindStringSubmatch(errStr)
 
 	if len(matches) != 3 {
-		return &Err{ErrSystemInternal.Code, fmt.Sprintf("无法解析错误字符串: %s", errStr)}
+		return ErrSystemInternal
 	}
 
 	code, err := strconv.Atoi(matches[1])

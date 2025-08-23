@@ -12,3 +12,7 @@ type UserProfile struct {
 	CreatedAt time.Time `gorm:"column:created_at"        json:"created_at"` // 创建时间戳
 	UpdatedAt time.Time `gorm:"column:updated_at"        json:"updated_at"` // 更新时间戳
 }
+
+func (UserProfile) TableName() string {
+	return "sso_user_profile"
+}

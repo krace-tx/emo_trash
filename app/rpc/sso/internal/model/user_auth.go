@@ -22,3 +22,7 @@ type UserAuth struct {
 	LastLoginAt time.Time `gorm:"column:last_login_at"             json:"last_login_at"` // 最后登录时间戳
 	LastLoginIP string    `gorm:"column:last_login_ip"      json:"last_login_ip"`        // 最后登录IP
 }
+
+func (UserAuth) TableName() string {
+	return "sso_user_auth"
+}

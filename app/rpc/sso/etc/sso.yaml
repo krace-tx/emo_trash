@@ -90,3 +90,8 @@ JWT:
   # 刷新令牌密钥（独立密钥，与访问令牌分离）
   RefreshSecret: "rT6fG8kH2jM5nP9qR3sV7wX1zC4vB6mN8p"
   RefreshExpire: 604800        # 刷新令牌过期时间（秒）= 7天
+
+Snowflake:
+  WorkerID: 1           # 工作节点ID (0-31)
+  DatacenterID: 1       # 数据中心ID (0-31)
+  Epoch: 1735660800000  # 起始时间戳(2025-01-01 00:00:00 UTC)

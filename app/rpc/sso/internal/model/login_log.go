@@ -22,3 +22,7 @@ type LoginLog struct {
 	TraceID    string                 `json:"trace_id" bson:"trace_id,omitempty"`     // 分布式追踪ID (用于链路追踪)
 	Extra      map[string]interface{} `json:"extra" bson:"extra,omitempty"`           // 额外信息 (存储特殊场景下的扩展数据)
 }
+
+func (LoginLog) TableName() string {
+	return "sso_login_log"
+}

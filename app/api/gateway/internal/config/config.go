@@ -9,11 +9,6 @@ type Config struct {
 	rest.RestConf
 
 	Rpc struct {
-		Auth zrpc.RpcClientConf
-	}
-
-	Auth struct {
-		AccessSecret string
-		AccessExpire int64
+		Auth zrpc.RpcClientConf `json:"auth"`
 	}
 }

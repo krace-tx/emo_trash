@@ -55,3 +55,11 @@ func InitMongo(conf MongoConf) (*mongo.Client, error) {
 	// 返回客户端和指定数据库实例
 	return client, nil
 }
+
+func MustInitMongo(conf MongoConf) *mongo.Client {
+	client, err := InitMongo(conf)
+	if err != nil {
+		panic(err)
+	}
+	return client
+}

@@ -3,11 +3,12 @@ package interceptor
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strings"
+
 	errx "github.com/krace-tx/emo_trash/pkg/err"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
-	"regexp"
-	"strings"
 )
 
 type Validator interface {
@@ -77,7 +78,10 @@ func translateMultiValidationError(req any, multiErr MultiValidationError) error
 		errorMsgs = append(errorMsgs, e)
 	}
 
-	return fmt.Errorf(strings.Join(errorMsgs, "; "))
+	if len(errorMsgs) > 0 {
+		return fmt.Errorf(strings.Join(errorMsgs, "; "))
+	}
+	return nil
 }
 
 // translateReason

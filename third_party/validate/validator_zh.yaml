@@ -1,7 +1,0 @@
-# 定义全局中文错误消息
-string:
-  pattern: "格式无效（要求：{{.pattern}}）"
-  min_len: "长度不能少于 {{.min}} 位"
-  max_len: "长度不能超过 {{.max}} 位"
-number:
-  gt: "必须大于 {{.gt}}"

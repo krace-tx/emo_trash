@@ -33,13 +33,14 @@ var (
 	ErrAuthSaveLoginRecordFail   = NewErr(ModuleAuth, 12, "保存登录状态失败")    // 10012
 	ErrAuthMobileFormat          = NewErr(ModuleAuth, 13, "手机号格式不正确")    // 10013
 	ErrAuthPasswordFormat        = NewErr(ModuleAuth, 14, "密码格式不符合要求")   // 10014
-	ErrAuthSmsCodeInvalid        = NewErr(ModuleAuth, 15, "短信验证码无效或已过期") // 10015
-	ErrAuthMobileExists          = NewErr(ModuleAuth, 16, "手机号已注册")      // 10016
-	ErrAuthGenIDFailed           = NewErr(ModuleAuth, 17, "生成用户ID失败")    // 10017
-	ErrAuthPwdEncryptFail        = NewErr(ModuleAuth, 18, "密码加密失败")      // 10018
-	ErrAuthCreateUserAuthFail    = NewErr(ModuleAuth, 19, "创建用户认证记录失败")  // 10019
-	ErrAuthCreateUserProfileFail = NewErr(ModuleAuth, 20, "创建用户资料失败")    // 10020
-	ErrAuthRegisterFailed        = NewErr(ModuleAuth, 21, "用户注册失败")      // 10021
+	ErrAuthSmsCodeExpired        = NewErr(ModuleAuth, 15, "短信验证码已过期")    // 10015
+	ErrAuthSmsCodeInvalid        = NewErr(ModuleAuth, 16, "短信验证码无效或已过期") // 10016
+	ErrAuthMobileExists          = NewErr(ModuleAuth, 17, "手机号已注册")      // 10017
+	ErrAuthGenIDFailed           = NewErr(ModuleAuth, 18, "生成用户ID失败")    // 10017
+	ErrAuthPwdEncryptFail        = NewErr(ModuleAuth, 19, "密码加密失败")      // 10019
+	ErrAuthCreateUserAuthFail    = NewErr(ModuleAuth, 20, "创建用户认证记录失败")  // 10020
+	ErrAuthCreateUserProfileFail = NewErr(ModuleAuth, 21, "创建用户资料失败")    // 10021
+	ErrAuthRegisterFailed        = NewErr(ModuleAuth, 22, "用户注册失败")      // 10022
 
 	// ====== SSO 单点登录模块 (11xxx) ======
 	ErrSSOTicketInvalid   = NewErr(ModuleSSO, 1, "票据无效")      // 11001

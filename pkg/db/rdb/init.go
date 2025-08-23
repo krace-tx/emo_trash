@@ -41,13 +41,31 @@ func InitMySQL(cfg DBConf) error {
 	return initDB(mysql.Open(cfg.DSN), cfg, DBTypeMySQL)
 }
 
+func MustInitMySQL(cfg DBConf) {
+	if err := InitMySQL(cfg); err != nil {
+		panic(err)
+	}
+}
+
 // 初始化PostgreSQL数据库
 func InitPostgres(cfg DBConf) error {
 	return initDB(postgres.Open(cfg.DSN), cfg, DBTypePostgres)
 }
 
+func MustInitPostgres(cfg DBConf) {
+	if err := InitPostgres(cfg); err != nil {
+		panic(err)
+	}
+}
+
 func InitTinyDB(cfg DBConf) error {
 	return initDB(sqlite.Open(cfg.DSN), cfg, DBTypeTinyDB)
+}
+
+func MustInitTinyDB(cfg DBConf) {
+	if err := InitTinyDB(cfg); err != nil {
+		panic(err)
+	}
 }
 
 // 通用数据库初始化逻辑
