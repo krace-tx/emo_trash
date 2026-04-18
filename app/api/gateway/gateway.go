@@ -13,6 +13,7 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 )
 
+// Program arguments: -f app/api/gateway/etc/gateway.yaml
 var configFile = flag.String("f", "etc/gateway.yaml", "the config file")
 
 func main() {

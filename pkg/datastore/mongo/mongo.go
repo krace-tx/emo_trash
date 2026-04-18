@@ -1,10 +1,10 @@
-package no_sql
+package mongo
 
 import (
 	"context"
 	"time"
 
-	"go.mongodb.org/mongo-driver/mongo"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -17,7 +17,7 @@ type MongoConf struct {
 }
 
 // InitMongo 根据配置初始化MongoDB客户端和数据库实例
-func InitMongo(conf MongoConf) (*mongo.Database, error) {
+func InitMongo(conf MongoConf) (*mongodriver.Database, error) {
 	// 创建客户端选项
 	clientOpts := options.Client().ApplyURI(conf.URI)
 
@@ -42,7 +42,7 @@ func InitMongo(conf MongoConf) (*mongo.Database, error) {
 	defer cancel()
 
 	// 建立连接
-	client, err := mongo.Connect(ctx, clientOpts)
+	client, err := mongodriver.Connect(ctx, clientOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func InitMongo(conf MongoConf) (*mongo.Database, error) {
 	return client.Database(conf.Database), nil
 }
 
-func MustInitMongo(conf MongoConf) *mongo.Database {
+func MustInitMongo(conf MongoConf) *mongodriver.Database {
 	db, err := InitMongo(conf)
 	if err != nil {
 		panic(err)

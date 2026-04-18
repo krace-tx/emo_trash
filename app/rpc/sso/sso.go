@@ -16,6 +16,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
+// Program arguments: -f app/rpc/sso/etc/sso.yaml
 var configFile = flag.String("f", "etc/sso.yaml", "the config file")
 
 func main() {

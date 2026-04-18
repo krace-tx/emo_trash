@@ -1,5 +1,6 @@
 services:
   go-dev:
+    image: make-go-dev:latest
     build: .
     container_name: emo_trash_dev
     volumes:

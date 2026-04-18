@@ -1,0 +1,18 @@
+# Offline: use after docker load (make-go-dev + alpine). No build, no pull.
+#   docker compose -f docker-compose.offline.yaml up -d
+services:
+  go-dev:
+    image: make-go-dev:latest
+    pull_policy: never
+    container_name: emo_trash_dev
+    volumes:
+      - ../../:/app
+      - go-mod-cache:/go/pkg/mod
+    environment:
+      - GOPROXY=https://goproxy.cn,direct
+      - GO111MODULE=on
+    tty: true
+    stdin_open: true
+
+volumes:
+  go-mod-cache:

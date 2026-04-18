@@ -1,4 +1,4 @@
-package no_sql
+package redis
 
 import (
 	"context"
@@ -9,12 +9,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/redis/go-redis/v9"
+	goredis "github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Redis struct {
-	cli *redis.Client
+	cli *goredis.Client
 	ctx context.Context
 	logx.Logger
 }
@@ -37,7 +37,7 @@ func GenerateKey(prefix string, suffix ...string) string {
 
 // NewRedisClient 创建一个新的Redis客户端实例
 func NewRedisClient(conf RedisConf) *Redis {
-	client := redis.NewClient(&redis.Options{
+	client := goredis.NewClient(&goredis.Options{
 		Addr:         conf.Addr,
 		Password:     conf.Password,
 		DB:           conf.DB,
@@ -121,7 +121,7 @@ func (r *Redis) LockWithOptions(key string, expiration time.Duration, opts ...Lo
 	// 可重入锁逻辑：检查当前锁是否由同一持有者持有
 	if options.Reentrant {
 		currentVal, err := r.cli.Get(r.ctx, key).Result()
-		if err != nil && err != redis.Nil {
+		if err != nil && err != goredis.Nil {
 			return "", false, fmt.Errorf("检查锁状态失败: %w", err)
 		}
 		// 已持有锁，延长过期时间并返回成功
@@ -245,7 +245,7 @@ func (r *Redis) SetBatch(data map[string]interface{}, expiration time.Duration) 
 func (r *Redis) GetBatch(keys []string) (map[string]string, error) {
 	result := make(map[string]string)
 	pipe := r.cli.Pipeline()
-	cmds := make([]*redis.StringCmd, len(keys))
+	cmds := make([]*goredis.StringCmd, len(keys))
 
 	for i, key := range keys {
 		cmds[i] = pipe.Get(r.ctx, key)
@@ -431,7 +431,7 @@ func (r *Redis) ZAdd(key string, value interface{}, score float64) error {
 		return fmt.Errorf("value is nil")
 	}
 
-	z := []redis.Z{
+	z := []goredis.Z{
 		{
 			Score:  score,
 			Member: marshal,

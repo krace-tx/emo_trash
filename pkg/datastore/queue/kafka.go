@@ -1,4 +1,4 @@
-package mq
+package queue
 
 import (
 	"context"

@@ -1,5 +1,5 @@
-// Package rdb 提供通用的关系型数据库访问层实现
-package rdb
+// Package sqlstore 提供基于 GORM 的关系型数据库访问层实现
+package sqlstore
 
 import (
 	"context"

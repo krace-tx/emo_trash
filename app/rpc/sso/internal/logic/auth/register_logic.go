@@ -6,10 +6,10 @@ import (
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/model"
 	authx "github.com/krace-tx/emo_trash/pkg/auth"
-	"github.com/krace-tx/emo_trash/pkg/db/no_sql"
-	"github.com/krace-tx/emo_trash/pkg/db/rdb"
+	"github.com/krace-tx/emo_trash/pkg/datastore/redis"
+	"github.com/krace-tx/emo_trash/pkg/datastore/sqlstore"
 	errx "github.com/krace-tx/emo_trash/pkg/err"
-	"github.com/redis/go-redis/v9"
+	goredis "github.com/redis/go-redis/v9"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
@@ -45,7 +45,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 // 令牌生成：生成访问令牌和刷新令牌
 // 返回结果：组装并返回注册成功响应
 func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
-	lockKey := no_sql.GenerateKey("register", in.Mobile)
+	lockKey := redis.GenerateKey("register", in.Mobile)
 	lockID, ok, err := l.svcCtx.Redis.LockWithOptions(lockKey, 10*time.Second)
 	if err != nil {
 		return nil, errx.ErrSystemInternal
@@ -103,11 +103,11 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 // 验证短信验证码
 func (l *RegisterLogic) verifySmsCode(mobile, code string) error {
 	// 从缓存中获取短信验证码
-	cacheKey := no_sql.GenerateKey("sms:code", mobile)
+	cacheKey := redis.GenerateKey("sms:code", mobile)
 	var cacheCode string
 	err := l.svcCtx.Redis.Get(cacheKey, &cacheCode)
 	if err != nil {
-		if err == redis.Nil {
+		if err == goredis.Nil {
 			return errx.ErrAuthSmsCodeInvalid
 		}
 		l.Logger.Error("Failed to get SMS code from cache:", err)
@@ -129,8 +129,8 @@ func (l *RegisterLogic) verifySmsCode(mobile, code string) error {
 
 // 检查手机号是否已注册
 func (l *RegisterLogic) checkMobileExists(mobile string) (bool, error) {
-	engine := rdb.NewEngine[model.UserAuth](rdb.M)
-	count, err := engine.Count(l.ctx, rdb.WithConditions("mobile = ?", mobile))
+	engine := sqlstore.NewEngine[model.UserAuth](sqlstore.M)
+	count, err := engine.Count(l.ctx, sqlstore.WithConditions("mobile = ?", mobile))
 	return count > 0, err
 }
 

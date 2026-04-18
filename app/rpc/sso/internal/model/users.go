@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
-	"github.com/krace-tx/emo_trash/pkg/db/rdb"
+	"github.com/krace-tx/emo_trash/pkg/datastore/sqlstore"
 	errx "github.com/krace-tx/emo_trash/pkg/err"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
@@ -81,7 +81,7 @@ func (m *UserModel) CreateUser(account, mobile, password, salt string) (*UserAut
 			Status:   UserStatusNormal,
 		}
 
-		if err := rdb.NewEngine[UserAuth](tx).Create(m.ctx, auth); err != nil {
+		if err := sqlstore.NewEngine[UserAuth](tx).Create(m.ctx, auth); err != nil {
 			return errx.ErrAuthCreateUserAuthFail
 		}
 
@@ -93,14 +93,14 @@ func (m *UserModel) CreateUser(account, mobile, password, salt string) (*UserAut
 			Region:   "未知",
 		}
 
-		if err := rdb.NewEngine[UserProfile](tx).Create(m.ctx, profile); err != nil {
+		if err := sqlstore.NewEngine[UserProfile](tx).Create(m.ctx, profile); err != nil {
 			return errx.ErrAuthCreateUserProfileFail
 		}
 
 		return nil
 	}
 
-	if err := rdb.Transaction(m.ctx, rdb.M, transaction); err != nil {
+	if err := sqlstore.Transaction(m.ctx, sqlstore.M, transaction); err != nil {
 		return nil, nil, err
 	}
 

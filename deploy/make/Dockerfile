@@ -1,5 +1,5 @@
 # 使用轻量级Linux发行版Alpine作为基础镜像
-FROM alpine:latest
+FROM alpine:3.12
 
 # 设置环境变量
 ENV GO_VERSION=1.24.5 \

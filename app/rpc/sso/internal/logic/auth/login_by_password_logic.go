@@ -10,7 +10,7 @@ import (
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 	authx "github.com/krace-tx/emo_trash/pkg/auth"
-	"github.com/krace-tx/emo_trash/pkg/db/rdb"
+	"github.com/krace-tx/emo_trash/pkg/datastore/sqlstore"
 	errx "github.com/krace-tx/emo_trash/pkg/err"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -32,8 +32,8 @@ func NewLoginByPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 
 func (l *LoginByPasswordLogic) LoginByPassword(in *pb.LoginByPasswordReq) (*pb.LoginResp, error) {
 	// 2. 查询用户认证信息
-	engine := rdb.NewEngine[model.UserAuth](rdb.M)
-	auth, err := engine.GetByCondition(l.ctx, rdb.WithConditions("account = ?", in.Account))
+	engine := sqlstore.NewEngine[model.UserAuth](sqlstore.M)
+	auth, err := engine.GetByCondition(l.ctx, sqlstore.WithConditions("account = ?", in.Account))
 	if err != nil {
 		l.Logger.Errorf("查询用户认证信息失败: %v, account=%s", err, in.Account)
 		return nil, errx.ErrDBQueryFailed

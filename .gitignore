@@ -26,6 +26,9 @@ go.work
 Thumbs.db
 .DS_Store
 
+# Docker offline image tars
+deploy/offline/images/*.tar
+
 # project
 *.cert
 *.key

@@ -1,7 +1,9 @@
+# Offline: use after docker load from deploy/offline/images/*.tar (no registry pull).
+#   docker compose -f docker-compose.offline.yaml up -d
 services:
-  # Redis 缓存服务
   redis:
     image: redis:7.2-alpine
+    pull_policy: never
     container_name: emo-trash-redis
     restart: always
     ports:
@@ -20,9 +22,9 @@ services:
       timeout: 5s
       retries: 3
 
-  # MySQL 关系型数据库
   mysql:
     image: mysql:8
+    pull_policy: never
     container_name: emo-trash-mysql
     restart: always
     ports:
@@ -43,9 +45,9 @@ services:
       timeout: 5s
       retries: 3
 
-  # MongoDB 文档数据库
   mongodb:
     image: mongo:6.0
+    pull_policy: never
     container_name: emo-trash-mongodb
     restart: always
     ports:
@@ -64,20 +66,18 @@ services:
       timeout: 5s
       retries: 3
 
-  # etcd 分布式配置存储（单节点）
   etcd:
     image: bitnamilegacy/etcd:3.5.18
-    restart: always  # 总是重启，确保服务持续可用
+    pull_policy: never
+    restart: always
     ports:
-      - "2379:2379"  # 客户端通信端口
-      - "2380:2380"  # 节点间通信端口
+      - "2379:2379"
+      - "2380:2380"
     environment:
-      - ETCDCTL_API=3  # 启用v3 API
-      - ETCD_NAME=etcd-node-1  # 节点名称
-      - ETCD_DATA_DIR=/etcd-data  # 数据持久化目录
-      # 添加etcd根密码（与其他服务密码策略保持一致）
+      - ETCDCTL_API=3
+      - ETCD_NAME=etcd-node-1
+      - ETCD_DATA_DIR=/etcd-data
       - ETCD_ROOT_PASSWORD=emoTrashEtcd123!
-      # 替换command flags为环境变量配置，避免冲突
       - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
       - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380
@@ -86,21 +86,19 @@ services:
       - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-token
       - ETCD_INITIAL_CLUSTER_STATE=new
     volumes:
-      - etcd-data:/etcd-data  # 使用命名卷持久化数据
+      - etcd-data:/etcd-data
     healthcheck:
       test: ["CMD", "etcdctl", "endpoint", "health", "--endpoints=http://localhost:2379", "--user=root:emoTrashEtcd123!"]
-      interval: 10s  # 每10秒检查一次
-      timeout: 5s    # 检查超时时间
-      retries: 3     # 连续3次失败视为不健康
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
-# 持久化数据卷
 volumes:
   redis-data:
   mysql-data:
   mongo-data:
   etcd-data:
 
-# 自定义网络
 networks:
   emo-trash-network:
     driver: bridge

@@ -1,4 +1,4 @@
-package vdb
+package search
 
 import (
 	"context"

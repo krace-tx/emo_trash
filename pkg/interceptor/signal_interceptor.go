@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/krace-tx/emo_trash/pkg/db/rdb"
+	"github.com/krace-tx/emo_trash/pkg/datastore/sqlstore"
 )
 
 func SignalInterceptor() {
@@ -19,7 +19,7 @@ func SignalInterceptor() {
 		log.Printf("收到关闭信号: %v，开始关闭...", sig)
 
 		// 1. 关闭数据库连接
-		if err := rdb.Close(); err != nil {
+		if err := sqlstore.Close(); err != nil {
 			log.Printf("数据库连接关闭失败: %v", err)
 		} else {
 			log.Println("数据库连接已关闭")
