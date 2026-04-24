@@ -23,9 +23,9 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 	}
 }
 
-// 刷新Token
-func (l *RefreshTokenLogic) RefreshToken(in *pb.RefreshTokenReq) (*pb.RefreshTokenResp, error) {
+// 刷新 Token
+func (l *RefreshTokenLogic) RefreshToken(in *pb.RefreshTokenReq) (*pb.LoginResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.RefreshTokenResp{}, nil
+	return &pb.LoginResp{}, nil
 }

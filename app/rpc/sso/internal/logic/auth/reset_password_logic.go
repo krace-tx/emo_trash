@@ -23,9 +23,9 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 	}
 }
 
-// 重置密码
-func (l *ResetPasswordLogic) ResetPassword(in *pb.ResetPasswordReq) (*pb.ResetPasswordResp, error) {
+// 忘记密码（通过邮箱验证码重置）
+func (l *ResetPasswordLogic) ResetPassword(in *pb.ResetPasswordReq) (*pb.CommonResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.ResetPasswordResp{}, nil
+	return &pb.CommonResp{}, nil
 }

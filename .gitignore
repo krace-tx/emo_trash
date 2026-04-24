@@ -45,3 +45,7 @@ uploads/
 
 # xml
 *.xml
+
+
+**/etc/*.yaml
+**/etc/*.yml

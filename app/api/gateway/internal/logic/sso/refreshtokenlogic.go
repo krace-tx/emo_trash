@@ -1,3 +1,6 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.1
+
 package sso
 
 import (
@@ -29,7 +32,7 @@ func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *type
 		RefreshToken: req.RefreshToken,
 	})
 	if err != nil {
-		l.Logger.Errorf("RefreshToken failed, err: %v", err)
+		l.Logger.Errorf("刷新Token失败: %v", err)
 		return types.Error(err), nil
 	}
 

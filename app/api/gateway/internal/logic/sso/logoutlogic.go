@@ -1,7 +1,11 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.1
+
 package sso
 
 import (
 	"context"
+
 	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
@@ -26,13 +30,15 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 
 func (l *LogoutLogic) Logout(req *types.LogoutReq) (resp *types.CommonResp, err error) {
 	data, err := l.svcCtx.Auth.Logout(l.ctx, &auth.LogoutReq{
-		Token:      req.Token,
-		DeviceType: req.DeviceType,
+		Token: req.Token,
 	})
 	if err != nil {
-		l.Logger.Errorf("Logout failed, err: %v", err)
+		l.Logger.Errorf("登出失败: %v", err)
 		return types.Error(err), nil
 	}
+	if data.GetSuccess() {
+		return types.SuccessWithMsg(nil, data.GetMessage()), nil
+	}
 
-	return types.Success(data), nil
+	return types.ParamError(data.GetMessage()), nil
 }

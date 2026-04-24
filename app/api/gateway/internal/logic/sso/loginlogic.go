@@ -1,3 +1,6 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.1
+
 package sso
 
 import (
@@ -25,15 +28,12 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.CommonResp, err error) {
-	data, err := l.svcCtx.Auth.LoginByPassword(l.ctx, &auth.LoginByPasswordReq{
-		Account:    req.Account,
-		Password:   req.Password,
-		DeviceType: req.DeviceType,
-		DeviceId:   req.DeviceId,
-		LoginIp:    req.LoginIp,
+	data, err := l.svcCtx.Auth.Login(l.ctx, &auth.LoginReq{
+		Email:    req.Email,
+		Password: req.Password,
 	})
 	if err != nil {
-		l.Logger.Errorf("Login failed, err: %v", err)
+		l.Logger.Errorf("邮箱登录失败: %v, email=%s", err, req.Email)
 		return types.Error(err), nil
 	}
 

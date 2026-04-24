@@ -1,8 +1,10 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.1
+
 package sso
 
 import (
 	"context"
-
 	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
@@ -27,14 +29,12 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.CommonResp, err error) {
 	data, err := l.svcCtx.Auth.Register(l.ctx, &auth.RegisterReq{
-		Mobile:   req.Mobile,
-		Password: req.Password,
-		Account:  req.Account,
-		SmsCode:  req.SmsCode,
+		Email:     req.Email,
+		EmailCode: req.EmailCode,
+		Password:  req.Password,
 	})
-
 	if err != nil {
-		l.Logger.Errorf("Register failed, err: %v", err)
+		l.Logger.Errorf("邮箱注册失败: %v, email=%s", err, req.Email)
 		return types.Error(err), nil
 	}
 

@@ -173,7 +173,7 @@ docker-compose:
 	  $(ECHO) "$(GREEN)=== Docker Compose services started successfully ==="$(NC)
 
 wsl:
-	docker exec -it emo_trash_dev bash
+	docker exec -it emo_trash_dev sh
 
 # 帮助信息
 help:
