@@ -1,159 +1,167 @@
-# emo_trash 项目架构文档
+# emo_trash
 
-## 1. 文档修订历史
+`emo_trash` 是一个基于 Go + go-zero 的微服务项目。  
+当前仓库已完成并对齐的核心链路是 **SSO 认证体系（邮箱验证码、注册、登录、密码、Token）**。
 
-| 版本   | 修订人   | 修订日期   | 修订内容 |
-|--------|----------|------------|----------|
-| v1.0   | krace    | 2025-08-07 | 初稿     |
-| v1.1   | —        | 2026-04-18 | 同步目录结构、部署与离线镜像说明 |
+## 当前实现范围
 
-## 2. 项目概述
+- 网关 API：`app/api/gateway`
+- SSO RPC：`app/rpc/sso`
+- 协议定义：
+  - `cmd/api/gateway.api`
+  - `cmd/api/sso.api`
+  - `cmd/rpc/sso.proto`
 
-### 简介
+当前 SSO 对外能力（HTTP）：
 
-**emo_trash** 是一个基于 Go 语言开发的匿名情感宣泄平台，采用微服务架构设计，主打「无压力发泄」概念。平台核心功能包括：
+- `POST /sso/v1/auth/email/code`
+- `POST /sso/v1/auth/register`
+- `POST /sso/v1/auth/login`
+- `POST /sso/v1/auth/password/reset`
+- `POST /sso/v1/auth/password/change`
+- `POST /sso/v1/auth/token/refresh`
+- `POST /sso/v1/auth/token/verify`
+- `POST /sso/v1/auth/logout`
 
-🔥 匿名情绪宣泄
+## 技术栈
 
-- 完全匿名发布机制
-- 支持文字/语音/图片等多种发泄形式
-- 智能脏话过滤与情绪分级系统
+- Go: `1.24.5`
+- 框架: `go-zero`
+- 通信: `HTTP + gRPC`
+- 存储: `MySQL + MongoDB + Redis`
+- 认证: `JWT`
+- 校验: `protoc-gen-validate`
 
-🤖 AI 情感博弈
+## 项目结构（核心）
 
-- 可定制 AI 发泄对象（可设定身份/性格/弱点）
-- 多模态交互（文字对骂/语音互怼）
-- 情感反射引擎（AI 会记住你的发泄风格）
-
-🌐 情绪社交网络
-
-- 基于 LBS 的情绪热点地图
-- 相似境遇推荐算法
-- 匿名互动社区（点赞/共鸣/组团发泄）
-
-💡 特色技术
-
-- 情感分析实时处理
-- 发泄内容生命周期管理
-- 多重匿名保障机制
-- 用户认证与授权（JWT/OAuth2）
-- 社交互动管理
-- AI 增强分析
-
-**技术栈**：
-
-- 语言: Go 1.24+
-- 框架: go-zero、go-eino
-- 通信: gRPC/HTTP
-- 存储: MySQL、MongoDB、Redis、Elasticsearch 等（见 `pkg/datastore`）
-- 消息: Kafka 等（见 `pkg/datastore/queue`）
-- 监控: Prometheus + Grafana（规划）
-
-## 3. 系统架构
-
-### 3.1 项目架构
-
-```
+```text
 .
-├── app                 ## 业务代码
-│   ├── api             ## API 网关
-│   │   └── gateway
-│   └── rpc             ## RPC 服务
-│       └── sso
-├── cmd                 ## proto / api 定义
-│   ├── api
-│   │   └── gateway.api
-│   └── rpc
-│       └── sso.proto
-├── deploy              ## 部署与容器
-│   ├── emo_trash       ## 基础中间件栈（Redis / MySQL / MongoDB / etcd）
-│   │   ├── docker-compose.yaml          ## 在线：可从仓库拉镜像
-│   │   └── docker-compose.offline.yaml ## 离线：仅使用本机已 load 的镜像（pull_policy: never）
-│   ├── make            ## Go 开发容器（Dockerfile + compose）
-│   │   ├── docker-compose.yaml
-│   │   └── docker-compose.offline.yaml ## 离线：无 build，仅 make-go-dev 镜像
-│   └── offline         ## 镜像离线打包 / 导入
-│       ├── export-offline.bat / .sh    ## 按镜像分别 docker save 到 images/*.tar
-│       ├── import-offline.bat / .sh    ## 依次 docker load（与 save 成对使用）
-│       └── images/     ## 导出的 tar 存放目录（见 .gitignore）
-├── doc                 ## 文档
-├── model               ## 数据库模型
-├── pkg                 ## 公共库
-│   ├── auth
-│   ├── constant
-│   ├── cors
-│   ├── datastore       ## 存储与消息适配（原 pkg/db 已拆分为语义化子包）
-│   │   ├── sqlstore    ## 关系型（GORM / MySQL 等）
-│   │   ├── redis       ## Redis 客户端封装
-│   │   ├── mongo       ## MongoDB 连接与配置
-│   │   ├── search      ## Elasticsearch / 向量检索等
-│   │   └── queue       ## Kafka / RabbitMQ / RocketMQ 等
-│   ├── eino
-│   ├── email
-│   ├── encrypt
-│   ├── err
-│   ├── filter
-│   ├── interceptor
-│   ├── media
-│   ├── nacos
-│   ├── oss
-│   ├── page
-│   ├── result
-│   ├── sensitive
-│   ├── snowflake
-│   ├── utils
-│   └── yaml
-├── static
-├── swagger
-├── test
-├── third_party
+├── app/
+│   ├── api/gateway/                 # HTTP 网关
+│   └── rpc/sso/                     # SSO RPC 服务
+├── cmd/
+│   ├── api/gateway.api              # 网关路由定义
+│   ├── api/sso.api                  # API DTO 定义
+│   └── rpc/sso.proto                # RPC 协议定义
+├── pkg/
+│   ├── auth/                        # JWT / 密码工具
+│   ├── datastore/                   # mysql / mongo / redis 封装
+│   ├── email/                       # 邮件发送
+│   ├── err/                         # 统一错误码
+│   └── ...
+├── deploy/                          # docker/离线部署相关
+├── third_party/                     # proto 三方依赖
 ├── Makefile
 └── README.md
 ```
 
-### 3.2 离线镜像与 Compose
+## 配置说明
 
-1. **导出**：在仓库根目录或 `deploy/offline` 下执行 `export-offline.bat`（Windows）或 `export-offline.sh`（Git Bash / Linux），在 `deploy/offline/images/` 下为每个镜像生成独立 `.tar`（`docker save`）。
-2. **导入**：将 `images/` 拷贝到离线机后执行 `import-offline.bat` / `import-offline.sh`，使用 `docker load -i` 依次加载（`docker save` 的归档需用 `load`，不要用 `import`）。
-3. **启动**：中间件栈使用 `deploy/emo_trash/docker-compose.offline.yaml`；开发容器使用 `deploy/make/docker-compose.offline.yaml`（`pull_policy: never`，不拉取、不构建）。
+本项目已在 `.gitignore` 中忽略 `**/etc/*.yaml` 与 `**/etc/*.yml`。  
+请在本地自行创建配置文件，不要提交真实凭据。
 
-### 3.3 服务架构
+### 1) SSO RPC 配置（示例）
 
-TODO
+运行 `app/rpc/sso/sso.go` 时，默认读取 `etc/sso.yaml`。
 
-### 3.4 数据库架构
+最小示例（请按环境替换）：
 
-TODO
+```yaml
+Service:
+  Name: sso.rpc
+  Mode: dev
 
-### 3.5 消息队列架构
+Zrpc:
+  Name: sso.rpc
+  ListenOn: 0.0.0.0:8100
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: sso.rpc
 
-TODO
+Mysql:
+  DSN: root:password@tcp(127.0.0.1:3306)/emo_trash?charset=utf8mb4&parseTime=True&loc=Local
 
-### 3.6 缓存架构
+Mongo:
+  URI: "mongodb://root:password@127.0.0.1:27017/emo_trash?authSource=admin"
+  Database: "emo_trash"
 
-TODO
+Redis:
+  Addr: 127.0.0.1:6379
+  Password: ""
+  DB: 0
 
-### 3.7 监控架构
+JWT:
+  AccessSecret: "replace_access_secret"
+  AccessExpire: 86400
+  RefreshSecret: "replace_refresh_secret"
+  RefreshExpire: 604800
 
-TODO
+Email:
+  Id: "your_email@qq.com"
+  Auth: "your_smtp_auth_code"
+  Host: "smtp.qq.com"
+  Port: "465"
 
-## 4. 系统组件
-
-### 4.1 Makefile
-
-```makefile
-# 项目配置
-PROJECT_NAME := emo_trash                       # 项目名称
-PROJECT_PATH := github.com/krace-tx/emo_trash   # 项目路径
+Snowflake:
+  WorkerID: 1
+  DatacenterID: 1
+  Epoch: 1735660800000
 ```
 
-- `make init` — 初始化项目环境
-- `make all` — 生成所有代码
-- `make api` — 生成 API 代码
-- `make rpc` — 生成 RPC 代码
-- `make mod` — 下载依赖
-- `make clean` — 清理生成的代码
-- `make swagger` — 生成 swagger 文档
-- `make help` — 查看帮助
+### 2) Gateway 配置（示例）
 
-*注意：Windows 若未安装 Make，可通过 WSL2 或 MSYS2 运行 `make`。*
+运行 `app/api/gateway/gateway.go` 时，默认读取 `etc/gateway.yaml`。
+
+```yaml
+Name: gateway.api
+Host: 0.0.0.0
+Port: 8888
+
+Rpc:
+  Auth:
+    Etcd:
+      Hosts:
+        - 127.0.0.1:2379
+      Key: sso.rpc
+```
+
+## 启动方式
+
+在仓库根目录执行：
+
+1. 启动 SSO RPC
+
+```bash
+go run app/rpc/sso/sso.go -f etc/sso.yaml
+```
+
+2. 启动 Gateway API
+
+```bash
+go run app/api/gateway/gateway.go -f etc/gateway.yaml
+```
+
+## 代码生成
+
+定义文件修改后可使用 `Makefile`：
+
+- `make api`：根据 `cmd/api/*.api` 生成 API 代码
+- `make rpc`：根据 `cmd/rpc/*.proto` 生成 RPC 代码
+- `make all`：同时生成 API/RPC
+- `make swagger`：生成 swagger
+- `make help`：查看全部命令
+
+## 认证流程简述（当前）
+
+1. `SendEmailCode`：生成 6 位验证码，写入 Redis（5 分钟），发送邮件。
+2. `Register`：邮箱注册，密码加盐哈希，写入 Mongo `users`，返回双 Token。
+3. `Login`：邮箱登录，状态检查 + 密码校验，返回双 Token。
+4. Token：支持刷新、校验、登出接口。
+
+## 开发约定
+
+- API 层保持薄层：参数映射 + RPC 调用 + `CommonResp` 封装。
+- 业务规则在 RPC 层实现，错误统一使用 `pkg/err`。
+- 禁止提交任何真实账号/密钥配置，使用本地 `etc/*.yaml`。
+- 协议改动顺序建议：`proto/api 定义` -> `生成代码` -> `logic` -> `README`。
