@@ -1,0 +1,169 @@
+import { PostInfo } from './post'
+
+export const MOCK_POSTS: PostInfo[] = [
+  {
+    id: '1',
+    author_id: 'u1',
+    author_name: '深海潜水员',
+    author_avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop',
+    title: '今天的情绪是深蓝色的',
+    content: '下班地铁上盯着窗外发呆，耳机里循环同一首歌，好像也没在听，只是需要一点声音填满空白。',
+    images: [
+      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=500&q=80'
+    ], // 夜晚 / 蓝色调 / 情绪感
+    video: '',
+    ai_evaluation: '',
+    like_count: 128,
+    comment_count: 24,
+    star_count: 56,
+    is_liked: false,
+    is_starred: false,
+    created_at: Date.now() - 1000 * 60 * 60 * 2
+  },
+  {
+    id: '2',
+    author_id: 'u2',
+    author_name: '微光',
+    author_avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
+    title: '碎碎念：关于明天的期待',
+    content: '刚把明天的待办写在便签上，贴在电脑边。虽然还是有点焦虑，但至少事情开始变得可控了。',
+    images: [
+      'https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=500&q=80'
+    ], // 桌面 / 计划 / 生活感
+    video: '',
+    ai_evaluation: '',
+    like_count: 89,
+    comment_count: 12,
+    star_count: 30,
+    is_liked: true,
+    is_starred: false,
+    created_at: Date.now() - 1000 * 60 * 60 * 5
+  },
+  {
+    id: '3',
+    author_id: 'u3',
+    author_name: '治愈系',
+    author_avatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop',
+    title: '海边的风',
+    content: '周末一个人跑去海边，风很大，头发全乱了，但那一刻真的很自由。好像什么都可以重新开始。',
+    images: [
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80'
+    ],
+    video: '',
+    ai_evaluation: '',
+    like_count: 256,
+    comment_count: 45,
+    star_count: 120,
+    is_liked: false,
+    is_starred: true,
+    created_at: Date.now() - 1000 * 60 * 60 * 24
+  },
+  {
+    id: '4',
+    author_id: 'u4',
+    author_name: '无名氏',
+    author_avatar: '',
+    title: '极致的简约',
+    content: '今天把房间收拾了一遍，扔掉了很多没用的东西。意外地轻松，可能情绪也是一样的吧。',
+    images: [
+      'https://images.unsplash.com/photo-1493666438817-866a91353ca9?w=500&q=80&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=500&q=80&auto=format&fit=crop'
+    ], // 干净房间 + 极简空间
+    video: '',
+    ai_evaluation: '',
+    like_count: 42,
+    comment_count: 5,
+    star_count: 10,
+    is_liked: false,
+    is_starred: false,
+    created_at: Date.now() - 1000 * 60 * 60 * 48
+  },
+
+  // 新增数据👇
+
+  {
+    id: '5',
+    author_id: 'u5',
+    author_name: '晚睡冠军',
+    author_avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop',
+    title: '又是熬夜的一天',
+    content: '本来只想刷十分钟短视频，结果一抬头已经两点半。明知道不好，但就是停不下来。',
+    images: [],
+    video: '',
+    ai_evaluation: '',
+    like_count: 73,
+    comment_count: 18,
+    star_count: 22,
+    is_liked: false,
+    is_starred: false,
+    created_at: Date.now() - 1000 * 60 * 30
+  },
+  {
+    id: '6',
+    author_id: 'u6',
+    author_name: '社恐患者',
+    author_avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop',
+    title: '今天又没说话',
+    content: '办公室一整天除了“好的”“收到”，几乎没说别的。其实也不是不想说，只是不知道该怎么插进去。',
+    images: [],
+    video: '',
+    ai_evaluation: '',
+    like_count: 140,
+    comment_count: 36,
+    star_count: 60,
+    is_liked: true,
+    is_starred: true,
+    created_at: Date.now() - 1000 * 60 * 60 * 6
+  },
+  {
+    id: '7',
+    author_id: 'u7',
+    author_name: '早起失败者',
+    author_avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
+    title: '闹钟响了三次',
+    content: '设了7:00、7:10、7:20，结果还是7:50才起。每天都在和自己拉扯。',
+    images: ['https://images.unsplash.com/photo-1506784365847-bbad939e9335?w=500&q=80'],
+    video: '',
+    ai_evaluation: '',
+    like_count: 58,
+    comment_count: 9,
+    star_count: 15,
+    is_liked: false,
+    is_starred: false,
+    created_at: Date.now() - 1000 * 60 * 60 * 10
+  },
+  {
+    id: '8',
+    author_id: 'u8',
+    author_name: '咖啡续命',
+    author_avatar: 'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=100&h=100&fit=crop',
+    title: '第三杯咖啡',
+    content: '下午三点，已经第三杯咖啡了。不是困，是脑子转不动，只能靠苦味撑着。',
+    images: ['https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500&q=80'],
+    video: '',
+    ai_evaluation: '',
+    like_count: 96,
+    comment_count: 21,
+    star_count: 33,
+    is_liked: false,
+    is_starred: false,
+    created_at: Date.now() - 1000 * 60 * 60 * 3
+  },
+  {
+    id: '9',
+    author_id: 'u9',
+    author_name: '散步的人',
+    author_avatar: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100&h=100&fit=crop',
+    title: '晚风刚刚好',
+    content: '吃完饭出来随便走走，风不大不小，刚刚好。那种“生活还不错”的感觉突然就出现了。',
+    images: ['https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=500&q=80'],
+    video: '',
+    ai_evaluation: '',
+    like_count: 180,
+    comment_count: 40,
+    star_count: 88,
+    is_liked: true,
+    is_starred: false,
+    created_at: Date.now() - 1000 * 60 * 60 * 8
+  }
+]

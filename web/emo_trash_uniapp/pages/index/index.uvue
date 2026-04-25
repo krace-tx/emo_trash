@@ -1,17 +1,181 @@
 <template>
-  <view class="page-container">
-    <BaseNavbar title="发现" />
-    <view class="content">
-      <text>发现页面 (开发中...)</text>
-    </view>
+  <view class="page-container index-page">
+    <BaseNavbar :placeholder="true" bgColor="#FDFAF3">
+      <template #default>
+        <view class="nav-logo-wrapper">
+          <image class="nav-logo" src="/static/logo.png" mode="aspectFit"></image>
+        </view>
+      </template>
+    </BaseNavbar>
+    
+    <scroll-view class="content-scroll" scroll-y @scrolltolower="loadMore">
+      <view class="waterfall-container">
+        <!-- 双列瀑布流布局 -->
+        <view class="waterfall-column left-column">
+          <DiscoveryCard 
+            v-for="post in leftList" 
+            :key="post.id" 
+            :post="post"
+            @click="toDetail(post.id)"
+          />
+        </view>
+        <view class="waterfall-column right-column">
+          <DiscoveryCard 
+            v-for="post in rightList" 
+            :key="post.id" 
+            :post="post"
+            @click="toDetail(post.id)"
+          />
+        </view>
+      </view>
+      
+      <view class="load-more-status" v-if="hasMore">
+        <text class="status-text">正在加载更多情绪...</text>
+      </view>
+      <view class="load-more-status" v-else>
+        <text class="status-text">到底了，这就是全部的情绪了</text>
+      </view>
+      
+      <!-- 为底部自定义 TabBar 留出占位空间 -->
+      <view class="tabbar-placeholder"></view>
+    </scroll-view>
+
+    <!-- 自定义底部导航 -->
+    <BaseTabBar />
   </view>
 </template>
 
 <script setup>
+import { ref, reactive, onMounted } from 'vue'
 import BaseNavbar from '@/components/BaseNavbar.uvue'
+import DiscoveryCard from '@/components/DiscoveryCard.uvue'
+import BaseTabBar from '@/components/BaseTabBar.uvue'
+import { listPosts, type PostInfo } from '@/api/post'
+import { MOCK_POSTS } from '@/api/mock'
+
+const leftList = ref<PostInfo[]>([])
+const rightList = ref<PostInfo[]>([])
+const hasMore = ref(true)
+const cursor = ref('')
+
+onMounted(() => {
+  fetchPosts()
+})
+
+onShow(() => {
+  uni.setStorageSync('current_tab_path', '/pages/index/index')
+})
+
+async function fetchPosts() {
+  try {
+    const res = await listPosts({
+      cursor: cursor.value,
+      page_size: 10,
+      type: 'discovery'
+    })
+    
+    let listToDisplay = res.list
+    
+    // 如果 API 返回为空且是第一页，则使用 Mock 数据
+    if (listToDisplay.length === 0 && cursor.value === '') {
+      console.log('API 返回数据为空，加载 Mock 数据')
+      listToDisplay = MOCK_POSTS
+      hasMore.value = false
+    } else {
+      hasMore.value = res.has_more
+      cursor.value = res.next_cursor
+    }
+    
+    // 分发到左右两列
+    listToDisplay.forEach((post) => {
+      if (leftList.value.length <= rightList.value.length) {
+        leftList.value.push(post)
+      } else {
+        rightList.value.push(post)
+      }
+    })
+  } catch (e) {
+    console.error('获取帖子失败，加载 Mock 数据', e)
+    if (cursor.value === '') {
+      MOCK_POSTS.forEach((post) => {
+        if (leftList.value.length <= rightList.value.length) {
+          leftList.value.push(post)
+        } else {
+          rightList.value.push(post)
+        }
+      })
+      hasMore.value = false
+    }
+  }
+}
+
+function loadMore() {
+  if (hasMore.value) {
+    fetchPosts()
+  }
+}
+
+function toDetail(id) {
+  uni.navigateTo({ url: `/pages/post/detail?id=${id}` })
+}
+
+function toCreatePost() {
+  uni.navigateTo({ url: '/pages/post/create' })
+}
 </script>
 
-<style scoped>
-.page-container { padding: 40rpx; }
-.content { display: flex; justify-content: center; padding-top: 100rpx; }
+<style lang="scss" scoped>
+.index-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #FDFAF3;
+}
+
+.nav-logo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  .nav-logo {
+    width: 240rpx;
+    height: 60rpx;
+  }
+}
+
+.content-scroll {
+  flex: 1;
+  padding: 0 16rpx;
+}
+
+.waterfall-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-top: 24rpx;
+}
+
+.waterfall-column {
+  width: 48.5%;
+  display: flex;
+  flex-direction: column;
+}
+
+.load-more-status {
+  padding: 40rpx 0 80rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* 确保垂直居中 */
+  text-align: center;  /* 确保文字水平居中 */
+  width: 100%;
+  .status-text {
+    font-size: 24rpx;
+    color: #A3A3A3;
+    font-weight: 300;
+  }
+}
+
+.tabbar-placeholder {
+  height: 160rpx; /* 留出自定义 TabBar 的高度 */
+}
 </style>

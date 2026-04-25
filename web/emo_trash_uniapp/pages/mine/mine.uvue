@@ -1,33 +1,225 @@
 <template>
-  <view class="page-container">
-    <BaseNavbar title="我" />
+  <view class="page-container mine-page">
+    <BaseNavbar :placeholder="true" bgColor="#FDFAF3">
+      <template #default>
+        <view class="nav-logo-wrapper">
+          <image class="nav-logo" src="/static/logo.png" mode="aspectFit"></image>
+        </view>
+      </template>
+    </BaseNavbar>
+
     <view class="content">
-      <text v-if="userStore.userInfo">你好, {{ userStore.userInfo.nickname }}</text>
-      <button v-else @click="toLogin">去登录</button>
-      
-      <view v-if="userStore.userInfo" style="margin-top: 40rpx;">
-         <button @click="handleLogout">退出登录</button>
+      <!-- 用户基础信息卡片 -->
+      <view class="profile-header">
+        <view class="avatar-wrapper">
+          <image class="avatar" :src="userStore.userInfo?.avatar || '/static/logo.png'" mode="aspectFill"></image>
+        </view>
+        <view class="user-info">
+          <text class="nickname">{{ userStore.userInfo?.nickname || '未登录' }}</text>
+          <text class="bio">{{ userStore.userInfo?.bio || '潜入深海，寄存情绪。' }}</text>
+        </view>
+      </view>
+
+      <!-- 统计数据 -->
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="num">0</text>
+          <text class="label">情绪</text>
+        </view>
+        <view class="stat-item">
+          <text class="num">0</text>
+          <text class="label">获赞</text>
+        </view>
+        <view class="stat-item">
+          <text class="num">0</text>
+          <text class="label">关注</text>
+        </view>
+      </view>
+
+      <!-- 功能列表 -->
+      <view class="menu-list">
+        <view class="menu-item" @click="toEditProfile">
+          <view class="item-left">
+            <text class="item-icon">✎</text>
+            <text class="item-text">编辑资料</text>
+          </view>
+          <text class="arrow">›</text>
+        </view>
+        <view class="menu-item">
+          <view class="item-left">
+            <text class="item-icon">★</text>
+            <text class="item-text">我的收藏</text>
+          </view>
+          <text class="arrow">›</text>
+        </view>
+        <view class="menu-item" @click="handleLogout">
+          <view class="item-left">
+            <text class="item-icon">✕</text>
+            <text class="item-text">退出登录</text>
+          </view>
+          <text class="arrow">›</text>
+        </view>
       </view>
     </view>
+    
+    <!-- 自定义底部导航 -->
+    <BaseTabBar />
   </view>
 </template>
 
 <script setup>
 import BaseNavbar from '@/components/BaseNavbar.uvue'
+import BaseTabBar from '@/components/BaseTabBar.uvue'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
 
-function toLogin() {
-  uni.navigateTo({ url: '/pages/auth/login/index' })
+onShow(() => {
+  uni.setStorageSync('current_tab_path', '/pages/mine/mine')
+})
+
+function toEditProfile() {
+  uni.navigateTo({ url: '/pages_user/edit-profile/index' })
 }
 
 function handleLogout() {
   userStore.logout()
+  uni.reLaunch({ url: '/pages/auth/login/index' })
 }
 </script>
 
-<style scoped>
-.page-container { padding: 40rpx; }
-.content { display: flex; flex-direction: column; align-items: center; padding-top: 100rpx; }
+<style lang="scss" scoped>
+.mine-page {
+  background-color: #FDFAF3;
+  min-height: 100vh;
+}
+
+.nav-logo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  .nav-logo {
+    width: 240rpx;
+    height: 60rpx;
+  }
+}
+
+.content {
+  padding: 40rpx 48rpx;
+  padding-bottom: 160rpx; /* 为底部 TabBar 留出空间 */
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 60rpx;
+  
+  .avatar-wrapper {
+    width: 140rpx;
+    height: 140rpx;
+    border-radius: 50%;
+    border: 4rpx solid #FFFFFF;
+    box-shadow: 0 8rpx 24rpx rgba(107, 139, 164, 0.1);
+    overflow: hidden;
+    margin-right: 32rpx;
+    background-color: #FFFFFF;
+    .avatar {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  
+  .user-info {
+    flex: 1;
+    .nickname {
+      font-size: 40rpx;
+      font-weight: 600;
+      color: #334155;
+      display: block;
+      margin-bottom: 12rpx;
+    }
+    .bio {
+      font-size: 24rpx;
+      color: #707070;
+      display: block;
+      font-weight: 300;
+    }
+  }
+}
+
+.stats-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background-color: #FFFFFF;
+  padding: 40rpx 0;
+  border-radius: 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(107, 139, 164, 0.05);
+  margin-bottom: 60rpx;
+  
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .num {
+      font-size: 36rpx;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 8rpx;
+    }
+    .label {
+      font-size: 22rpx;
+      color: #A3A3A3;
+      font-weight: 300;
+    }
+  }
+}
+
+.menu-list {
+  background-color: #FFFFFF;
+  border-radius: 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(107, 139, 164, 0.05);
+  overflow: hidden;
+  
+  .menu-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32rpx 40rpx;
+    border-bottom: 1rpx solid #F7F8FA;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:active {
+      background-color: #F9FAFB;
+    }
+    
+    .item-left {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .item-icon {
+        font-size: 32rpx;
+        color: #6B8BA4;
+        margin-right: 24rpx;
+      }
+      .item-text {
+        font-size: 28rpx;
+        color: #4A4A4A;
+        font-weight: 400;
+      }
+    }
+    
+    .arrow {
+      font-size: 32rpx;
+      color: #D0D0D0;
+      font-weight: 200;
+    }
+  }
+}
 </style>

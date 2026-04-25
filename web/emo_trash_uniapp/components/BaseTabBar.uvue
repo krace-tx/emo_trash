@@ -1,0 +1,178 @@
+<template>
+  <view class="tabbar-container">
+    <view class="tabbar-inner">
+      <!-- 发现 -->
+      <view class="tab-item" @click="switchTab('/pages/index/index')">
+        <image 
+          :src="currentPath === '/pages/index/index' ? '/static/tabbar/discovery-active.svg' : '/static/tabbar/discovery.svg'" 
+          class="tab-icon"
+        ></image>
+        <text class="tab-text" :class="{ 'active': currentPath === '/pages/index/index' }">发现</text>
+      </view>
+
+      <!-- 我 -->
+      <view class="tab-item" @click="switchTab('/pages/mine/mine')">
+        <image
+          :src="currentPath === '/pages/mine/mine' ? '/static/tabbar/mine-active.svg' : '/static/tabbar/mine.svg'"
+          class="tab-icon"
+        ></image>
+        <text class="tab-text" :class="{ 'active': currentPath === '/pages/mine/mine' }">我</text>
+      </view>
+
+      <!-- ⭐ 悬浮中间按钮（移到最后，脱离布局） -->
+      <view class="tab-item-center" @click="toCreate">
+        <view class="plus-btn-outer">
+          <view class="plus-btn">
+            <text class="plus-icon">+</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="safe-area-placeholder"></view>
+  </view>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const currentPath = ref('')
+
+onMounted(() => {
+  getCurrentPath()
+})
+
+function getCurrentPath() {
+  const pages = getCurrentPages()
+  if (pages.length > 0) {
+    const route = pages[pages.length - 1].route
+    currentPath.value = route.startsWith('/') ? route : '/' + route
+  }
+}
+
+function switchTab(url : string) {
+  if (currentPath.value === url) return
+  uni.switchTab({
+    url,
+    success: () => {
+      currentPath.value = url
+    }
+  })
+}
+
+function toCreate() {
+  // #ifdef APP-PLUS
+  uni.vibrateShort()
+  // #endif
+  uni.navigateTo({ url: '/pages/post/create' })
+}
+</script>
+
+<style lang="scss" scoped>
+.tabbar-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #FDFAF3;
+  z-index: 999;
+  border-top: 1rpx solid rgba(107, 139, 164, 0.06);
+
+  overflow: visible; /* ⭐允许按钮溢出 */
+}
+
+.tabbar-inner {
+  height: 110rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between; /* ⭐左右分布 */
+  padding: 0 80rpx;
+
+  position: relative;
+  overflow: visible; /* ⭐关键 */
+}
+
+/* 左右 tab */
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120rpx; /* ⭐固定宽度避免被挤 */
+
+  .tab-icon {
+    width: 52rpx;
+    height: 52rpx;
+    margin-bottom: 4rpx;
+  }
+
+  .tab-text {
+    font-size: 20rpx;
+    color: #BDBDBD;
+
+    &.active {
+      color: #6B8BA4;
+      font-weight: 600;
+    }
+  }
+}
+
+/* ⭐ 中间悬浮按钮（核心） */
+.tab-item-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -46rpx; /* ⭐ = 按钮一半高度 */
+
+  z-index: 10;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20rpx; /* ⭐扩大点击区域 */
+}
+
+/* 外层白色包裹（浮层感） */
+.plus-btn-outer {
+  padding: 12rpx;
+  background-color: #FDFAF3;
+  border-radius: 50%;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+/* 主按钮 */
+.plus-btn {
+  width: 112rpx;
+  height: 112rpx;
+  background-color: #6B8BA4;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* 更真实的浮起阴影 */
+  box-shadow:
+    0 8rpx 24rpx rgba(107, 139, 164, 0.25),
+    0 2rpx 6rpx rgba(107, 139, 164, 0.15);
+
+  transition: all 0.2s;
+
+  .plus-icon {
+    color: #FFFFFF;
+    font-size: 56rpx;
+    font-weight: 200;
+    margin-top: -4rpx;
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+.safe-area-placeholder {
+  height: env(safe-area-inset-bottom);
+}
+</style>

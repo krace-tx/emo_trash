@@ -1,0 +1,117 @@
+<template>
+  <view class="discovery-card" @click="$emit('click')">
+    <!-- 图片区域：仅在有图时显示，保持高度自适应 -->
+    <view v-if="post.images && post.images.length > 0" class="image-wrapper">
+      <image :src="post.images[0]" mode="widthFix" class="card-image"></image>
+    </view>
+    
+    <view class="card-body">
+      <!-- 标题：左对齐，最多两行 -->
+      <text class="card-title">{{ post.title || post.content }}</text>
+      
+      <!-- 底部互动区：横向排布 -->
+      <view class="card-footer">
+        <view class="footer-left">
+          <image :src="post.author_avatar || '/static/logo.png'" class="mini-avatar"></image>
+          <text class="author-name">{{ post.author_name }}</text>
+        </view>
+        <view class="footer-right">
+          <text class="heart-icon">{{ post.is_liked ? '♥' : '♡' }}</text>
+          <text class="count-text">{{ post.like_count }}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup>
+const props = defineProps({
+  post: {
+    type: Object,
+    required: true
+  }
+})
+defineEmits(['click'])
+</script>
+
+<style lang="scss" scoped>
+.discovery-card {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(107, 139, 164, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.image-wrapper {
+  width: 100%;
+  line-height: 0; /* 消除底部间隙 */
+}
+
+.card-image {
+  width: 100%;
+  display: block;
+}
+
+.card-body {
+  padding: 16rpx 20rpx 20rpx;
+}
+
+.card-title {
+  font-size: 26rpx;
+  color: #334155;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left; /* 强制左对齐 */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+}
+
+.card-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  .mini-avatar {
+    width: 32rpx;
+    height: 32rpx;
+    border-radius: 50%;
+    margin-right: 8rpx;
+    background-color: #f5f7fa;
+  }
+  .author-name {
+    font-size: 20rpx;
+    color: #707070;
+    max-width: 120rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.footer-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  .heart-icon {
+    font-size: 24rpx;
+    color: #6B8BA4;
+    margin-right: 4rpx;
+  }
+  .count-text {
+    font-size: 20rpx;
+    color: #707070;
+  }
+}
+</style>
