@@ -1,0 +1,136 @@
+import { ref } from 'vue'
+import { login as apiLogin, register as apiRegister, sendEmailCode as apiSendCode, resetPassword as apiResetPassword } from '@/api/sso'
+import { useUserStore } from '@/stores/user'
+import { uiStore } from '@/stores/ui'
+import { validateEmail, validatePassword } from '@/utils/validate'
+
+export function useAuth() {
+  const userStore = useUserStore()
+  const loading = ref(false)
+  const countdown = ref(0)
+  let timer: number | null = null
+
+  // 发送验证码
+  async function sendCode(email: string, scene: string): Promise<boolean> {
+    if (!validateEmail(email)) {
+      uiStore.showToast('邮箱格式不正确', 'error')
+      return false
+    }
+    
+    if (countdown.value > 0) return false
+
+    try {
+      loading.value = true
+      const success = await apiSendCode(email, scene)
+      if (success) {
+        uiStore.showToast('验证码已发送', 'success')
+        startCountdown()
+      }
+      return success
+    } catch (e) {
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  function startCountdown() {
+    countdown.value = 60
+    timer = setInterval(() => {
+      countdown.value--
+      if (countdown.value <= 0) {
+        if (timer != null) clearInterval(timer)
+      }
+    }, 1000)
+  }
+
+  // 登录
+  async function login(email: string, pass: string): Promise<boolean> {
+    if (!validateEmail(email)) {
+      uiStore.showToast('邮箱格式不正确', 'error')
+      return false
+    }
+    if (!validatePassword(pass)) {
+      uiStore.showToast('密码长度需为8-32位', 'error')
+      return false
+    }
+
+    try {
+      loading.value = true
+      const res = await apiLogin({ email, password: pass })
+      userStore.setToken(res.access_token)
+      await userStore.fetchUserInfo()
+      return true
+    } catch (e) {
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 注册
+  async function register(email: string, code: string, pass: string): Promise<boolean> {
+    if (!validateEmail(email)) {
+      uiStore.showToast('邮箱格式不正确', 'error')
+      return false
+    }
+    if (code.length < 4) {
+      uiStore.showToast('请输入正确的验证码', 'error')
+      return false
+    }
+    if (!validatePassword(pass)) {
+      uiStore.showToast('密码长度需为8-32位', 'error')
+      return false
+    }
+
+    try {
+      loading.value = true
+      const res = await apiRegister({ email, email_code: code, password: pass })
+      userStore.setToken(res.access_token)
+      await userStore.fetchUserInfo()
+      return true
+    } catch (e) {
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  // 重置密码
+  async function resetPassword(email: string, code: string, pass: string): Promise<boolean> {
+     if (!validateEmail(email)) {
+      uiStore.showToast('邮箱格式不正确', 'error')
+      return false
+    }
+    if (code.length < 4) {
+      uiStore.showToast('请输入正确的验证码', 'error')
+      return false
+    }
+    if (!validatePassword(pass)) {
+      uiStore.showToast('密码长度需为8-32位', 'error')
+      return false
+    }
+    
+    try {
+      loading.value = true
+      const success = await apiResetPassword({ email, email_code: code, new_password: pass })
+      if (success) {
+        uiStore.showToast('重置成功', 'success')
+      }
+      return success
+    } catch (e) {
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return {
+    loading,
+    countdown,
+    sendCode,
+    login,
+    register,
+    resetPassword
+  }
+}

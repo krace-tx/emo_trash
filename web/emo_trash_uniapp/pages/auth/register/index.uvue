@@ -1,0 +1,138 @@
+<template>
+  <view class="page-container elegant-cure">
+    <BaseNavbar :showBack="true" bgColor="#FDFAF3" />
+
+    <view class="content">
+      <view class="header-section">
+        <text class="page-title">开启私密空间</text>
+        <text class="page-subtitle">遇见懂你的人，寄存你的情绪</text>
+      </view>
+
+      <view class="form-section">
+        <BaseInput 
+          v-model="email" 
+          placeholder="常用邮箱" 
+          type="text" 
+          iconType="mail"
+        >
+          <template #right>
+            <view class="code-btn" :class="{ 'is-active': countdown > 0 }" @click="handleSendCode">
+              <text class="code-text">{{ countdown > 0 ? countdown + 's' : '获取验证码' }}</text>
+            </view>
+          </template>
+        </BaseInput>
+        
+        <view class="spacer"></view>
+
+        <BaseInput 
+          v-model="code" 
+          placeholder="6位验证码" 
+          type="number" 
+          iconType="key"
+          :maxlength="6"
+        />
+
+        <view class="spacer"></view>
+
+        <BaseInput 
+          v-model="password" 
+          placeholder="设置密码 (8-32位)" 
+          :password="true"
+          iconType="lock"
+        />
+
+        <view class="spacer"></view>
+
+        <BaseInput 
+          v-model="confirmPassword" 
+          placeholder="再次输入密码" 
+          :password="true"
+          iconType="lock"
+        />
+      </view>
+
+      <view class="action-section">
+        <BaseButton 
+          text="立 即 注 册" 
+          :disabled="!isReady" 
+          :loading="loading" 
+          @click="handleRegister" 
+        />
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import BaseNavbar from '@/components/BaseNavbar.uvue'
+import BaseInput from '@/components/BaseInput.uvue'
+import BaseButton from '@/components/BaseButton.uvue'
+import { useAuth } from '@/composables/useAuth'
+
+const email = ref('')
+const code = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+
+const { loading, countdown, sendCode, register } = useAuth()
+
+onShow(() => {
+  email.value = ''
+  code.value = ''
+  password.value = ''
+  confirmPassword.value = ''
+})
+
+const isReady = computed(() => {
+  return email.value && code.value.length === 6 && password.value.length >= 8 && confirmPassword.value.length >= 8
+})
+
+async function handleSendCode() {
+  if (countdown.value > 0 || loading.value) return
+  await sendCode(email.value, 'register')
+}
+
+async function handleRegister() {
+  if (password.value !== confirmPassword.value) {
+    uni.showToast({ title: '两次输入的密码不一致', icon: 'none' })
+    return
+  }
+  const success = await register(email.value, code.value, password.value)
+  if (success) {
+    uni.showToast({ title: '注册成功', icon: 'success' })
+    setTimeout(() => { uni.reLaunch({ url: '/pages/index/index' }) }, 1500)
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.page-container.elegant-cure {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #FDFAF3;
+  padding: 0 88rpx;
+}
+
+.header-section {
+  padding: 40rpx 0 80rpx;
+  .page-title { font-size: 48rpx; font-weight: 300; color: #334155; display: block; letter-spacing: 4rpx; }
+  .page-subtitle { font-size: 26rpx; color: #707070; margin-top: 20rpx; display: block; font-weight: 300; }
+}
+
+.form-section {
+  margin-top: 40rpx;
+  .spacer { height: 40rpx; }
+}
+
+.code-btn {
+  padding: 10rpx 0;
+  .code-text { font-size: 26rpx; color: #6B8BA4; font-weight: 400; }
+  &.is-active .code-text { color: #D0C9C0; }
+}
+
+.action-section {
+  margin-top: 100rpx;
+}
+</style>

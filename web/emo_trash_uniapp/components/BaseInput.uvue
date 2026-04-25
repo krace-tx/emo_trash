@@ -1,0 +1,170 @@
+<template>
+  <view class="base-input-wrapper" :class="{ 'is-focus': isFocus }">
+    <!-- 左侧线性图标区域 -->
+    <view v-if="iconType" class="linear-icon-left">
+      <!-- 邮件图标 -->
+      <view v-if="iconType === 'mail'" class="icon-mail-box">
+        <view class="icon-mail-rect"></view>
+        <view class="icon-mail-v"></view>
+      </view>
+      <!-- 锁头图标 -->
+      <view v-if="iconType === 'lock'" class="icon-lock-box">
+        <view class="icon-lock-handle"></view>
+        <view class="icon-lock-body"></view>
+      </view>
+      <!-- 钥匙/验证码图标 -->
+      <view v-if="iconType === 'key'" class="icon-key-box">
+        <view class="icon-key-head"></view>
+        <view class="icon-key-body"></view>
+      </view>
+    </view>
+    
+    <input
+      class="base-input"
+      :value="modelValue"
+      :type="type"
+      :placeholder="placeholder"
+      placeholder-style="color: #A3A3A3; font-weight: 300; font-size: 28rpx;"
+      :password="password"
+      @input="onInput"
+      @focus="isFocus = true"
+      @blur="isFocus = false"
+      :maxlength="maxlength"
+    />
+    
+    <!-- 右侧插槽 -->
+    <slot name="right"></slot>
+  </view>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const props = defineProps({
+  modelValue: { type: String, default: '' },
+  type: { type: String, default: 'text' },
+  placeholder: { type: String, default: '' },
+  password: { type: Boolean, default: false },
+  maxlength: { type: Number, default: 140 },
+  iconType: { type: String, default: '' } // mail, lock, key
+})
+
+const emit = defineEmits(['update:modelValue'])
+const isFocus = ref(false)
+
+function onInput(e) {
+  emit('update:modelValue', e.detail.value)
+}
+</script>
+
+<style lang="scss" scoped>
+/* 线宽标准：1.5rpx 约等于 0.75px-1px，保持极细质感 */
+$line-width: 2rpx;
+$inactive-color: #BDBDBD;
+$active-color: #6B8BA4;
+
+.base-input-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1rpx solid #EAE3D9;
+  padding: 32rpx 0 16rpx;
+  transition: all 0.4s ease;
+  
+  &.is-focus {
+    border-bottom-color: $active-color;
+    .icon-mail-rect, .icon-mail-v, 
+    .icon-lock-handle, .icon-lock-body,
+    .icon-key-head, .icon-key-body {
+      border-color: $active-color;
+    }
+  }
+}
+
+.linear-icon-left {
+  width: 44rpx;
+  margin-right: 24rpx; /* 图标右侧留出呼吸空间 */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* 邮件图标 CSS 绘制 */
+.icon-mail-box {
+  width: 32rpx;
+  height: 24rpx;
+  position: relative;
+  .icon-mail-rect {
+    width: 100%;
+    height: 100%;
+    border: $line-width solid $inactive-color;
+    border-radius: 4rpx;
+  }
+  .icon-mail-v {
+    position: absolute;
+    top: 2rpx;
+    left: 4rpx;
+    width: 20rpx;
+    height: 12rpx;
+    border-left: $line-width solid $inactive-color;
+    border-bottom: $line-width solid $inactive-color;
+    transform: rotate(-45deg);
+    border-radius: 0 0 0 2rpx;
+  }
+}
+
+/* 锁头图标 CSS 绘制 */
+.icon-lock-box {
+  width: 28rpx;
+  height: 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .icon-lock-handle {
+    width: 18rpx;
+    height: 14rpx;
+    border: $line-width solid $inactive-color;
+    border-bottom: none;
+    border-radius: 10rpx 10rpx 0 0;
+  }
+  .icon-lock-body {
+    width: 100%;
+    height: 18rpx;
+    border: $line-width solid $inactive-color;
+    border-radius: 4rpx;
+    background: transparent; /* 无锁孔留白 */
+  }
+}
+
+/* 钥匙图标 CSS 绘制 */
+.icon-key-box {
+  width: 32rpx;
+  height: 32rpx;
+  position: relative;
+  .icon-key-head {
+    width: 16rpx;
+    height: 16rpx;
+    border: $line-width solid $inactive-color;
+    border-radius: 50%;
+  }
+  .icon-key-body {
+    position: absolute;
+    top: 14rpx;
+    left: 8rpx;
+    width: 20rpx;
+    height: 12rpx;
+    border-left: $line-width solid $inactive-color;
+    border-top: $line-width solid $inactive-color;
+    transform: rotate(45deg);
+  }
+}
+
+.base-input {
+  flex: 1;
+  height: 60rpx;
+  font-size: 32rpx;
+  color: #334155;
+  font-weight: 300;
+  background: transparent;
+}
+</style>

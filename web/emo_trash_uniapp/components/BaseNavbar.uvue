@@ -1,0 +1,110 @@
+<template>
+  <view v-if="placeholder" class="navbar-placeholder" :style="{ height: navbarHeight + 'px' }"></view>
+  <view class="navbar" :style="{ 
+    height: navbarHeight + 'px', 
+    paddingTop: statusBarHeight + 'px',
+    backgroundColor: bgColor 
+  }">
+    <view class="navbar-left" @click="onLeftClick">
+      <slot name="left">
+        <!-- 默认简约线性返回按钮 -->
+        <view v-if="showBack" class="back-icon-box">
+          <view class="back-arrow-line"></view>
+        </view>
+      </slot>
+    </view>
+    <view class="navbar-title">
+      <text class="title-text" :style="{ color: titleColor }">{{ title }}</text>
+    </view>
+    <view class="navbar-right">
+      <slot name="right"></slot>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const props = defineProps({
+  title: { type: String, default: '' },
+  bgColor: { type: String, default: '#FDFAF3' }, // 默认适配奶油色背景
+  titleColor: { type: String, default: '#334155' },
+  placeholder: { type: Boolean, default: true },
+  showBack: { type: Boolean, default: false }
+})
+
+const emit = defineEmits(['leftClick'])
+
+const statusBarHeight = ref(0)
+const navbarHeight = ref(44)
+
+onMounted(() => {
+  const sys = uni.getSystemInfoSync()
+  statusBarHeight.value = sys.statusBarHeight || 0
+  navbarHeight.value = (sys.statusBarHeight || 0) + 44
+})
+
+function onLeftClick() {
+  if (props.showBack) {
+    uni.navigateBack()
+  }
+  emit('leftClick')
+}
+</script>
+
+<style lang="scss" scoped>
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32rpx;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.navbar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  .title-text {
+    font-size: 32rpx;
+    font-weight: 500;
+  }
+}
+
+.navbar-left, .navbar-right {
+  min-width: 80rpx;
+  height: 44px; /* 固定导航栏高度部分 */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.navbar-right {
+  justify-content: flex-end;
+}
+
+/* 简约线性返回按钮 CSS 绘制 */
+.back-icon-box {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.back-arrow-line {
+  width: 20rpx;
+  height: 20rpx;
+  border-left: 3rpx solid #334155;
+  border-top: 3rpx solid #334155;
+  transform: rotate(-45deg);
+  margin-left: 8rpx;
+}
+</style>

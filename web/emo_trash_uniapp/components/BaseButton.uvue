@@ -1,0 +1,78 @@
+<template>
+  <view 
+    class="base-button-wrapper"
+    :class="[size, { 'is-disabled': disabled || loading }]"
+    @click="handleClick"
+  >
+    <view class="base-button-inner" :class="[type]">
+      <text v-if="loading" class="loading-icon">...</text>
+      <text v-else class="button-text">{{ text }}</text>
+    </view>
+  </view>
+</template>
+
+<script setup>
+const props = defineProps({
+  text: { type: String, default: '' },
+  type: { type: String, default: 'primary' }, 
+  size: { type: String, default: 'large' }, 
+  disabled: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false }
+})
+
+const emit = defineEmits(['click'])
+
+function handleClick(e) {
+  if (!props.disabled && !props.loading) {
+    emit('click', e)
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.base-button-wrapper {
+  width: 100%;
+  transition: all 0.3s ease;
+  
+  &:active {
+    transform: scale(0.97);
+  }
+  
+  &.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.base-button-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100rpx;
+  border-radius: 100rpx; /* 使用明确的大圆角而非 999 */
+  border: none;
+  font-weight: 500;
+  letter-spacing: 2rpx;
+  /* 强制开启 GPU 加速，有时能修复某些平台的阴影渲染问题 */
+  transform: translateZ(0);
+}
+
+.primary {
+  background-color: #6B8BA4;
+  color: #FFFFFF;
+}
+
+.secondary {
+  background-color: #F8F9FA;
+  color: #666666;
+}
+
+.button-text {
+  font-size: 32rpx;
+  font-weight: 500;
+}
+
+.loading-icon {
+  font-size: 32rpx;
+}
+</style>

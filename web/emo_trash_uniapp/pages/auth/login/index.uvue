@@ -1,0 +1,274 @@
+<template>
+  <view class="page-container elegant-cure">
+    <BaseNavbar :placeholder="true" bgColor="transparent" />
+    <view class="content">
+      <!-- 顶部 Logo 区域 -->
+      <view class="logo-section">
+        <image class="logo-image" src="/static/logo.png" mode="aspectFit"></image>
+      </view>
+
+      <!-- 呼吸感十足的输入区 -->
+      <view class="form-section">
+        <BaseInput 
+          v-model="email" 
+          placeholder="邮箱账号" 
+          type="text" 
+          iconType="mail"
+        />
+        <view class="spacer"></view>
+        <BaseInput 
+          v-model="password" 
+          placeholder="登录密码" 
+          :password="!passwordVisible"
+          iconType="lock"
+        >
+          <template #right>
+            <view class="eye-wrapper" @click="passwordVisible = !passwordVisible">
+              <view class="linear-eye" :class="{ 'is-open': passwordVisible }">
+                <!-- 睁眼：椭圆轮廓 + 中心点 -->
+                <view v-if="passwordVisible" class="eye-outline">
+                  <view class="eye-dot"></view>
+                </view>
+                <!-- 闭眼：向下弧线 -->
+                <view v-else class="eye-closed-arc"></view>
+              </view>
+            </view>
+          </template>
+        </BaseInput>
+      </view>
+
+      <!-- 操作区 -->
+      <view class="action-section">
+        <BaseButton 
+          text="登 录" 
+          :loading="loading" 
+          @click="handleLogin" 
+        />
+        
+        <view class="helper-links">
+          <text class="link-text" @click="toResetPassword">找回密码</text>
+          <text class="link-text" @click="toRegister">注册账号</text>
+        </view>
+      </view>
+
+      <!-- 底部协议 -->
+      <view class="protocol-footer" :class="{ 'shake': protocolShake }">
+        <view class="custom-checkbox-box" @click="toggleAgree">
+          <view class="custom-checkbox" :class="{ 'checked': isAgree }">
+            <text v-if="isAgree" class="check-mark">✓</text>
+          </view>
+        </view>
+        <view class="protocol-text-box">
+          <text class="p-normal">我已阅读并同意</text>
+          <text class="p-link">《用户协议》</text>
+          <text class="p-normal">与</text>
+          <text class="p-link">《隐私政策》</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import BaseInput from '@/components/BaseInput.uvue'
+import BaseButton from '@/components/BaseButton.uvue'
+import { useAuth } from '@/composables/useAuth'
+
+const email = ref('')
+const password = ref('')
+const passwordVisible = ref(false)
+const isAgree = ref(false)
+const protocolShake = ref(false)
+
+const { loading, login } = useAuth()
+
+onShow(() => {
+  // 进入页面时清空数据
+  email.value = ''
+  password.value = ''
+  isAgree.value = false
+})
+
+function toggleAgree() {
+  isAgree.value = !isAgree.value
+}
+
+async function handleLogin() {
+  if (!isAgree.value) {
+    triggerShake()
+    return
+  }
+  const success = await login(email.value, password.value)
+  if (success) {
+    uni.reLaunch({ url: '/pages/index/index' })
+  }
+}
+
+function triggerShake() {
+  protocolShake.value = true
+  // #ifdef APP-PLUS
+  uni.vibrateShort()
+  // #endif
+  setTimeout(() => { protocolShake.value = false }, 500)
+}
+
+function toRegister() { uni.navigateTo({ url: '/pages/auth/register/index' }) }
+function toResetPassword() { uni.navigateTo({ url: '/pages/auth/reset-password/index' }) }
+</script>
+
+<style lang="scss" scoped>
+$line-width: 2rpx;
+$inactive-color: #BDBDBD;
+$active-color: #6B8BA4;
+
+.page-container.elegant-cure {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #FDFAF3; 
+  padding: 0 88rpx;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-section {
+  padding: 120rpx 0 80rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  .logo-image {
+    width: 400rpx;
+    height: 400rpx;
+    animation: fadeInDown 0.8s ease-out;
+  }
+}
+
+.form-section {
+  margin-bottom: 100rpx;
+  .spacer { height: 40rpx; }
+}
+
+/* 极致线性眼睛图标 */
+.eye-wrapper {
+  padding: 10rpx 0 10rpx 20rpx;
+  display: flex;
+  align-items: center;
+}
+
+.linear-eye {
+  width: 40rpx;
+  height: 32rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  
+  .eye-outline {
+    width: 36rpx;
+    height: 20rpx;
+    border: $line-width solid $inactive-color;
+    border-radius: 80% 0; /* 两头尖的椭圆 */
+    transform: rotate(45deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    .eye-dot {
+      width: 8rpx;
+      height: 8rpx;
+      background-color: $inactive-color;
+      border-radius: 50%;
+      transform: rotate(-45deg);
+    }
+  }
+  
+  &.is-open {
+    .eye-outline { border-color: $active-color; }
+    .eye-dot { background-color: $active-color; }
+  }
+  
+  .eye-closed-arc {
+    width: 32rpx;
+    height: 16rpx;
+    border-bottom: $line-width solid $inactive-color;
+    border-radius: 0 0 16rpx 16rpx; /* 向下弧线 */
+    margin-top: -8rpx;
+  }
+}
+
+.action-section {
+  .helper-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50rpx;
+    padding: 0 10rpx;
+    .link-text {
+      font-size: 26rpx;
+      color: #707070;
+      font-weight: 300;
+    }
+  }
+}
+
+.protocol-footer {
+  margin-top: auto;
+  padding-bottom: 60rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  
+  &.shake { animation: shake 0.5s; }
+  
+  .custom-checkbox-box {
+    padding: 10rpx;
+    margin-right: 12rpx;
+  }
+  
+  .custom-checkbox {
+    width: 28rpx;
+    height: 28rpx;
+    border: 1rpx solid #D0C9C0;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s;
+    
+    &.checked {
+      background-color: #6B8BA4;
+      border-color: #6B8BA4;
+    }
+    .check-mark {
+      font-size: 18rpx;
+      color: #FFFFFF;
+    }
+  }
+  
+  .protocol-text-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .p-normal { font-size: 22rpx; color: #707070; }
+  .p-link { font-size: 22rpx; color: #6B8BA4; font-weight: 500; margin: 0 4rpx; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8rpx); }
+  75% { transform: translateX(8rpx); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>

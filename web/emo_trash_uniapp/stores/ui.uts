@@ -1,0 +1,29 @@
+import { reactive } from 'vue'
+
+export type ToastType = 'success' | 'error' | 'none'
+
+export const uiStore = reactive({
+  toast: {
+    show: false,
+    message: '',
+    type: 'none' as ToastType,
+    duration: 2000
+  },
+  
+  showToast(message: string, type: ToastType = 'none', duration: number = 2000) {
+    this.toast.message = message
+    this.toast.type = type
+    this.toast.duration = duration
+    this.toast.show = true
+    
+    setTimeout(() => {
+      this.toast.show = false
+    }, duration)
+  }
+})
+
+export function useToast() {
+  return {
+    show: (msg: string, type: ToastType = 'none') => uiStore.showToast(msg, type)
+  }
+}

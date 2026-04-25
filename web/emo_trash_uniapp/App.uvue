@@ -4,6 +4,7 @@
 	// #endif
 
 	import { useUserStore } from './stores/user'
+  import BaseToast from './components/BaseToast.uvue'
 
 	onLaunch(() => {
 		console.log('App Launch')
@@ -11,10 +12,13 @@
 		// 初始跳转校验
 		const userStore = useUserStore()
 		if (!userStore.token) {
-			// 如果没有 token，且当前不是白名单页面（这里简单处理，通常 reLaunch 到登录）
-			// 注意：App 启动时，拦截器可能还没生效，所以这里手动跑一次逻辑
-			console.log('No token found on launch')
-		}
+			console.log('No token found on launch, redirecting to login')
+			uni.reLaunch({
+				url: '/pages/auth/login/index'
+			})
+		} else {
+      userStore.fetchUserInfo()
+    }
 	})
 
 	onAppShow(() => {
@@ -48,6 +52,10 @@
 	})
 	// #endif
 </script>
+
+<template>
+  <BaseToast />
+</template>
 
 <style>
 	/*每个页面公共css */

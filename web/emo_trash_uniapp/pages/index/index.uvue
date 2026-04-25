@@ -1,0 +1,17 @@
+<template>
+  <view class="page-container">
+    <BaseNavbar title="发现" />
+    <view class="content">
+      <text>发现页面 (开发中...)</text>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import BaseNavbar from '@/components/BaseNavbar.uvue'
+</script>
+
+<style scoped>
+.page-container { padding: 40rpx; }
+.content { display: flex; justify-content: center; padding-top: 100rpx; }
+</style>

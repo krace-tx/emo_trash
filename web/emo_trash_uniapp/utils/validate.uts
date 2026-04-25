@@ -1,0 +1,14 @@
+/**
+ * 验证邮箱格式
+ */
+export function validateEmail(email: string): boolean {
+  const reg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
+  return reg.test(email)
+}
+
+/**
+ * 验证密码格式 (8-32位)
+ */
+export function validatePassword(password: string): boolean {
+  return password.length >= 8 && password.length <= 32
+}

@@ -1,0 +1,33 @@
+<template>
+  <view class="page-container">
+    <BaseNavbar title="我" />
+    <view class="content">
+      <text v-if="userStore.userInfo">你好, {{ userStore.userInfo.nickname }}</text>
+      <button v-else @click="toLogin">去登录</button>
+      
+      <view v-if="userStore.userInfo" style="margin-top: 40rpx;">
+         <button @click="handleLogout">退出登录</button>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import BaseNavbar from '@/components/BaseNavbar.uvue'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+
+function toLogin() {
+  uni.navigateTo({ url: '/pages/auth/login/index' })
+}
+
+function handleLogout() {
+  userStore.logout()
+}
+</script>
+
+<style scoped>
+.page-container { padding: 40rpx; }
+.content { display: flex; flex-direction: column; align-items: center; padding-top: 100rpx; }
+</style>
