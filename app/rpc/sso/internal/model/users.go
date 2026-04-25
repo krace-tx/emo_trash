@@ -13,6 +13,8 @@ const (
 	UserStatusDisabled UserStatus = 0
 )
 
+const UserCollectionName = "users"
+
 type User struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty"              json:"id"`
 	Email     string             `bson:"email"                      json:"email"`
@@ -24,4 +26,8 @@ type User struct {
 	CreatedAt time.Time          `bson:"created_at"                 json:"created_at"`
 	UpdatedAt time.Time          `bson:"updated_at"                 json:"updated_at"`
 	DeletedAt *time.Time         `bson:"deleted_at,omitempty"       json:"-"` // 软删除，nil 表示未删除
+}
+
+func (User) TableName() string {
+	return UserCollectionName
 }

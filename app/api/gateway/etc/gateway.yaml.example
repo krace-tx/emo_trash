@@ -1,0 +1,14 @@
+Name: gateway
+Host: 0.0.0.0
+Port: 8888
+
+Rpc:
+  Auth:
+    Etcd:
+      Hosts:
+        - 127.0.0.1:2379
+      User: root
+      Pass: emoTrashEtcd123!
+      Key: sso.rpc
+    Timeout: 5000
+    NonBlock: true

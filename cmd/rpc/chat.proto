@@ -1,0 +1,603 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "./pb";
+
+import "validate/validate.proto";
+
+// ================================================================
+//  覆盖：私聊 / 群组 / 匿名匹配 / AI情感陪伴
+// ================================================================
+
+service chat {
+
+  // ---------- 消息 ----------
+  // 发送消息（私聊 & 群聊统一入口，通过 conversation_id 区分）
+  rpc SendMessage(SendMessageReq) returns (SendMessageResp);
+
+  // 拉取历史消息（游标分页，支持上滑加载）
+  rpc GetMessages(GetMessagesReq) returns (GetMessagesResp);
+
+  // 撤回消息（仅限 2 分钟内）
+  rpc RecallMessage(RecallMessageReq) returns (CommonResp);
+
+  // ---------- 会话 ----------
+  // 获取会话列表（含最后一条消息 & 未读数）
+  rpc GetConversations(GetConversationsReq) returns (GetConversationsResp);
+
+  // 标记会话已读
+  rpc MarkRead(MarkReadReq) returns (CommonResp);
+
+  // ---------- 群组 ----------
+  // 创建群组
+  rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp);
+
+  // 获取群组详情
+  rpc GetGroupInfo(GetGroupInfoReq) returns (GetGroupInfoResp);
+
+  // 修改群组信息（群主/管理员可操作）
+  rpc UpdateGroupInfo(UpdateGroupInfoReq) returns (CommonResp);
+
+  // 邀请成员加入群组
+  rpc InviteGroupMembers(InviteGroupMembersReq) returns (CommonResp);
+
+  // 退出群组
+  rpc QuitGroup(QuitGroupReq) returns (CommonResp);
+
+  // 解散群组（仅群主）
+  rpc DismissGroup(DismissGroupReq) returns (CommonResp);
+
+  // 获取群成员列表
+  rpc GetGroupMembers(GetGroupMembersReq) returns (GetGroupMembersResp);
+
+  // ---------- 匿名匹配 ----------
+  // 发起匿名匹配（进入匹配队列）
+  rpc StartMatch(StartMatchReq) returns (StartMatchResp);
+
+  // 取消匹配
+  rpc CancelMatch(CancelMatchReq) returns (CommonResp);
+
+  // 查询当前匹配状态
+  rpc GetMatchStatus(GetMatchStatusReq) returns (GetMatchStatusResp);
+
+  // 结束匿名聊天（双方任意一方可结束）
+  rpc EndAnonymousChat(EndAnonymousChatReq) returns (CommonResp);
+
+  // ---------- AI 情感陪伴 ----------
+  // 发起 AI 对话（触发决策层 + 输出层两阶段处理）
+  rpc SendToAI(SendToAIReq) returns (SendToAIResp);
+
+  // 获取 AI 对话历史
+  rpc GetAIHistory(GetAIHistoryReq) returns (GetAIHistoryResp);
+
+  // 获取本次对话的情感分析结果（供前端动态 UI 使用）
+  rpc GetEmotionAnalysis(GetEmotionAnalysisReq) returns (GetEmotionAnalysisResp);
+}
+
+
+// ================================================================
+//  枚举
+// ================================================================
+
+enum MessageType {
+  MSG_TYPE_UNKNOWN  = 0;
+  MSG_TYPE_TEXT     = 1; // 文本
+  MSG_TYPE_IMAGE    = 2; // 图片
+  MSG_TYPE_RECALL   = 3; // 撤回通知
+  MSG_TYPE_AI       = 4; // AI 回复消息
+  MSG_TYPE_SYSTEM   = 5; // 系统通知（匹配成功 / 对方已离开等）
+}
+
+enum ConversationType {
+  CONV_TYPE_UNKNOWN   = 0;
+  CONV_TYPE_SINGLE    = 1; // 普通私聊
+  CONV_TYPE_GROUP     = 2; // 群聊
+  CONV_TYPE_ANONYMOUS = 3; // 匿名私聊
+  CONV_TYPE_AI        = 4; // AI 陪伴会话
+}
+
+enum MatchStatus {
+  MATCH_STATUS_UNKNOWN  = 0;
+  MATCH_STATUS_WAITING  = 1; // 等待中
+  MATCH_STATUS_MATCHED  = 2; // 已匹配
+  MATCH_STATUS_CANCELED = 3; // 已取消
+}
+
+// 情感极性（决策层输出）
+enum EmotionPolarity {
+  EMOTION_UNKNOWN  = 0;
+  EMOTION_POSITIVE = 1; // 积极
+  EMOTION_NEUTRAL  = 2; // 中性
+  EMOTION_NEGATIVE = 3; // 消极
+  EMOTION_CRISIS   = 4; // 危机（需触发高优先级干预策略）
+}
+
+enum GroupMemberRole {
+  ROLE_MEMBER = 0;
+  ROLE_ADMIN  = 1;
+  ROLE_OWNER  = 2;
+}
+
+
+// ================================================================
+//  公共结构体
+// ================================================================
+
+message Message {
+  // @inject_tag: json:"msg_id"
+  int64 msg_id = 1;
+
+  // @inject_tag: json:"conversation_id"
+  int64 conversation_id = 2;
+
+  // @inject_tag: json:"sender_id"
+  int64 sender_id = 3;
+
+  // @inject_tag: json:"type"
+  MessageType type = 4;
+
+  // @inject_tag: json:"content"
+  string content = 5; // 文本内容 / 图片URL / 系统提示文案
+
+  // @inject_tag: json:"quote_msg_id"
+  int64 quote_msg_id = 6; // 引用回复，0 表示无
+
+  // @inject_tag: json:"is_recalled"
+  bool is_recalled = 7;
+
+  // @inject_tag: json:"send_time"
+  int64 send_time = 8; // Unix 毫秒
+}
+
+message Conversation {
+  // @inject_tag: json:"conversation_id"
+  int64 conversation_id = 1;
+
+  // @inject_tag: json:"type"
+  ConversationType type = 2;
+
+  // @inject_tag: json:"name"
+  string name = 3; // 群名 / 对方昵称 / "匿名用户" / "AI助手"
+
+  // @inject_tag: json:"avatar"
+  string avatar = 4;
+
+  // @inject_tag: json:"last_message"
+  Message last_message = 5;
+
+  // @inject_tag: json:"unread_count"
+  int32 unread_count = 6;
+
+  // @inject_tag: json:"updated_at"
+  int64 updated_at = 7;
+}
+
+message GroupMember {
+  // @inject_tag: json:"user_id"
+  int64 user_id = 1;
+
+  // @inject_tag: json:"nickname"
+  string nickname = 2;
+
+  // @inject_tag: json:"avatar"
+  string avatar = 3;
+
+  // @inject_tag: json:"role"
+  GroupMemberRole role = 4;
+
+  // @inject_tag: json:"joined_at"
+  int64 joined_at = 5;
+}
+
+
+// ================================================================
+//  消息
+// ================================================================
+
+message SendMessageReq {
+  // @inject_tag: json:"conversation_id"
+  int64 conversation_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "conversation_id 无效"
+  ];
+
+  // @inject_tag: json:"type"
+  MessageType type = 2 [
+    (validate.rules).enum = {defined_only: true, not_in: [0, 3, 4, 5]},
+    (validate.error_msg) = "消息类型无效，客户端只允许发送 TEXT / IMAGE"
+  ];
+
+  // @inject_tag: json:"content"
+  string content = 3 [
+    (validate.rules).string = {min_len: 1, max_len: 2000},
+    (validate.error_msg) = "消息内容不能为空且不超过 2000 字符"
+  ];
+
+  // @inject_tag: json:"quote_msg_id"
+  int64 quote_msg_id = 4;
+}
+
+message SendMessageResp {
+  // @inject_tag: json:"msg_id"
+  int64 msg_id = 1;
+
+  // @inject_tag: json:"send_time"
+  int64 send_time = 2;
+}
+
+message GetMessagesReq {
+  // @inject_tag: json:"conversation_id"
+  int64 conversation_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "conversation_id 无效"
+  ];
+
+  // @inject_tag: json:"before_msg_id"
+  int64 before_msg_id = 2; // 0 表示从最新一条开始
+
+  // @inject_tag: json:"limit"
+  int32 limit = 3 [
+    (validate.rules).int32 = {gte: 1, lte: 50},
+    (validate.error_msg) = "limit 范围为 1-50"
+  ];
+}
+
+message GetMessagesResp {
+  // @inject_tag: json:"messages"
+  repeated Message messages = 1;
+
+  // @inject_tag: json:"has_more"
+  bool has_more = 2;
+}
+
+message RecallMessageReq {
+  // @inject_tag: json:"msg_id"
+  int64 msg_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "msg_id 无效"
+  ];
+}
+
+
+// ================================================================
+//  会话
+// ================================================================
+
+message GetConversationsReq {
+  // @inject_tag: json:"page"
+  int32 page = 1 [
+    (validate.rules).int32.gte = 1,
+    (validate.error_msg) = "page 最小为 1"
+  ];
+
+  // @inject_tag: json:"page_size"
+  int32 page_size = 2 [
+    (validate.rules).int32 = {gte: 1, lte: 30},
+    (validate.error_msg) = "page_size 范围为 1-30"
+  ];
+}
+
+message GetConversationsResp {
+  // @inject_tag: json:"conversations"
+  repeated Conversation conversations = 1;
+
+  // @inject_tag: json:"total"
+  int64 total = 2;
+}
+
+message MarkReadReq {
+  // @inject_tag: json:"conversation_id"
+  int64 conversation_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "conversation_id 无效"
+  ];
+
+  // @inject_tag: json:"last_read_msg_id"
+  int64 last_read_msg_id = 2 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "last_read_msg_id 无效"
+  ];
+}
+
+
+// ================================================================
+//  群组
+// ================================================================
+
+message CreateGroupReq {
+  // @inject_tag: json:"name"
+  string name = 1 [
+    (validate.rules).string = {min_len: 2, max_len: 30},
+    (validate.error_msg) = "群名长度为 2-30 字符"
+  ];
+
+  // @inject_tag: json:"avatar"
+  string avatar = 2;
+
+  // @inject_tag: json:"member_ids"
+  repeated int64 member_ids = 3 [
+    (validate.rules).repeated = {min_items: 2, max_items: 99},
+    (validate.error_msg) = "建群至少需要邀请 2 名成员"
+  ];
+}
+
+message CreateGroupResp {
+  // @inject_tag: json:"group_id"
+  int64 group_id = 1;
+
+  // @inject_tag: json:"conversation_id"
+  int64 conversation_id = 2;
+}
+
+message GetGroupInfoReq {
+  // @inject_tag: json:"group_id"
+  int64 group_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "group_id 无效"
+  ];
+}
+
+message GetGroupInfoResp {
+  // @inject_tag: json:"group_id"
+  int64 group_id = 1;
+
+  // @inject_tag: json:"name"
+  string name = 2;
+
+  // @inject_tag: json:"avatar"
+  string avatar = 3;
+
+  // @inject_tag: json:"announcement"
+  string announcement = 4;
+
+  // @inject_tag: json:"owner_id"
+  int64 owner_id = 5;
+
+  // @inject_tag: json:"member_count"
+  int32 member_count = 6;
+
+  // @inject_tag: json:"created_at"
+  int64 created_at = 7;
+}
+
+message UpdateGroupInfoReq {
+  // @inject_tag: json:"group_id"
+  int64 group_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "group_id 无效"
+  ];
+
+  // @inject_tag: json:"name"
+  string name = 2 [
+    (validate.rules).string.max_len = 30,
+    (validate.error_msg) = "群名最长 30 字符"
+  ];
+
+  // @inject_tag: json:"avatar"
+  string avatar = 3;
+
+  // @inject_tag: json:"announcement"
+  string announcement = 4 [
+    (validate.rules).string.max_len = 300,
+    (validate.error_msg) = "群公告最长 300 字符"
+  ];
+}
+
+message InviteGroupMembersReq {
+  // @inject_tag: json:"group_id"
+  int64 group_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "group_id 无效"
+  ];
+
+  // @inject_tag: json:"member_ids"
+  repeated int64 member_ids = 2 [
+    (validate.rules).repeated = {min_items: 1, max_items: 50},
+    (validate.error_msg) = "每次邀请 1-50 人"
+  ];
+}
+
+message QuitGroupReq {
+  // @inject_tag: json:"group_id"
+  int64 group_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "group_id 无效"
+  ];
+}
+
+message DismissGroupReq {
+  // @inject_tag: json:"group_id"
+  int64 group_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "group_id 无效"
+  ];
+}
+
+message GetGroupMembersReq {
+  // @inject_tag: json:"group_id"
+  int64 group_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "group_id 无效"
+  ];
+
+  // @inject_tag: json:"page"
+  int32 page = 2 [
+    (validate.rules).int32.gte = 1,
+    (validate.error_msg) = "page 最小为 1"
+  ];
+
+  // @inject_tag: json:"page_size"
+  int32 page_size = 3 [
+    (validate.rules).int32 = {gte: 1, lte: 100},
+    (validate.error_msg) = "page_size 范围为 1-100"
+  ];
+}
+
+message GetGroupMembersResp {
+  // @inject_tag: json:"members"
+  repeated GroupMember members = 1;
+
+  // @inject_tag: json:"total"
+  int64 total = 2;
+}
+
+
+// ================================================================
+//  匿名匹配
+// ================================================================
+
+message StartMatchReq {
+  // @inject_tag: json:"emotion_tag"
+  string emotion_tag = 1 [
+    (validate.rules).string = {
+      in: ["lonely", "anxious", "stressed", "sad", "just_chat"]
+    },
+    (validate.error_msg) = "情绪标签无效，支持: lonely/anxious/stressed/sad/just_chat"
+  ];
+}
+
+message StartMatchResp {
+  // @inject_tag: json:"match_id"
+  string match_id = 1; // 匹配任务 ID，用于后续查询状态
+
+  // @inject_tag: json:"status"
+  MatchStatus status = 2;
+
+  // @inject_tag: json:"queue_position"
+  int32 queue_position = 3; // 当前排队位置，供前端展示
+}
+
+message CancelMatchReq {
+  // @inject_tag: json:"match_id"
+  string match_id = 1 [
+    (validate.rules).string.min_len = 1,
+    (validate.error_msg) = "match_id 不能为空"
+  ];
+}
+
+message GetMatchStatusReq {
+  // @inject_tag: json:"match_id"
+  string match_id = 1 [
+    (validate.rules).string.min_len = 1,
+    (validate.error_msg) = "match_id 不能为空"
+  ];
+}
+
+message GetMatchStatusResp {
+  // @inject_tag: json:"status"
+  MatchStatus status = 1;
+
+  // @inject_tag: json:"conversation_id"
+  int64 conversation_id = 2; // 匹配成功后返回，status=MATCHED 时有效
+
+  // @inject_tag: json:"anonymous_name"
+  string anonymous_name = 3; // 对方的随机匿名昵称，如"流浪的星球#4721"
+}
+
+message EndAnonymousChatReq {
+  // @inject_tag: json:"conversation_id"
+  int64 conversation_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "conversation_id 无效"
+  ];
+}
+
+
+// ================================================================
+//  AI 情感陪伴
+// ================================================================
+
+message SendToAIReq {
+  // @inject_tag: json:"conversation_id"
+  int64 conversation_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "conversation_id 无效"
+  ];
+
+  // @inject_tag: json:"content"
+  string content = 2 [
+    (validate.rules).string = {min_len: 1, max_len: 1000},
+    (validate.error_msg) = "内容不能为空且不超过 1000 字符"
+  ];
+}
+
+message SendToAIResp {
+  // @inject_tag: json:"msg_id"
+  int64 msg_id = 1;
+
+  // @inject_tag: json:"reply"
+  string reply = 2; // AI 输出层生成的安抚性回复
+
+  // @inject_tag: json:"emotion"
+  EmotionAnalysisResult emotion = 3; // 决策层分析结果，供前端动态 UI 使用
+
+  // @inject_tag: json:"send_time"
+  int64 send_time = 4;
+}
+
+message GetAIHistoryReq {
+  // @inject_tag: json:"conversation_id"
+  int64 conversation_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "conversation_id 无效"
+  ];
+
+  // @inject_tag: json:"before_msg_id"
+  int64 before_msg_id = 2;
+
+  // @inject_tag: json:"limit"
+  int32 limit = 3 [
+    (validate.rules).int32 = {gte: 1, lte: 30},
+    (validate.error_msg) = "limit 范围为 1-30"
+  ];
+}
+
+message GetAIHistoryResp {
+  // @inject_tag: json:"messages"
+  repeated Message messages = 1;
+
+  // @inject_tag: json:"has_more"
+  bool has_more = 2;
+}
+
+message GetEmotionAnalysisReq {
+  // @inject_tag: json:"msg_id"
+  int64 msg_id = 1 [
+    (validate.rules).int64.gt = 0,
+    (validate.error_msg) = "msg_id 无效"
+  ];
+}
+
+message GetEmotionAnalysisResp {
+  // @inject_tag: json:"result"
+  EmotionAnalysisResult result = 1;
+}
+
+// 情感分析结果（决策层输出，复用于多处）
+message EmotionAnalysisResult {
+  // @inject_tag: json:"polarity"
+  EmotionPolarity polarity = 1; // 情感极性
+
+  // @inject_tag: json:"score"
+  float score = 2; // 置信度 0.0-1.0
+
+  // @inject_tag: json:"keywords"
+  repeated string keywords = 3; // 识别到的情绪关键词
+
+  // @inject_tag: json:"intervention_level"
+  int32 intervention_level = 4; // 干预等级 1-3，供输出层选择回复策略
+}
+
+
+// ================================================================
+//  通用响应
+// ================================================================
+
+message CommonResp {
+  // @inject_tag: json:"success"
+  bool success = 1;
+
+  // @inject_tag: json:"message"
+  string message = 2;
+}

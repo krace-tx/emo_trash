@@ -64,6 +64,7 @@ var (
 	// ====== 数据库模块 (20xxx) ======
 	ErrDBConnectFailed = NewErr(ModuleDB, 0, "数据库连接失败") // 20000
 	ErrDBQueryFailed   = NewErr(ModuleDB, 1, "数据库查询错误") // 20001
+	ErrDBUpdateFailed  = NewErr(ModuleDB, 2, "数据库更新异常")
 
 	// ====== 用户模块 (30xxx) ======
 	ErrUserNotFound       = NewErr(ModuleUser, 1, "用户不存在")      // 30001
