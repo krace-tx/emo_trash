@@ -1,0 +1,79 @@
+syntax = "v1"
+
+info(
+    title: "Post Service API"
+    description: "帖子服务API，提供发布、查询、社交互动等功能"
+    author: "krace"
+    email: "qilinhu009@gmail.com"
+    version: "v1"
+)
+
+type (
+    // 帖子基础信息
+    PostInfo {
+        Id string `json:"id"` // 帖子ID
+        AuthorId string `json:"author_id"` // 作者ID
+        AuthorName string `json:"author_name"` // 匿名昵称
+        AuthorAvatar string `json:"author_avatar"` // 匿名头像
+        Title string `json:"title"` // 标题
+        Content string `json:"content"` // 内容
+        Images []string `json:"images"` // 图片列表
+        Video string `json:"video"` // 视频URL(可选)
+        AiEvaluation string `json:"ai_evaluation"` // AI评价
+        LikeCount int64 `json:"like_count"` // 点赞数
+        CommentCount int64 `json:"comment_count"` // 评论数
+        StarCount int64 `json:"star_count"` // 收藏数
+        IsLiked bool `json:"is_liked"` // 当前用户是否点赞
+        IsStarred bool `json:"is_starred"` // 当前用户是否收藏
+        CreatedAt int64 `json:"created_at"` // 发布时间
+    }
+
+    // 发布帖子请求
+    CreatePostReq {
+        Title string `json:"title,optional"` // 标题
+        Content string `json:"content"` // 内容
+        Images []string `json:"images,optional"` // 图片
+        IsAnonymous bool `json:"is_anonymous,default=true"` // 是否匿名
+    }
+
+    // 更新帖子请求
+    UpdatePostReq {
+        Id string `json:"id"`
+        Title string `json:"title,optional"`
+        Content string `json:"content,optional"`
+        Images []string `json:"images,optional"`
+    }
+
+    // 删除帖子请求
+    DeletePostReq {
+        Id string `json:"id"`
+    }
+
+    // 获取帖子详情请求
+    GetPostDetailReq {
+        Id string `json:"id"`
+    }
+
+    // 帖子列表请求
+    ListPostsReq {
+        Cursor string `json:"cursor,optional"` // 分页游标
+        PageSize int `json:"page_size,optional,default=20"` // 分页大小
+        Type string `json:"type,optional,options=discovery|follow|hot"` // 列表类型
+    }
+
+    ListPostsResp {
+        List []PostInfo `json:"list"`
+        NextCursor string `json:"next_cursor"`
+        HasMore bool `json:"has_more"`
+    }
+
+    // 点赞/取消点赞请求
+    LikePostReq {
+        Id string `json:"id"`
+    }
+
+    // 收藏/取消收藏请求
+    StarPostReq {
+        Id string `json:"id"`
+    }
+)

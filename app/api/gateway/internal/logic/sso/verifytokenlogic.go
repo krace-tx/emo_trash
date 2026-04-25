@@ -1,15 +1,11 @@
-// Code scaffolded by goctl. Safe to edit.
-// goctl 1.10.1
-
 package sso
 
 import (
 	"context"
 
-	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
-
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,11 +25,11 @@ func NewVerifyTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Verif
 }
 
 func (l *VerifyTokenLogic) VerifyToken(req *types.VerifyReq) (resp *types.CommonResp, err error) {
-	data, err := l.svcCtx.Auth.VerifyToken(l.ctx, &auth.VerifyReq{
+	data, err := l.svcCtx.Sso.VerifyToken(l.ctx, &auth.VerifyReq{
 		Token: req.Token,
 	})
 	if err != nil {
-		l.Logger.Errorf("验证Token失败: %v", err)
+		l.Logger.Errorf("验证令牌失败: %v", err)
 		return types.Error(err), nil
 	}
 

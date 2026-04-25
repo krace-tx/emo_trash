@@ -8,7 +8,9 @@ info (
 )
 
 import "sso.api"
+import "post.api"
 
+// 公共服务 - 无需授权
 @server (
 	group:   sso
 	prefix:  /sso/v1
@@ -27,11 +29,20 @@ service gateway {
 	@handler ResetPassword
 	post /auth/password/reset (ResetPasswordReq) returns (CommonResp)
 
-	@handler ChangePassword
-	post /auth/password/change (ChangePasswordReq) returns (CommonResp)
-
 	@handler RefreshToken
 	post /auth/token/refresh (RefreshTokenReq) returns (CommonResp)
+}
+
+// 授权服务 - 需要自定义 Auth 中间件
+@server (
+	group:      sso
+	prefix:     /sso/v1
+	middleware: Auth
+	timeout:    10s
+)
+service gateway {
+	@handler ChangePassword
+	post /auth/password/change (ChangePasswordReq) returns (CommonResp)
 
 	@handler VerifyToken
 	post /auth/token/verify (VerifyReq) returns (CommonResp)
@@ -44,5 +55,34 @@ service gateway {
 
 	@handler UpdateUserInfo
 	post /user/info/update (UpdateUserInfoReq) returns (CommonResp)
+}
+
+@server (
+	group:      post
+	prefix:     /post/v1
+	middleware: Auth
+	timeout:    10s
+)
+service gateway {
+	@handler CreatePost
+	post /create (CreatePostReq) returns (CommonResp)
+
+	@handler UpdatePost
+	post /update (UpdatePostReq) returns (CommonResp)
+
+	@handler DeletePost
+	post /delete (DeletePostReq) returns (CommonResp)
+
+	@handler GetPostDetail
+	get /detail (GetPostDetailReq) returns (CommonResp)
+
+	@handler ListPosts
+	get /list (ListPostsReq) returns (CommonResp)
+
+	@handler LikePost
+	post /like (LikePostReq) returns (CommonResp)
+
+	@handler StarPost
+	post /star (StarPostReq) returns (CommonResp)
 }
 

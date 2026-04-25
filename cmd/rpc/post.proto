@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package post;
+
+option go_package = "./pb";
+
+import "validate/validate.proto";
+
+service post {
+  // 发布帖子
+  rpc CreatePost(CreatePostReq) returns (CreatePostResp);
+
+  // 更新帖子
+  rpc UpdatePost(UpdatePostReq) returns (CommonResp);
+
+  // 删除帖子
+  rpc DeletePost(DeletePostReq) returns (CommonResp);
+
+  // 获取帖子详情
+  rpc GetPostDetail(GetPostDetailReq) returns (GetPostDetailResp);
+
+  // 帖子列表
+  rpc ListPosts(ListPostsReq) returns (ListPostsResp);
+
+  // 点赞/取消点赞
+  rpc LikePost(LikePostReq) returns (CommonResp);
+
+  // 收藏/取消收藏
+  rpc StarPost(StarPostReq) returns (CommonResp);
+}
+
+// ============ 消息定义 ============
+
+message PostInfo {
+  // @inject_tag: json:"id"
+  string id = 1;
+  // @inject_tag: json:"author_id"
+  string author_id = 2;
+  // @inject_tag: json:"author_name"
+  string author_name = 3;
+  // @inject_tag: json:"author_avatar"
+  string author_avatar = 4;
+  // @inject_tag: json:"title"
+  string title = 5;
+  // @inject_tag: json:"content"
+  string content = 6;
+  // @inject_tag: json:"images"
+  repeated string images = 7;
+  // @inject_tag: json:"video"
+  string video = 8;
+  // @inject_tag: json:"ai_evaluation"
+  string ai_evaluation = 9;
+  // @inject_tag: json:"like_count"
+  int64 like_count = 10;
+  // @inject_tag: json:"comment_count"
+  int64 comment_count = 11;
+  // @inject_tag: json:"star_count"
+  int64 star_count = 12;
+  // @inject_tag: json:"is_liked"
+  bool is_liked = 13;
+  // @inject_tag: json:"is_starred"
+  bool is_starred = 14;
+  // @inject_tag: json:"created_at"
+  int64 created_at = 15;
+}
+
+message CreatePostReq {
+  // @inject_tag: json:"author_id"
+  string author_id = 1;
+  // @inject_tag: json:"title"
+  string title = 2;
+  // @inject_tag: json:"content"
+  string content = 3 [
+    (validate.rules).string.min_len = 1,
+    (validate.error_msg) = "内容不能为空"
+  ];
+  // @inject_tag: json:"images"
+  repeated string images = 4;
+  // @inject_tag: json:"is_anonymous"
+  bool is_anonymous = 5;
+}
+
+message CreatePostResp {
+  // @inject_tag: json:"id"
+  string id = 1;
+}
+
+message UpdatePostReq {
+  // @inject_tag: json:"id"
+  string id = 1;
+  // @inject_tag: json:"user_id"
+  string user_id = 2;
+  // @inject_tag: json:"title"
+  string title = 3;
+  // @inject_tag: json:"content"
+  string content = 4;
+  // @inject_tag: json:"images"
+  repeated string images = 5;
+}
+
+message DeletePostReq {
+  // @inject_tag: json:"id"
+  string id = 1;
+  // @inject_tag: json:"user_id"
+  string user_id = 2;
+}
+
+message GetPostDetailReq {
+  // @inject_tag: json:"id"
+  string id = 1;
+  // @inject_tag: json:"user_id"
+  string user_id = 2; // 当前用户ID，用于判断是否已点赞/收藏
+}
+
+message GetPostDetailResp {
+  // @inject_tag: json:"post"
+  PostInfo post = 1;
+}
+
+message ListPostsReq {
+  // @inject_tag: json:"user_id"
+  string user_id = 1;
+  // @inject_tag: json:"cursor"
+  string cursor = 2;
+  // @inject_tag: json:"page_size"
+  int32 page_size = 3;
+  // @inject_tag: json:"type"
+  string type = 4; // discovery | follow | hot
+}
+
+message ListPostsResp {
+  // @inject_tag: json:"list"
+  repeated PostInfo list = 1;
+  // @inject_tag: json:"next_cursor"
+  string next_cursor = 2;
+  // @inject_tag: json:"has_more"
+  bool has_more = 3;
+}
+
+message LikePostReq {
+  // @inject_tag: json:"id"
+  string id = 1;
+  // @inject_tag: json:"user_id"
+  string user_id = 2;
+}
+
+message StarPostReq {
+  // @inject_tag: json:"id"
+  string id = 1;
+  // @inject_tag: json:"user_id"
+  string user_id = 2;
+}
+
+message CommonResp {
+  // @inject_tag: json:"success"
+  bool success = 1;
+  // @inject_tag: json:"message"
+  string message = 2;
+}

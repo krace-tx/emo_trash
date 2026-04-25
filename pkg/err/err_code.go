@@ -8,6 +8,7 @@ const (
 	ModuleCAS    = 13 // CAS 协议
 	ModuleDB     = 20 // 数据库
 	ModuleUser   = 30 // 用户业务
+	ModulePost   = 40 // 帖子业务
 	ModuleSystem = 50 // 系统
 	ModuleCache  = 60 // 缓存
 )
@@ -65,6 +66,8 @@ var (
 	ErrDBConnectFailed = NewErr(ModuleDB, 0, "数据库连接失败") // 20000
 	ErrDBQueryFailed   = NewErr(ModuleDB, 1, "数据库查询错误") // 20001
 	ErrDBUpdateFailed  = NewErr(ModuleDB, 2, "数据库更新异常")
+	ErrDBInsertFailed  = NewErr(ModuleDB, 3, "数据库插入失败")
+	ErrDBDeleteFailed  = NewErr(ModuleDB, 4, "数据库删除失败")
 
 	// ====== 用户模块 (30xxx) ======
 	ErrUserNotFound       = NewErr(ModuleUser, 1, "用户不存在")      // 30001
@@ -72,6 +75,12 @@ var (
 	ErrUserProfileFailed  = NewErr(ModuleUser, 3, "获取用户资料失败")   // 30003
 	ErrUserProfileInvalid = NewErr(ModuleUser, 4, "用户资料不完整")    // 30004
 	ErrUserSearchEmpty    = NewErr(ModuleUser, 5, "未找到符合条件的用户") // 30005
+
+	// ====== 帖子模块 (40xxx) ======
+	ErrPostNotFound      = NewErr(ModulePost, 1, "帖子不存在")   // 40001
+	ErrPostCreateFailed  = NewErr(ModulePost, 2, "发布帖子失败")  // 40002
+	ErrPostUpdateAllowed = NewErr(ModulePost, 3, "无权修改该帖子") // 40003
+	ErrPostDeleteAllowed = NewErr(ModulePost, 4, "无权删除该帖子") // 40004
 
 	// ====== 系统模块 (50xxx) ======
 	ErrSystemInternal   = NewErr(ModuleSystem, 0, "系统内部错误") // 50000

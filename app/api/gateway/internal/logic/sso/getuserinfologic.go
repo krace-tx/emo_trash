@@ -1,6 +1,3 @@
-// Code scaffolded by goctl. Safe to edit.
-// goctl 1.10.1
-
 package sso
 
 import (
@@ -8,6 +5,8 @@ import (
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
+	consts "github.com/krace-tx/emo_trash/pkg/constant"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +26,23 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
+	userId := l.ctx.Value(consts.UserId).(string)
 
-	return
+	data, err := l.svcCtx.Sso.GetUserInfo(l.ctx, &auth.GetUserInfoReq{
+		UserId: userId,
+	})
+	if err != nil {
+		l.Logger.Errorf("获取用户信息失败: %v, user_id=%s", err, userId)
+		return types.Error(err), nil
+	}
+
+	return types.Success(&types.UserInfo{
+		UserId:     data.User.UserId,
+		Email:      data.User.Email,
+		Nickname:   data.User.Nickname,
+		Avatar:     data.User.Avatar,
+		CreateTime: data.User.CreateTime,
+		Bio:        data.User.Bio,
+		Mood:       data.User.Mood,
+	}), nil
 }

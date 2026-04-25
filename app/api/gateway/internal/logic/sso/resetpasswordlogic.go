@@ -28,7 +28,7 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 }
 
 func (l *ResetPasswordLogic) ResetPassword(req *types.ResetPasswordReq) (resp *types.CommonResp, err error) {
-	data, err := l.svcCtx.Auth.ResetPassword(l.ctx, &auth.ResetPasswordReq{
+	data, err := l.svcCtx.Sso.ResetPassword(l.ctx, &auth.ResetPasswordReq{
 		Email:       req.Email,
 		EmailCode:   req.EmailCode,
 		NewPassword: req.NewPassword,

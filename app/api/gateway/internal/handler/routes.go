@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	post "github.com/krace-tx/emo_trash/app/api/gateway/internal/handler/post"
 	sso "github.com/krace-tx/emo_trash/app/api/gateway/internal/handler/sso"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 
@@ -14,6 +15,51 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/create",
+					Handler: post.CreatePostHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/delete",
+					Handler: post.DeletePostHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/detail",
+					Handler: post.GetPostDetailHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/like",
+					Handler: post.LikePostHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/list",
+					Handler: post.ListPostsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/star",
+					Handler: post.StarPostHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/update",
+					Handler: post.UpdatePostHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/post/v1"),
+		rest.WithTimeout(10000*time.Millisecond),
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{
@@ -25,16 +71,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/auth/login",
 				Handler: sso.LoginHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/auth/logout",
-				Handler: sso.LogoutHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/auth/password/change",
-				Handler: sso.ChangePasswordHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
@@ -51,22 +87,42 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/auth/token/refresh",
 				Handler: sso.RefreshTokenHandler(serverCtx),
 			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/auth/token/verify",
-				Handler: sso.VerifyTokenHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/user/info",
-				Handler: sso.GetUserInfoHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/user/info/update",
-				Handler: sso.UpdateUserInfoHandler(serverCtx),
-			},
 		},
+		rest.WithPrefix("/sso/v1"),
+		rest.WithTimeout(10000*time.Millisecond),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/auth/logout",
+					Handler: sso.LogoutHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/auth/password/change",
+					Handler: sso.ChangePasswordHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/auth/token/verify",
+					Handler: sso.VerifyTokenHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/user/info",
+					Handler: sso.GetUserInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/info/update",
+					Handler: sso.UpdateUserInfoHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/sso/v1"),
 		rest.WithTimeout(10000*time.Millisecond),
 	)

@@ -5,16 +5,14 @@ import (
 	"errors"
 	"time"
 
-	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/model"
+	"github.com/krace-tx/emo_trash/app/model"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 	authx "github.com/krace-tx/emo_trash/pkg/auth"
-	consts "github.com/krace-tx/emo_trash/pkg/constant"
 	errx "github.com/krace-tx/emo_trash/pkg/err"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"google.golang.org/grpc/metadata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -35,8 +33,7 @@ func NewChangePasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 
 // 修改密码（已登录状态，需旧密码验证）
 func (l *ChangePasswordLogic) ChangePassword(in *pb.ChangePasswordReq) (*pb.CommonResp, error) {
-	// 1. 从 context 获取 user_id
-	userId := l.getUserIdFromCtx()
+	userId := in.UserId
 	if userId == "" {
 		return nil, errx.ErrAuthUnauthorized
 	}
@@ -95,20 +92,4 @@ func (l *ChangePasswordLogic) ChangePassword(in *pb.ChangePasswordReq) (*pb.Comm
 
 	l.Logger.Infof("用户修改密码成功: user_id=%s", userId)
 	return &pb.CommonResp{Success: true, Message: "密码修改成功"}, nil
-}
-
-func (l *ChangePasswordLogic) getUserIdFromCtx() string {
-	// 先尝试从 context 直接获取（可能由拦截器注入）
-	if v, ok := l.ctx.Value(consts.UserId).(string); ok {
-		return v
-	}
-
-	// 再尝试从 gRPC metadata 获取
-	if md, ok := metadata.FromIncomingContext(l.ctx); ok {
-		if v, ok := md[consts.UserId]; ok && len(v) > 0 {
-			return v[0]
-		}
-	}
-
-	return ""
 }

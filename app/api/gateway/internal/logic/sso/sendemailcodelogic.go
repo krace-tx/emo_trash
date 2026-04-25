@@ -28,7 +28,7 @@ func NewSendEmailCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sen
 }
 
 func (l *SendEmailCodeLogic) SendEmailCode(req *types.SendEmailCodeReq) (resp *types.CommonResp, err error) {
-	data, err := l.svcCtx.Auth.SendEmailCode(l.ctx, &auth.SendEmailCodeReq{
+	data, err := l.svcCtx.Sso.SendEmailCode(l.ctx, &auth.SendEmailCodeReq{
 		Email: req.Email,
 		Scene: req.Scene,
 	})

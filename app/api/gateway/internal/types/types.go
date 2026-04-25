@@ -15,7 +15,38 @@ type CommonResp struct {
 	Message string      `json:"message"` // 提示信息
 }
 
+type CreatePostReq struct {
+	Title       string   `json:"title,optional"`            // 标题
+	Content     string   `json:"content"`                   // 内容
+	Images      []string `json:"images,optional"`           // 图片
+	IsAnonymous bool     `json:"is_anonymous,default=true"` // 是否匿名
+}
+
+type DeletePostReq struct {
+	Id string `json:"id"`
+}
+
+type GetPostDetailReq struct {
+	Id string `json:"id"`
+}
+
 type GetUserInfoReq struct {
+}
+
+type LikePostReq struct {
+	Id string `json:"id"`
+}
+
+type ListPostsReq struct {
+	Cursor   string `json:"cursor,optional"`                            // 分页游标
+	PageSize int    `json:"page_size,optional,default=20"`              // 分页大小
+	Type     string `json:"type,optional,options=discovery|follow|hot"` // 列表类型
+}
+
+type ListPostsResp struct {
+	List       []PostInfo `json:"list"`
+	NextCursor string     `json:"next_cursor"`
+	HasMore    bool       `json:"has_more"`
 }
 
 type LoginReq struct {
@@ -25,6 +56,24 @@ type LoginReq struct {
 
 type LogoutReq struct {
 	Token string `json:"token,required,min=1"` // 当前Token(必填)
+}
+
+type PostInfo struct {
+	Id           string   `json:"id"`            // 帖子ID
+	AuthorId     string   `json:"author_id"`     // 作者ID
+	AuthorName   string   `json:"author_name"`   // 匿名昵称
+	AuthorAvatar string   `json:"author_avatar"` // 匿名头像
+	Title        string   `json:"title"`         // 标题
+	Content      string   `json:"content"`       // 内容
+	Images       []string `json:"images"`        // 图片列表
+	Video        string   `json:"video"`         // 视频URL(可选)
+	AiEvaluation string   `json:"ai_evaluation"` // AI评价
+	LikeCount    int64    `json:"like_count"`    // 点赞数
+	CommentCount int64    `json:"comment_count"` // 评论数
+	StarCount    int64    `json:"star_count"`    // 收藏数
+	IsLiked      bool     `json:"is_liked"`      // 当前用户是否点赞
+	IsStarred    bool     `json:"is_starred"`    // 当前用户是否收藏
+	CreatedAt    int64    `json:"created_at"`    // 发布时间
 }
 
 type RefreshTokenReq struct {
@@ -48,9 +97,22 @@ type SendEmailCodeReq struct {
 	Scene string `json:"scene,required,options=register|login|reset_pwd"` // 场景(必填)
 }
 
+type StarPostReq struct {
+	Id string `json:"id"`
+}
+
+type UpdatePostReq struct {
+	Id      string   `json:"id"`
+	Title   string   `json:"title,optional"`
+	Content string   `json:"content,optional"`
+	Images  []string `json:"images,optional"`
+}
+
 type UpdateUserInfoReq struct {
 	Nickname string `json:"nickname,optional"` // 昵称(可选)
 	Avatar   string `json:"avatar,optional"`   // 头像(可选)
+	Bio      string `json:"bio,optional"`      // 简介(可选)
+	Mood     string `json:"mood,optional"`     // 情绪标签(可选)
 }
 
 type UserInfo struct {
@@ -59,6 +121,8 @@ type UserInfo struct {
 	Nickname   string `json:"nickname"`    // 昵称
 	Avatar     string `json:"avatar"`      // 头像
 	CreateTime int64  `json:"create_time"` // 创建时间
+	Bio        string `json:"bio"`         // 简介
+	Mood       string `json:"mood"`        // 情绪标签
 }
 
 type VerifyReq struct {

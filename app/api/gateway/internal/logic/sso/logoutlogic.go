@@ -29,7 +29,7 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 }
 
 func (l *LogoutLogic) Logout(req *types.LogoutReq) (resp *types.CommonResp, err error) {
-	data, err := l.svcCtx.Auth.Logout(l.ctx, &auth.LogoutReq{
+	data, err := l.svcCtx.Sso.Logout(l.ctx, &auth.LogoutReq{
 		Token: req.Token,
 	})
 	if err != nil {

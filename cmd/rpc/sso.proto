@@ -134,14 +134,17 @@ message ResetPasswordReq {
 
 // ============ 修改密码 ============
 message ChangePasswordReq {
+  // @inject_tag: json:"user_id"
+  string user_id = 1;
+
   // @inject_tag: json:"old_password"
-  string old_password = 1 [
+  string old_password = 2 [
     (validate.rules).string = {min_len: 8, max_len: 32},
     (validate.error_msg) = "旧密码长度必须在8-32位之间"
   ];
 
   // @inject_tag: json:"new_password"
-  string new_password = 2 [
+  string new_password = 3 [
     (validate.rules).string = {min_len: 8, max_len: 32},
     (validate.error_msg) = "新密码长度必须在8-32位之间"
   ];

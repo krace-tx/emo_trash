@@ -10,5 +10,6 @@ type Config struct {
 
 	Rpc struct {
 		Auth zrpc.RpcClientConf `json:"auth"`
+		Post zrpc.RpcClientConf `json:"post"`
 	}
 }

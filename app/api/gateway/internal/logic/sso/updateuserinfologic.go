@@ -1,6 +1,3 @@
-// Code scaffolded by goctl. Safe to edit.
-// goctl 1.10.1
-
 package sso
 
 import (
@@ -8,6 +5,8 @@ import (
 
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/svc"
 	"github.com/krace-tx/emo_trash/app/api/gateway/internal/types"
+	"github.com/krace-tx/emo_trash/app/rpc/sso/client/auth"
+	consts "github.com/krace-tx/emo_trash/pkg/constant"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +26,19 @@ func NewUpdateUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 }
 
 func (l *UpdateUserInfoLogic) UpdateUserInfo(req *types.UpdateUserInfoReq) (resp *types.CommonResp, err error) {
-	// todo: add your logic here and delete this line
+	userId := l.ctx.Value(consts.UserId).(string)
 
-	return
+	data, err := l.svcCtx.Sso.UpdateUserInfo(l.ctx, &auth.UpdateUserInfoReq{
+		UserId:   userId,
+		Nickname: req.Nickname,
+		Avatar:   req.Avatar,
+		Bio:      req.Bio,
+		Mood:     req.Mood,
+	})
+	if err != nil {
+		l.Logger.Errorf("更新用户信息失败: %v, user_id=%s", err, userId)
+		return types.Error(err), nil
+	}
+
+	return types.Success(data), nil
 }

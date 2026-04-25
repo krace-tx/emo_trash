@@ -49,3 +49,5 @@ uploads/
 
 **/etc/*.yaml
 **/etc/*.yml
+
+/node_modules

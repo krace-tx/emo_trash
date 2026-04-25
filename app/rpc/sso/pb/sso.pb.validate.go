@@ -990,6 +990,8 @@ func (m *ChangePasswordReq) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for UserId
+
 	if l := utf8.RuneCountInString(m.GetOldPassword()); l < 8 || l > 32 {
 		err := ChangePasswordReqValidationError{
 			field:  "OldPassword",

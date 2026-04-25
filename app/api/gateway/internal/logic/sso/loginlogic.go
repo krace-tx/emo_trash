@@ -1,6 +1,3 @@
-// Code scaffolded by goctl. Safe to edit.
-// goctl 1.10.1
-
 package sso
 
 import (
@@ -28,7 +25,7 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.CommonResp, err error) {
-	data, err := l.svcCtx.Auth.Login(l.ctx, &auth.LoginReq{
+	data, err := l.svcCtx.Sso.Login(l.ctx, &auth.LoginReq{
 		Email:    req.Email,
 		Password: req.Password,
 	})

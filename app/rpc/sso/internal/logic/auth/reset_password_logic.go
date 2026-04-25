@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/model"
+	"github.com/krace-tx/emo_trash/app/model"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 	authx "github.com/krace-tx/emo_trash/pkg/auth"

@@ -398,10 +398,12 @@ func (x *ResetPasswordReq) GetNewPassword() string {
 // ============ 修改密码 ============
 type ChangePasswordReq struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"user_id"
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
 	// @inject_tag: json:"old_password"
-	OldPassword string `protobuf:"bytes,1,opt,name=old_password,json=oldPassword,proto3" json:"old_password"`
+	OldPassword string `protobuf:"bytes,2,opt,name=old_password,json=oldPassword,proto3" json:"old_password"`
 	// @inject_tag: json:"new_password"
-	NewPassword   string `protobuf:"bytes,2,opt,name=new_password,json=newPassword,proto3" json:"new_password"`
+	NewPassword   string `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -434,6 +436,13 @@ func (x *ChangePasswordReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ChangePasswordReq.ProtoReflect.Descriptor instead.
 func (*ChangePasswordReq) Descriptor() ([]byte, []int) {
 	return file_sso_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ChangePasswordReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
 }
 
 func (x *ChangePasswordReq) GetOldPassword() string {
@@ -997,10 +1006,11 @@ const file_sso_proto_rawDesc = "" +
 	"\x05email\x18\x01 \x01(\tB\x1d\xfaB\x04r\x02`\x01\x82\xb5\x18\x12邮箱格式错误R\x05email\x12A\n" +
 	"\n" +
 	"email_code\x18\x02 \x01(\tB\"\xfaB\x06r\x04\x10\x04\x18\x06\x82\xb5\x18\x15验证码格式错误R\temailCode\x12R\n" +
-	"\fnew_password\x18\x03 \x01(\tB/\xfaB\x06r\x04\x10\b\x18 \x82\xb5\x18\"密码长度必须在8-32位之间R\vnewPassword\"\xc1\x01\n" +
-	"\x11ChangePasswordReq\x12U\n" +
-	"\fold_password\x18\x01 \x01(\tB2\xfaB\x06r\x04\x10\b\x18 \x82\xb5\x18%旧密码长度必须在8-32位之间R\voldPassword\x12U\n" +
-	"\fnew_password\x18\x02 \x01(\tB2\xfaB\x06r\x04\x10\b\x18 \x82\xb5\x18%新密码长度必须在8-32位之间R\vnewPassword\"]\n" +
+	"\fnew_password\x18\x03 \x01(\tB/\xfaB\x06r\x04\x10\b\x18 \x82\xb5\x18\"密码长度必须在8-32位之间R\vnewPassword\"\xda\x01\n" +
+	"\x11ChangePasswordReq\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12U\n" +
+	"\fold_password\x18\x02 \x01(\tB2\xfaB\x06r\x04\x10\b\x18 \x82\xb5\x18%旧密码长度必须在8-32位之间R\voldPassword\x12U\n" +
+	"\fnew_password\x18\x03 \x01(\tB2\xfaB\x06r\x04\x10\b\x18 \x82\xb5\x18%新密码长度必须在8-32位之间R\vnewPassword\"]\n" +
 	"\x0fRefreshTokenReq\x12J\n" +
 	"\rrefresh_token\x18\x01 \x01(\tB%\xfaB\x04r\x02\x10\x01\x82\xb5\x18\x1arefresh_token 不能为空R\frefreshToken\"@\n" +
 	"\tVerifyReq\x123\n" +
