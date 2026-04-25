@@ -1,0 +1,221 @@
+<template>
+  <scroll-view class="container" scroll-y>
+    <!-- 沉浸式顶部 -->
+    <view class="header">
+      <image class="bg-img" src="https://picsum.photos/800/400?blur=10" mode="aspectFill" />
+      <view class="user-card">
+        <view class="user-info">
+          <image class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=me" />
+          <view class="names">
+            <text class="nickname">路过的程序猿</text>
+            <text class="id">ID: 12345678</text>
+          </view>
+          <view class="edit-btn">编辑资料</view>
+        </view>
+        <view class="bio">做一个快乐的垃圾桶，装下所有的不开心。</view>
+        <view class="stats">
+          <view class="stat-item">
+            <text class="count">12</text>
+            <text class="label">发布</text>
+          </view>
+          <view class="stat-item">
+            <text class="count">256</text>
+            <text class="label">获赞</text>
+          </view>
+          <view class="stat-item">
+            <text class="count">88</text>
+            <text class="label">收藏</text>
+          </view>
+          <view class="stat-item">
+            <text class="count">10</text>
+            <text class="label">关注</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 功能列表 -->
+    <view class="menu-list">
+      <view class="menu-item" @click="handleManage">
+        <text class="menu-icon">📝</text>
+        <text class="menu-name">帖子管理</text>
+        <text class="arrow">></text>
+      </view>
+      <view class="menu-item">
+        <text class="menu-icon">⭐</text>
+        <text class="menu-name">我的收藏</text>
+        <text class="arrow">></text>
+      </view>
+      <view class="menu-item" @click="handleLogout">
+        <text class="menu-icon">🚪</text>
+        <text class="menu-name">退出登录</text>
+        <text class="arrow">></text>
+      </view>
+    </view>
+  </scroll-view>
+</template>
+
+<script setup>
+import { logout } from '@/api/sso'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+
+function handleManage() {
+  uni.navigateTo({
+    url: '/pages_user/manage/manage'
+  })
+}
+
+async function handleLogout() {
+  uni.showModal({
+    title: '提示',
+    content: '确定要退出登录吗？',
+    success: async (res) => {
+      if (res.confirm) {
+        try {
+          if (userStore.token) {
+            await logout(userStore.token)
+          }
+        } catch (e) {
+          console.error('退出接口调用失败', e)
+        } finally {
+          userStore.logout()
+          uni.showToast({ title: '已退出登录' })
+          setTimeout(() => {
+            uni.reLaunch({ url: '/pages/auth/login/index' })
+          }, 1000)
+        }
+      }
+    }
+  })
+}
+</script>
+
+<style lang="scss" scoped>
+.container {
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.header {
+  position: relative;
+  padding-bottom: 40rpx;
+}
+
+.bg-img {
+  width: 100%;
+  height: 400rpx;
+}
+
+.user-card {
+  margin: -100rpx 30rpx 0;
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  position: relative;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 4rpx solid #fff;
+  margin-top: -60rpx;
+}
+
+.names {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.nickname {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.id {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.edit-btn {
+  font-size: 24rpx;
+  color: #666;
+  padding: 10rpx 30rpx;
+  border: 1px solid #ddd;
+  border-radius: 30rpx;
+}
+
+.bio {
+  margin-top: 30rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40rpx;
+  padding-top: 30rpx;
+  border-top: 1px solid #f5f5f5;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.count {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.label {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.menu-list {
+  margin: 20rpx 30rpx;
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 0 30rpx;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  height: 100rpx;
+  border-bottom: 1px solid #f5f5f5;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.menu-icon {
+  font-size: 36rpx;
+  margin-right: 20rpx;
+}
+
+.menu-name {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.arrow {
+  font-size: 24rpx;
+  color: #ccc;
+}
+</style>

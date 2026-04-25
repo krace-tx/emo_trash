@@ -38,5 +38,11 @@ service gateway {
 
 	@handler Logout
 	post /auth/logout (LogoutReq) returns (CommonResp)
+
+	@handler GetUserInfo
+	get /user/info (GetUserInfoReq) returns (CommonResp)
+
+	@handler UpdateUserInfo
+	post /user/info/update (UpdateUserInfoReq) returns (CommonResp)
 }
 

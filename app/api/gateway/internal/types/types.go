@@ -15,6 +15,9 @@ type CommonResp struct {
 	Message string      `json:"message"` // 提示信息
 }
 
+type GetUserInfoReq struct {
+}
+
 type LoginReq struct {
 	Email    string `json:"email,required,email"`           // 邮箱(必填)
 	Password string `json:"password,required,min=8,max=32"` // 密码(必填)
@@ -43,6 +46,19 @@ type ResetPasswordReq struct {
 type SendEmailCodeReq struct {
 	Email string `json:"email,required,email"`                            // 邮箱(必填)
 	Scene string `json:"scene,required,options=register|login|reset_pwd"` // 场景(必填)
+}
+
+type UpdateUserInfoReq struct {
+	Nickname string `json:"nickname,optional"` // 昵称(可选)
+	Avatar   string `json:"avatar,optional"`   // 头像(可选)
+}
+
+type UserInfo struct {
+	UserId     string `json:"user_id"`     // 用户ID
+	Email      string `json:"email"`       // 邮箱
+	Nickname   string `json:"nickname"`    // 昵称
+	Avatar     string `json:"avatar"`      // 头像
+	CreateTime int64  `json:"create_time"` // 创建时间
 }
 
 type VerifyReq struct {

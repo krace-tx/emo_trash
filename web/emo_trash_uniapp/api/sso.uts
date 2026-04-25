@@ -1,0 +1,111 @@
+import { request } from './request'
+
+/**
+ * 登录响应数据
+ */
+export type LoginData = {
+  access_token: string
+  access_token_expire: number
+  refresh_token: string
+  refresh_token_expire: number
+}
+
+/**
+ * 发送邮箱验证码
+ * @param email 邮箱
+ * @param scene 场景: register|login|reset_pwd
+ */
+export function sendEmailCode(email: string, scene: string): Promise<boolean> {
+  return request<boolean>({
+    url: '/sso/v1/auth/email/code',
+    method: 'POST',
+    data: { email, scene }
+  })
+}
+
+/**
+ * 注册
+ */
+export function register(data: any): Promise<boolean> {
+  return request<boolean>({
+    url: '/sso/v1/auth/register',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 登录
+ */
+export function login(data: any): Promise<LoginData> {
+  return request<LoginData>({
+    url: '/sso/v1/auth/login',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 忘记密码（通过邮箱验证码重置）
+ */
+export function resetPassword(data: any): Promise<boolean> {
+  return request<boolean>({
+    url: '/sso/v1/auth/password/reset',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 修改密码（需登录）
+ */
+export function changePassword(data: any): Promise<boolean> {
+  return request<boolean>({
+    url: '/sso/v1/auth/password/change',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 刷新 Token
+ */
+export function refreshToken(token: string): Promise<LoginData> {
+  return request<LoginData>({
+    url: '/sso/v1/auth/token/refresh',
+    method: 'POST',
+    data: { refresh_token: token }
+  })
+}
+
+/**
+ * 退出登录
+ */
+export function logout(token: string): Promise<boolean> {
+  return request<boolean>({
+    url: '/sso/v1/auth/logout',
+    method: 'POST',
+    data: { token }
+  })
+}
+
+/**
+ * 获取用户信息
+ */
+export function getUserInfo(): Promise<any> {
+  return request<any>({
+    url: '/sso/v1/user/info',
+    method: 'GET'
+  })
+}
+
+/**
+ * 更新用户信息
+ */
+export function updateUserInfo(data: any): Promise<boolean> {
+  return request<boolean>({
+    url: '/sso/v1/user/info/update',
+    method: 'POST',
+    data
+  })
+}

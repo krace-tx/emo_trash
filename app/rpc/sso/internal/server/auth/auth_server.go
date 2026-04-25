@@ -70,3 +70,15 @@ func (s *AuthServer) Logout(ctx context.Context, in *pb.LogoutReq) (*pb.CommonRe
 	l := authlogic.NewLogoutLogic(ctx, s.svcCtx)
 	return l.Logout(in)
 }
+
+// 获取用户信息
+func (s *AuthServer) GetUserInfo(ctx context.Context, in *pb.GetUserInfoReq) (*pb.GetUserInfoResp, error) {
+	l := authlogic.NewGetUserInfoLogic(ctx, s.svcCtx)
+	return l.GetUserInfo(in)
+}
+
+// 更新用户信息
+func (s *AuthServer) UpdateUserInfo(ctx context.Context, in *pb.UpdateUserInfoReq) (*pb.CommonResp, error) {
+	l := authlogic.NewUpdateUserInfoLogic(ctx, s.svcCtx)
+	return l.UpdateUserInfo(in)
+}

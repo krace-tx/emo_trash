@@ -1,0 +1,44 @@
+import { reactive } from 'vue'
+import { getUserInfo } from '@/api/sso'
+
+export type UserInfo = {
+  userId: string
+  email: string
+  nickname: string
+  avatar: string
+}
+
+export const userStore = reactive({
+  token: uni.getStorageSync('access_token') as string | null,
+  userInfo: null as UserInfo | null,
+  
+  setToken(token: string) {
+    this.token = token
+    uni.setStorageSync('access_token', token)
+  },
+  
+  async fetchUserInfo() {
+    if (!this.token) return
+    try {
+      const info = await getUserInfo()
+      this.userInfo = info as UserInfo
+    } catch (e) {
+      console.error('获取用户信息失败', e)
+    }
+  },
+  
+  setUserInfo(userInfo: UserInfo) {
+    this.userInfo = userInfo
+  },
+  
+  logout() {
+    this.token = null
+    this.userInfo = null
+    uni.removeStorageSync('access_token')
+  }
+})
+
+// 为了兼容 spec 中的 useUserStore 调用方式
+export function useUserStore() {
+  return userStore
+}

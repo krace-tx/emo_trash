@@ -56,6 +56,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/auth/token/verify",
 				Handler: sso.VerifyTokenHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user/info",
+				Handler: sso.GetUserInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/user/info/update",
+				Handler: sso.UpdateUserInfoHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/sso/v1"),
 		rest.WithTimeout(10000*time.Millisecond),

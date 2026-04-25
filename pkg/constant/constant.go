@@ -1,5 +1,7 @@
 package consts
 
+import "time"
+
 const (
 	UserId       = "user_id" // 用户id
 	Admin        = "$Admin^"
@@ -33,6 +35,18 @@ const (
 	ActionComment  = "comment"
 
 	Online = "online"
+)
+
+// 验证码场景枚举
+const (
+	SceneRegister = "register"
+	SceneLogin    = "login"
+	SceneResetPwd = "reset_pwd"
+)
+
+const (
+	CodeCoolingTime = 30 * time.Second // 验证码发送冷却时间
+	CodeExpireTime  = 5 * time.Minute  // 验证码有效期
 )
 
 // 社区redis缓存键

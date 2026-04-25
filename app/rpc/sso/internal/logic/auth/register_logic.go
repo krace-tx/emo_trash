@@ -10,6 +10,7 @@ import (
 	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 	authx "github.com/krace-tx/emo_trash/pkg/auth"
 	consts "github.com/krace-tx/emo_trash/pkg/constant"
+	"github.com/krace-tx/emo_trash/pkg/datastore/redis"
 	errx "github.com/krace-tx/emo_trash/pkg/err"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,13 +34,18 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 // 邮箱注册
 func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.LoginResp, error) {
-	userColl := l.svcCtx.Mongo.Collection("users")
+	// 1. 验证邮箱验证码
+	if !l.verifyCode(in.Email, in.EmailCode, consts.SceneRegister) {
+		return nil, errx.ErrAuthSmsCodeInvalid
+	}
+
+	userColl := l.svcCtx.Mongo.Collection(model.UserCollectionName)
 	existFilter := bson.M{
 		"email":      in.Email,
 		"deleted_at": bson.M{"$exists": false},
 	}
 
-	// 校验邮箱是否已注册
+	// 2. 校验邮箱是否已注册
 	existsErr := userColl.FindOne(l.ctx, existFilter).Err()
 	if existsErr == nil {
 		return nil, errx.ErrAuthMobileExists
@@ -49,7 +55,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.LoginResp, error) {
 		return nil, errx.ErrDBQueryFailed
 	}
 
-	// 密码加盐哈希
+	// 3. 密码加盐哈希
 	salt, err := authx.GenerateSalt()
 	if err != nil {
 		l.Logger.Errorf("生成密码盐失败: %v, email=%s", err, in.Email)
@@ -73,6 +79,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.LoginResp, error) {
 		UpdatedAt: now,
 	}
 
+	// 4. 创建用户
 	insertResult, err := userColl.InsertOne(l.ctx, user)
 	if err != nil {
 		l.Logger.Errorf("创建用户失败: %v, email=%s", err, in.Email)
@@ -85,9 +92,32 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.LoginResp, error) {
 		return nil, errx.ErrAuthGenIDFailed
 	}
 
+	// 5. 注册成功后清理验证码
+	l.delCode(in.Email, consts.SceneRegister)
+
+	l.Logger.Infof("用户注册成功: email=%s, user_id=%s", in.Email, insertedID.Hex())
+	return l.generateTokenPair(insertedID.Hex(), in.Email)
+}
+
+func (l *RegisterLogic) verifyCode(email, code, scene string) bool {
+	codeKey := redis.GenerateKey("sso", "email_code", scene, email)
+	var cachedCode string
+	if err := l.svcCtx.Redis.Get(codeKey, &cachedCode); err != nil {
+		l.Logger.Errorf("获取验证码失败: %v, email=%s, scene=%s", err, email, scene)
+		return false
+	}
+	return cachedCode == code
+}
+
+func (l *RegisterLogic) delCode(email, scene string) {
+	codeKey := redis.GenerateKey("sso", "email_code", scene, email)
+	_ = l.svcCtx.Redis.Del(codeKey)
+}
+
+func (l *RegisterLogic) generateTokenPair(userId, email string) (*pb.LoginResp, error) {
 	claims := map[string]any{
-		consts.UserId: insertedID.Hex(),
-		"email":       in.Email,
+		consts.UserId: userId,
+		"email":       email,
 	}
 
 	accessToken, err := authx.GenJwtToken(
@@ -96,7 +126,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.LoginResp, error) {
 		claims,
 	)
 	if err != nil {
-		l.Logger.Errorf("注册后生成访问令牌失败: %v, email=%s", err, in.Email)
+		l.Logger.Errorf("注册后生成访问令牌失败: %v, user_id=%s", err, userId)
 		return nil, errx.ErrAuthGenAccessTokenFail
 	}
 
@@ -106,11 +136,10 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.LoginResp, error) {
 		claims,
 	)
 	if err != nil {
-		l.Logger.Errorf("注册后生成刷新令牌失败: %v, email=%s", err, in.Email)
+		l.Logger.Errorf("注册后生成刷新令牌失败: %v, user_id=%s", err, userId)
 		return nil, errx.ErrAuthGenRefreshTokenFail
 	}
 
-	l.Logger.Infof("用户注册成功: email=%s, user_id=%s", in.Email, insertedID.Hex())
 	return &pb.LoginResp{
 		AccessToken:        accessToken,
 		AccessTokenExpire:  l.svcCtx.Config.JWT.AccessExpire,

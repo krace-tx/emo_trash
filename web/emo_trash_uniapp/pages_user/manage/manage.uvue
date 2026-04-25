@@ -1,0 +1,148 @@
+<template>
+  <view class="container">
+    <view class="tabs">
+      <view 
+        v-for="(tab, index) in tabs" 
+        :key="index"
+        :class="['tab-item', activeTab === index ? 'active' : '']"
+        @click="activeTab = index"
+      >
+        {{ tab }}
+      </view>
+    </view>
+
+    <scroll-view class="list-scroll" scroll-y>
+      <view v-for="item in list" :key="item.id" class="post-item">
+        <!-- #ifdef APP -->
+        <view class="swipe-action">
+          <!-- 模拟侧滑删除 -->
+          <view class="item-content">
+            <image class="cover" :src="item.cover" mode="aspectFill" />
+            <view class="info">
+              <text class="title">{{ item.title }}</text>
+              <text class="time">{{ item.time }}</text>
+            </view>
+          </view>
+          <view class="delete-btn">删除</view>
+        </view>
+        <!-- #endif -->
+        
+        <!-- #ifdef MP-WEIXIN -->
+        <view class="wx-item">
+           <image class="cover" :src="item.cover" mode="aspectFill" />
+            <view class="info">
+              <text class="title">{{ item.title }}</text>
+              <text class="time">{{ item.time }}</text>
+            </view>
+        </view>
+        <!-- #endif -->
+      </view>
+    </scroll-view>
+  </view>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const tabs = ['已发布', '草稿']
+const activeTab = ref(0)
+
+const publishedList = ref([
+  { id: '1', title: '我的第一篇帖子', time: '2026-04-20', cover: 'https://picsum.photos/200/200' },
+  { id: '2', title: '今天心情不太好', time: '2026-04-21', cover: 'https://picsum.photos/200/201' }
+])
+
+const draftList = ref([
+  { id: '3', title: '待完成的草稿', time: '2026-04-24', cover: 'https://picsum.photos/200/202' }
+])
+
+const list = computed(() => activeTab.value === 0 ? publishedList.value : draftList.value)
+</script>
+
+<style lang="scss" scoped>
+.container {
+  height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  display: flex;
+  background-color: #fff;
+  height: 88rpx;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  color: #666;
+  
+  &.active {
+    color: #ff2442;
+    font-weight: bold;
+  }
+}
+
+.list-scroll {
+  flex: 1;
+}
+
+.post-item {
+  background-color: #fff;
+  margin-bottom: 2rpx;
+}
+
+.item-content {
+  display: flex;
+  padding: 20rpx;
+  background-color: #fff;
+}
+
+.wx-item {
+  display: flex;
+  padding: 20rpx;
+}
+
+.cover {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 8rpx;
+  margin-right: 20rpx;
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.swipe-action {
+  display: flex;
+  width: 100%;
+}
+
+.delete-btn {
+  width: 120rpx;
+  background-color: #ff2442;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+}
+</style>

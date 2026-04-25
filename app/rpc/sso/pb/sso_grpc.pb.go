@@ -27,6 +27,8 @@ const (
 	Auth_RefreshToken_FullMethodName   = "/sso.auth/RefreshToken"
 	Auth_VerifyToken_FullMethodName    = "/sso.auth/VerifyToken"
 	Auth_Logout_FullMethodName         = "/sso.auth/Logout"
+	Auth_GetUserInfo_FullMethodName    = "/sso.auth/GetUserInfo"
+	Auth_UpdateUserInfo_FullMethodName = "/sso.auth/UpdateUserInfo"
 )
 
 // AuthClient is the client API for Auth service.
@@ -49,6 +51,10 @@ type AuthClient interface {
 	VerifyToken(ctx context.Context, in *VerifyReq, opts ...grpc.CallOption) (*VerifyResp, error)
 	// 登出
 	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 获取用户信息
+	GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
+	// 更新用户信息
+	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
 type authClient struct {
@@ -139,6 +145,26 @@ func (c *authClient) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.Cal
 	return out, nil
 }
 
+func (c *authClient) GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserInfoResp)
+	err := c.cc.Invoke(ctx, Auth_GetUserInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Auth_UpdateUserInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServer is the server API for Auth service.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility.
@@ -159,6 +185,10 @@ type AuthServer interface {
 	VerifyToken(context.Context, *VerifyReq) (*VerifyResp, error)
 	// 登出
 	Logout(context.Context, *LogoutReq) (*CommonResp, error)
+	// 获取用户信息
+	GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoResp, error)
+	// 更新用户信息
+	UpdateUserInfo(context.Context, *UpdateUserInfoReq) (*CommonResp, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -192,6 +222,12 @@ func (UnimplementedAuthServer) VerifyToken(context.Context, *VerifyReq) (*Verify
 }
 func (UnimplementedAuthServer) Logout(context.Context, *LogoutReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedAuthServer) GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUserInfo not implemented")
+}
+func (UnimplementedAuthServer) UpdateUserInfo(context.Context, *UpdateUserInfoReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateUserInfo not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 func (UnimplementedAuthServer) testEmbeddedByValue()              {}
@@ -358,6 +394,42 @@ func _Auth_Logout_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GetUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_GetUserInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GetUserInfo(ctx, req.(*GetUserInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).UpdateUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_UpdateUserInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).UpdateUserInfo(ctx, req.(*UpdateUserInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -396,6 +468,14 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _Auth_Logout_Handler,
+		},
+		{
+			MethodName: "GetUserInfo",
+			Handler:    _Auth_GetUserInfo_Handler,
+		},
+		{
+			MethodName: "UpdateUserInfo",
+			Handler:    _Auth_UpdateUserInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

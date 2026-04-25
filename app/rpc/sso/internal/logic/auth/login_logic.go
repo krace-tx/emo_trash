@@ -32,7 +32,7 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 // 邮箱登录
 func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
-	userColl := l.svcCtx.Mongo.Collection("users")
+	userColl := l.svcCtx.Mongo.Collection(model.UserCollectionName)
 	filter := bson.M{
 		"email":      in.Email,
 		"deleted_at": bson.M{"$exists": false},
@@ -62,9 +62,14 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		return nil, errx.ErrAuthPasswordIncorrect
 	}
 
+	l.Logger.Infof("用户登录成功: email=%s, user_id=%s", user.Email, user.ID.Hex())
+	return l.generateTokenPair(user.ID.Hex(), user.Email)
+}
+
+func (l *LoginLogic) generateTokenPair(userId, email string) (*pb.LoginResp, error) {
 	claims := map[string]any{
-		consts.UserId: user.ID.Hex(),
-		"email":       user.Email,
+		consts.UserId: userId,
+		"email":       email,
 	}
 
 	accessToken, err := authx.GenJwtToken(
@@ -73,7 +78,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		claims,
 	)
 	if err != nil {
-		l.Logger.Errorf("生成访问令牌失败: %v, email=%s", err, in.Email)
+		l.Logger.Errorf("生成访问令牌失败: %v, user_id=%s", err, userId)
 		return nil, errx.ErrAuthGenAccessTokenFail
 	}
 
@@ -83,11 +88,10 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		claims,
 	)
 	if err != nil {
-		l.Logger.Errorf("生成刷新令牌失败: %v, email=%s", err, in.Email)
+		l.Logger.Errorf("生成刷新令牌失败: %v, user_id=%s", err, userId)
 		return nil, errx.ErrAuthGenRefreshTokenFail
 	}
 
-	l.Logger.Infof("用户登录成功: email=%s, user_id=%s", user.Email, user.ID.Hex())
 	return &pb.LoginResp{
 		AccessToken:        accessToken,
 		AccessTokenExpire:  l.svcCtx.Config.JWT.AccessExpire,

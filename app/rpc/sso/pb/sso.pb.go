@@ -545,7 +545,7 @@ func (x *VerifyReq) GetToken() string {
 type VerifyResp struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// @inject_tag: json:"user_id"
-	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
 	// @inject_tag: json:"email"
 	Email         string `protobuf:"bytes,2,opt,name=email,proto3" json:"email"`
 	unknownFields protoimpl.UnknownFields
@@ -582,11 +582,11 @@ func (*VerifyResp) Descriptor() ([]byte, []int) {
 	return file_sso_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *VerifyResp) GetUserId() int64 {
+func (x *VerifyResp) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 func (x *VerifyResp) GetEmail() string {
@@ -697,6 +697,241 @@ func (x *CommonResp) GetMessage() string {
 	return ""
 }
 
+// ============ 用户信息 ============
+type UserInfo struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"user_id"
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
+	// @inject_tag: json:"email"
+	Email string `protobuf:"bytes,2,opt,name=email,proto3" json:"email"`
+	// @inject_tag: json:"nickname"
+	Nickname string `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname"`
+	// @inject_tag: json:"avatar"
+	Avatar string `protobuf:"bytes,4,opt,name=avatar,proto3" json:"avatar"`
+	// @inject_tag: json:"create_time"
+	CreateTime    int64 `protobuf:"varint,5,opt,name=create_time,json=createTime,proto3" json:"create_time"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserInfo) Reset() {
+	*x = UserInfo{}
+	mi := &file_sso_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserInfo) ProtoMessage() {}
+
+func (x *UserInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserInfo.ProtoReflect.Descriptor instead.
+func (*UserInfo) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *UserInfo) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UserInfo) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UserInfo) GetNickname() string {
+	if x != nil {
+		return x.Nickname
+	}
+	return ""
+}
+
+func (x *UserInfo) GetAvatar() string {
+	if x != nil {
+		return x.Avatar
+	}
+	return ""
+}
+
+func (x *UserInfo) GetCreateTime() int64 {
+	if x != nil {
+		return x.CreateTime
+	}
+	return 0
+}
+
+type GetUserInfoReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"user_id"
+	UserId        string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserInfoReq) Reset() {
+	*x = GetUserInfoReq{}
+	mi := &file_sso_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserInfoReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserInfoReq) ProtoMessage() {}
+
+func (x *GetUserInfoReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserInfoReq.ProtoReflect.Descriptor instead.
+func (*GetUserInfoReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *GetUserInfoReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetUserInfoResp struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"user"
+	User          *UserInfo `protobuf:"bytes,1,opt,name=user,proto3" json:"user"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserInfoResp) Reset() {
+	*x = GetUserInfoResp{}
+	mi := &file_sso_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserInfoResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserInfoResp) ProtoMessage() {}
+
+func (x *GetUserInfoResp) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserInfoResp.ProtoReflect.Descriptor instead.
+func (*GetUserInfoResp) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *GetUserInfoResp) GetUser() *UserInfo {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+type UpdateUserInfoReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"user_id"
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
+	// @inject_tag: json:"nickname"
+	Nickname string `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname"`
+	// @inject_tag: json:"avatar"
+	Avatar        string `protobuf:"bytes,3,opt,name=avatar,proto3" json:"avatar"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserInfoReq) Reset() {
+	*x = UpdateUserInfoReq{}
+	mi := &file_sso_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserInfoReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserInfoReq) ProtoMessage() {}
+
+func (x *UpdateUserInfoReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserInfoReq.ProtoReflect.Descriptor instead.
+func (*UpdateUserInfoReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *UpdateUserInfoReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UpdateUserInfoReq) GetNickname() string {
+	if x != nil {
+		return x.Nickname
+	}
+	return ""
+}
+
+func (x *UpdateUserInfoReq) GetAvatar() string {
+	if x != nil {
+		return x.Avatar
+	}
+	return ""
+}
+
 var File_sso_proto protoreflect.FileDescriptor
 
 const file_sso_proto_rawDesc = "" +
@@ -736,14 +971,29 @@ const file_sso_proto_rawDesc = "" +
 	"\x05token\x18\x01 \x01(\tB\x1d\xfaB\x04r\x02\x10\x01\x82\xb5\x18\x12token 不能为空R\x05token\";\n" +
 	"\n" +
 	"VerifyResp\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x14\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\"@\n" +
 	"\tLogoutReq\x123\n" +
 	"\x05token\x18\x01 \x01(\tB\x1d\xfaB\x04r\x02\x10\x01\x82\xb5\x18\x12token 不能为空R\x05token\"@\n" +
 	"\n" +
 	"CommonResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage2\xa1\x03\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x8e\x01\n" +
+	"\bUserInfo\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
+	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x16\n" +
+	"\x06avatar\x18\x04 \x01(\tR\x06avatar\x12\x1f\n" +
+	"\vcreate_time\x18\x05 \x01(\x03R\n" +
+	"createTime\")\n" +
+	"\x0eGetUserInfoReq\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"4\n" +
+	"\x0fGetUserInfoResp\x12!\n" +
+	"\x04user\x18\x01 \x01(\v2\r.sso.UserInfoR\x04user\"`\n" +
+	"\x11UpdateUserInfoReq\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
+	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x16\n" +
+	"\x06avatar\x18\x03 \x01(\tR\x06avatar2\x96\x04\n" +
 	"\x04auth\x12>\n" +
 	"\rSendEmailCode\x12\x15.sso.SendEmailCodeReq\x1a\x16.sso.SendEmailCodeResp\x12,\n" +
 	"\bRegister\x12\x10.sso.RegisterReq\x1a\x0e.sso.LoginResp\x12&\n" +
@@ -752,7 +1002,9 @@ const file_sso_proto_rawDesc = "" +
 	"\x0eChangePassword\x12\x16.sso.ChangePasswordReq\x1a\x0f.sso.CommonResp\x124\n" +
 	"\fRefreshToken\x12\x14.sso.RefreshTokenReq\x1a\x0e.sso.LoginResp\x12.\n" +
 	"\vVerifyToken\x12\x0e.sso.VerifyReq\x1a\x0f.sso.VerifyResp\x12)\n" +
-	"\x06Logout\x12\x0e.sso.LogoutReq\x1a\x0f.sso.CommonRespB\x06Z\x04./pbb\x06proto3"
+	"\x06Logout\x12\x0e.sso.LogoutReq\x1a\x0f.sso.CommonResp\x128\n" +
+	"\vGetUserInfo\x12\x13.sso.GetUserInfoReq\x1a\x14.sso.GetUserInfoResp\x129\n" +
+	"\x0eUpdateUserInfo\x12\x16.sso.UpdateUserInfoReq\x1a\x0f.sso.CommonRespB\x06Z\x04./pbb\x06proto3"
 
 var (
 	file_sso_proto_rawDescOnce sync.Once
@@ -766,7 +1018,7 @@ func file_sso_proto_rawDescGZIP() []byte {
 	return file_sso_proto_rawDescData
 }
 
-var file_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_sso_proto_goTypes = []any{
 	(*SendEmailCodeReq)(nil),  // 0: sso.SendEmailCodeReq
 	(*SendEmailCodeResp)(nil), // 1: sso.SendEmailCodeResp
@@ -780,29 +1032,38 @@ var file_sso_proto_goTypes = []any{
 	(*VerifyResp)(nil),        // 9: sso.VerifyResp
 	(*LogoutReq)(nil),         // 10: sso.LogoutReq
 	(*CommonResp)(nil),        // 11: sso.CommonResp
+	(*UserInfo)(nil),          // 12: sso.UserInfo
+	(*GetUserInfoReq)(nil),    // 13: sso.GetUserInfoReq
+	(*GetUserInfoResp)(nil),   // 14: sso.GetUserInfoResp
+	(*UpdateUserInfoReq)(nil), // 15: sso.UpdateUserInfoReq
 }
 var file_sso_proto_depIdxs = []int32{
-	0,  // 0: sso.auth.SendEmailCode:input_type -> sso.SendEmailCodeReq
-	2,  // 1: sso.auth.Register:input_type -> sso.RegisterReq
-	3,  // 2: sso.auth.Login:input_type -> sso.LoginReq
-	5,  // 3: sso.auth.ResetPassword:input_type -> sso.ResetPasswordReq
-	6,  // 4: sso.auth.ChangePassword:input_type -> sso.ChangePasswordReq
-	7,  // 5: sso.auth.RefreshToken:input_type -> sso.RefreshTokenReq
-	8,  // 6: sso.auth.VerifyToken:input_type -> sso.VerifyReq
-	10, // 7: sso.auth.Logout:input_type -> sso.LogoutReq
-	1,  // 8: sso.auth.SendEmailCode:output_type -> sso.SendEmailCodeResp
-	4,  // 9: sso.auth.Register:output_type -> sso.LoginResp
-	4,  // 10: sso.auth.Login:output_type -> sso.LoginResp
-	11, // 11: sso.auth.ResetPassword:output_type -> sso.CommonResp
-	11, // 12: sso.auth.ChangePassword:output_type -> sso.CommonResp
-	4,  // 13: sso.auth.RefreshToken:output_type -> sso.LoginResp
-	9,  // 14: sso.auth.VerifyToken:output_type -> sso.VerifyResp
-	11, // 15: sso.auth.Logout:output_type -> sso.CommonResp
-	8,  // [8:16] is the sub-list for method output_type
-	0,  // [0:8] is the sub-list for method input_type
-	0,  // [0:0] is the sub-list for extension type_name
-	0,  // [0:0] is the sub-list for extension extendee
-	0,  // [0:0] is the sub-list for field type_name
+	12, // 0: sso.GetUserInfoResp.user:type_name -> sso.UserInfo
+	0,  // 1: sso.auth.SendEmailCode:input_type -> sso.SendEmailCodeReq
+	2,  // 2: sso.auth.Register:input_type -> sso.RegisterReq
+	3,  // 3: sso.auth.Login:input_type -> sso.LoginReq
+	5,  // 4: sso.auth.ResetPassword:input_type -> sso.ResetPasswordReq
+	6,  // 5: sso.auth.ChangePassword:input_type -> sso.ChangePasswordReq
+	7,  // 6: sso.auth.RefreshToken:input_type -> sso.RefreshTokenReq
+	8,  // 7: sso.auth.VerifyToken:input_type -> sso.VerifyReq
+	10, // 8: sso.auth.Logout:input_type -> sso.LogoutReq
+	13, // 9: sso.auth.GetUserInfo:input_type -> sso.GetUserInfoReq
+	15, // 10: sso.auth.UpdateUserInfo:input_type -> sso.UpdateUserInfoReq
+	1,  // 11: sso.auth.SendEmailCode:output_type -> sso.SendEmailCodeResp
+	4,  // 12: sso.auth.Register:output_type -> sso.LoginResp
+	4,  // 13: sso.auth.Login:output_type -> sso.LoginResp
+	11, // 14: sso.auth.ResetPassword:output_type -> sso.CommonResp
+	11, // 15: sso.auth.ChangePassword:output_type -> sso.CommonResp
+	4,  // 16: sso.auth.RefreshToken:output_type -> sso.LoginResp
+	9,  // 17: sso.auth.VerifyToken:output_type -> sso.VerifyResp
+	11, // 18: sso.auth.Logout:output_type -> sso.CommonResp
+	14, // 19: sso.auth.GetUserInfo:output_type -> sso.GetUserInfoResp
+	11, // 20: sso.auth.UpdateUserInfo:output_type -> sso.CommonResp
+	11, // [11:21] is the sub-list for method output_type
+	1,  // [1:11] is the sub-list for method input_type
+	1,  // [1:1] is the sub-list for extension type_name
+	1,  // [1:1] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_sso_proto_init() }
@@ -816,7 +1077,7 @@ func file_sso_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_sso_proto_rawDesc), len(file_sso_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

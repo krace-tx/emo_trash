@@ -9,6 +9,7 @@ import (
 	"github.com/krace-tx/emo_trash/app/rpc/sso/internal/svc"
 	"github.com/krace-tx/emo_trash/app/rpc/sso/pb"
 	authx "github.com/krace-tx/emo_trash/pkg/auth"
+	consts "github.com/krace-tx/emo_trash/pkg/constant"
 	"github.com/krace-tx/emo_trash/pkg/datastore/redis"
 	errx "github.com/krace-tx/emo_trash/pkg/err"
 	"go.mongodb.org/mongo-driver/bson"
@@ -34,14 +35,7 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 // 忘记密码（通过邮箱验证码重置）
 func (l *ResetPasswordLogic) ResetPassword(in *pb.ResetPasswordReq) (*pb.CommonResp, error) {
 	// 1. 验证邮箱验证码
-	codeKey := redis.GenerateKey("sso", "email_code", "reset_pwd", in.Email)
-	var cachedCode string
-	if err := l.svcCtx.Redis.Get(codeKey, &cachedCode); err != nil {
-		l.Logger.Errorf("获取重置密码验证码失败: %v, email=%s", err, in.Email)
-		return nil, errx.ErrAuthSmsCodeInvalid
-	}
-	if cachedCode != in.EmailCode {
-		l.Logger.Errorf("重置密码验证码错误: email=%s", in.Email)
+	if !l.verifyCode(in.Email, in.EmailCode, consts.SceneResetPwd) {
 		return nil, errx.ErrAuthSmsCodeInvalid
 	}
 
@@ -86,9 +80,24 @@ func (l *ResetPasswordLogic) ResetPassword(in *pb.ResetPasswordReq) (*pb.CommonR
 		return nil, errx.ErrDBUpdateFailed
 	}
 
-	// 5. 删除已使用的验证码
-	_ = l.svcCtx.Redis.Del(codeKey)
+	// 5. 成功后清理验证码
+	l.delCode(in.Email, consts.SceneResetPwd)
 
 	l.Logger.Infof("密码重置成功: email=%s", in.Email)
 	return &pb.CommonResp{Success: true, Message: "密码重置成功"}, nil
+}
+
+func (l *ResetPasswordLogic) verifyCode(email, code, scene string) bool {
+	codeKey := redis.GenerateKey("sso", "email_code", scene, email)
+	var cachedCode string
+	if err := l.svcCtx.Redis.Get(codeKey, &cachedCode); err != nil {
+		l.Logger.Errorf("获取验证码失败: %v, email=%s, scene=%s", err, email, scene)
+		return false
+	}
+	return cachedCode == code
+}
+
+func (l *ResetPasswordLogic) delCode(email, scene string) {
+	codeKey := redis.GenerateKey("sso", "email_code", scene, email)
+	_ = l.svcCtx.Redis.Del(codeKey)
 }

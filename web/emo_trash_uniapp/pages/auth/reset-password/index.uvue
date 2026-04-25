@@ -1,0 +1,281 @@
+<template>
+  <view class="container">
+    <view class="safe-top-padding"></view>
+
+    <view class="header">
+      <text class="title">重置密码</text>
+      <text class="subtitle">请验证邮箱并设置您的新密码</text>
+    </view>
+
+    <view class="form-container">
+      <view class="input-group">
+        <view class="input-item">
+          <input 
+            v-model="email" 
+            type="text" 
+            placeholder="请输入绑定的邮箱" 
+            class="main-input" 
+            placeholder-class="input-placeholder"
+          />
+        </view>
+        
+        <view class="input-item row-layout">
+          <input 
+            v-model="emailCode" 
+            type="number" 
+            maxlength="6" 
+            placeholder="请输入验证码" 
+            class="main-input code-input" 
+            placeholder-class="input-placeholder"
+          />
+          <view 
+            class="send-code-btn" 
+            :class="{ disabled: countdown > 0 || isSendingCode }" 
+            @click="handleSendCode"
+          >
+            <view class="vertical-line"></view>
+            <text class="send-code-text">
+              {{ isSendingCode ? '发送中' : (countdown > 0 ? `${countdown}s` : '获取验证码') }}
+            </text>
+          </view>
+        </view>
+
+        <view class="input-item">
+          <input 
+            v-model="newPassword" 
+            type="password" 
+            placeholder="设置新密码 (8-32位)" 
+            class="main-input" 
+            placeholder-class="input-placeholder"
+          />
+        </view>
+
+        <view class="input-item">
+          <input 
+            v-model="confirmPassword" 
+            type="password" 
+            placeholder="再次确认新密码" 
+            class="main-input" 
+            placeholder-class="input-placeholder"
+          />
+        </view>
+      </view>
+      
+      <button class="reset-btn" @click="handleReset" :loading="isLoading">重置并登录</button>
+      
+      <view class="footer-actions">
+        <text class="action-text" @click="handleBack">返回登录</text>
+      </view>
+    </view>
+
+    <view class="safe-bottom-padding"></view>
+  </view>
+</template>
+
+<script setup>
+import { ref, onUnmounted } from 'vue'
+import { sendEmailCode, resetPassword } from '@/api/sso'
+
+const email = ref('')
+const emailCode = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
+const isLoading = ref(false)
+const isSendingCode = ref(false)
+const countdown = ref(0)
+let timer = null
+
+function clearForm() {
+  email.value = ''
+  emailCode.value = ''
+  newPassword.value = ''
+  confirmPassword.value = ''
+}
+
+async function handleSendCode() {
+  if (countdown.value > 0 || isSendingCode.value) return
+  if (!email.value || !email.value.includes('@')) {
+    uni.showToast({ title: '请输入正确的邮箱', icon: 'none' })
+    return
+  }
+
+  isSendingCode.value = true
+  try {
+    await sendEmailCode(email.value, 'reset_pwd')
+    uni.showToast({ title: '验证码已发送' })
+    countdown.value = 60
+    timer = setInterval(() => {
+      if (countdown.value > 0) {
+        countdown.value--
+      } else {
+        clearInterval(timer)
+      }
+    }, 1000)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    isSendingCode.value = false
+  }
+}
+
+async function handleReset() {
+  if (!email.value || !emailCode.value || !newPassword.value || !confirmPassword.value) {
+    uni.showToast({ title: '请填写完整信息', icon: 'none' })
+    return
+  }
+  if (newPassword.value !== confirmPassword.value) {
+    uni.showToast({ title: '两次输入的密码不一致', icon: 'none' })
+    return
+  }
+
+  isLoading.value = true
+  try {
+    await resetPassword({
+      email: email.value,
+      email_code: emailCode.value,
+      new_password: newPassword.value
+    })
+    uni.showToast({ title: '重置成功' })
+    setTimeout(() => {
+      clearForm()
+      uni.navigateTo({ url: '/pages/auth/login/index' })
+    }, 1500)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+function handleBack() {
+  clearForm()
+  uni.navigateBack()
+}
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
+</script>
+
+<style lang="scss" scoped>
+.container {
+  padding: 0 60rpx;
+  height: 100vh;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.safe-top-padding {
+  height: var(--status-bar-height);
+  padding-top: 40rpx;
+}
+
+.header {
+  margin-top: 60rpx;
+  margin-bottom: 80rpx;
+}
+
+.title {
+  font-size: 60rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  display: block;
+  letter-spacing: -1rpx;
+}
+
+.subtitle {
+  font-size: 32rpx;
+  color: #8e8e93;
+  margin-top: 24rpx;
+}
+
+.form-container {
+  flex: 1;
+}
+
+.input-item {
+  height: 140rpx;
+  border-bottom: 1rpx solid #efeff4;
+  display: flex;
+  align-items: center;
+  flex-direction: row; 
+}
+
+.row-layout {
+  justify-content: space-between;
+}
+
+.main-input {
+  flex: 1;
+  font-size: 36rpx;
+  color: #000;
+  height: 60rpx;
+  line-height: 60rpx;
+}
+
+.input-placeholder {
+  color: #c7c7cc;
+}
+
+.send-code-btn {
+  height: 60rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding-left: 20rpx;
+}
+
+.vertical-line {
+  width: 2rpx;
+  height: 40rpx;
+  background-color: #f2f2f7;
+  margin-right: 30rpx;
+}
+
+.send-code-text {
+  font-size: 32rpx;
+  color: #ff2442;
+  font-weight: 500;
+  line-height: 60rpx;
+  text-align: right;
+  min-width: 160rpx;
+}
+
+.reset-btn {
+  margin-top: 80rpx;
+  background-color: #ff2442;
+  color: #fff;
+  border-radius: 55rpx;
+  height: 110rpx;
+  line-height: 110rpx;
+  font-size: 36rpx;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 15rpx 30rpx rgba(255, 36, 66, 0.15);
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 60rpx;
+}
+
+.action-text {
+  font-size: 32rpx;
+  color: #8e8e93;
+  padding: 20rpx;
+}
+
+.safe-bottom-padding {
+  height: env(safe-area-inset-bottom);
+  padding-bottom: 30rpx;
+}
+
+@media screen and (min-height: 800px) {
+  .header {
+    margin-top: 100rpx;
+  }
+}
+</style>

@@ -16,6 +16,8 @@ import (
 type (
 	ChangePasswordReq = pb.ChangePasswordReq
 	CommonResp        = pb.CommonResp
+	GetUserInfoReq    = pb.GetUserInfoReq
+	GetUserInfoResp   = pb.GetUserInfoResp
 	LoginReq          = pb.LoginReq
 	LoginResp         = pb.LoginResp
 	LogoutReq         = pb.LogoutReq
@@ -24,6 +26,7 @@ type (
 	ResetPasswordReq  = pb.ResetPasswordReq
 	SendEmailCodeReq  = pb.SendEmailCodeReq
 	SendEmailCodeResp = pb.SendEmailCodeResp
+	UpdateUserInfoReq = pb.UpdateUserInfoReq
 	VerifyReq         = pb.VerifyReq
 	VerifyResp        = pb.VerifyResp
 
@@ -44,6 +47,10 @@ type (
 		VerifyToken(ctx context.Context, in *VerifyReq, opts ...grpc.CallOption) (*VerifyResp, error)
 		// 登出
 		Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 获取用户信息
+		GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
+		// 更新用户信息
+		UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*CommonResp, error)
 	}
 
 	defaultAuth struct {
@@ -103,4 +110,16 @@ func (m *defaultAuth) VerifyToken(ctx context.Context, in *VerifyReq, opts ...gr
 func (m *defaultAuth) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewAuthClient(m.cli.Conn())
 	return client.Logout(ctx, in, opts...)
+}
+
+// 获取用户信息
+func (m *defaultAuth) GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.GetUserInfo(ctx, in, opts...)
+}
+
+// 更新用户信息
+func (m *defaultAuth) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.UpdateUserInfo(ctx, in, opts...)
 }

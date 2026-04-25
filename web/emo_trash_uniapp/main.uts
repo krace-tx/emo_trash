@@ -1,0 +1,43 @@
+import App from './App.uvue'
+import { createSSRApp } from 'vue'
+import { useUserStore } from './stores/user'
+
+export function createApp() {
+	const app = createSSRApp(App)
+	
+	// 路由白名单
+	const whiteList = [
+		'/pages/auth/login/index',
+		'/pages/auth/register/index',
+		'/pages/auth/reset-password/index',
+		'/pages/index/index',
+		'/pages_post/detail/detail'
+	]
+
+	// 添加拦截器
+	const list = ['navigateTo', 'redirectTo', 'reLaunch', 'switchTab']
+	list.forEach(item => {
+		uni.addInterceptor(item, {
+			invoke(e : any) : boolean {
+				const url = e.url.split('?')[0]
+				const userStore = useUserStore()
+				
+				if (!userStore.token && !whiteList.includes(url)) {
+					uni.showToast({
+						title: '请先登录',
+						icon: 'none'
+					})
+					uni.navigateTo({
+						url: '/pages/auth/login/index'
+					})
+					return false
+				}
+				return true
+			}
+		})
+	})
+
+	return {
+		app
+	}
+}

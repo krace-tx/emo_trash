@@ -1,0 +1,202 @@
+<template>
+  <view class="comment-list">
+    <view class="comment-count">共 {{ count }} 条评论</view>
+    
+    <view v-for="comment in comments" :key="comment.id" class="comment-item">
+      <image class="avatar" :src="comment.avatar" />
+      <view class="main-content">
+        <view class="user-info">
+          <text class="nickname">{{ comment.nickname }}</text>
+          <view class="like" @click="handleLike(comment)">
+            <text class="like-icon">❤️</text>
+            <text class="like-count">{{ comment.likeCount }}</text>
+          </view>
+        </view>
+        <text class="text">{{ comment.content }}</text>
+        <view class="footer">
+          <text class="time">{{ comment.time }}</text>
+          <text class="reply-btn">回复</text>
+        </view>
+        
+        <!-- 二级回复 -->
+        <view v-if="comment.replies && comment.replies.length" class="replies">
+          <view v-for="reply in comment.replies.slice(0, 2)" :key="reply.id" class="reply-item">
+            <image class="reply-avatar" :src="reply.avatar" />
+            <view class="reply-content">
+              <view class="reply-user">
+                <text class="reply-nickname">{{ reply.nickname }}</text>
+                <view class="reply-like">❤️ {{ reply.likeCount }}</view>
+              </view>
+              <text class="reply-text">
+                <text v-if="reply.replyTo" class="reply-to">@{{ reply.replyTo }} </text>
+                {{ reply.content }}
+              </text>
+            </view>
+          </view>
+          <view v-if="comment.replies.length > 2" class="more-replies" @click="handleMore(comment)">
+            展开 {{ comment.replies.length - 2 }} 条回复 >
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup>
+defineProps({
+  count: {
+    type: Number,
+    default: 0
+  },
+  comments: {
+    type: Array,
+    default: () => []
+  }
+})
+
+function handleLike(comment) {
+  // 处理点赞逻辑
+}
+
+function handleMore(comment) {
+  // 查看更多回复跳转
+}
+</script>
+
+<style lang="scss" scoped>
+.comment-list {
+  padding: 20rpx;
+  background-color: #fff;
+}
+
+.comment-count {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 30rpx;
+}
+
+.comment-item {
+  display: flex;
+  margin-bottom: 40rpx;
+}
+
+.avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.nickname {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.like {
+  display: flex;
+  align-items: center;
+}
+
+.like-icon {
+  font-size: 24rpx;
+}
+
+.like-count {
+  font-size: 22rpx;
+  color: #999;
+  margin-left: 4rpx;
+}
+
+.text {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.5;
+}
+
+.footer {
+  margin-top: 12rpx;
+  display: flex;
+  align-items: center;
+}
+
+.time {
+  font-size: 22rpx;
+  color: #999;
+  margin-right: 20rpx;
+}
+
+.reply-btn {
+  font-size: 24rpx;
+  color: #666;
+  font-weight: bold;
+}
+
+.replies {
+  margin-top: 20rpx;
+  background-color: #f8f8f8;
+  padding: 16rpx;
+  border-radius: 8rpx;
+}
+
+.reply-item {
+  display: flex;
+  margin-bottom: 16rpx;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.reply-avatar {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  margin-right: 12rpx;
+}
+
+.reply-content {
+  flex: 1;
+}
+
+.reply-user {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4rpx;
+}
+
+.reply-nickname {
+  font-size: 22rpx;
+  color: #666;
+}
+
+.reply-like {
+  font-size: 20rpx;
+  color: #999;
+}
+
+.reply-text {
+  font-size: 26rpx;
+  color: #333;
+}
+
+.reply-to {
+  color: #507daf;
+}
+
+.more-replies {
+  font-size: 22rpx;
+  color: #507daf;
+  margin-top: 10rpx;
+}
+</style>

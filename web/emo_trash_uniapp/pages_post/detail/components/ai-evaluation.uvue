@@ -1,0 +1,74 @@
+<template>
+  <view class="ai-evaluation">
+    <view class="header">
+      <text class="ai-icon">✨</text>
+      <text class="ai-title">智能星工坊 AI 评价</text>
+    </view>
+    <view class="content">
+      <text class="ai-text">{{ content }}</text>
+    </view>
+    <view class="footer">
+      <text class="ai-tip">AI 生成内容仅供参考</text>
+    </view>
+  </view>
+</template>
+
+<script setup>
+defineProps({
+  content: {
+    type: String,
+    default: '这是一个非常有深度的帖子，作者通过细腻的描写展现了内心的情感波动。建议可以从更多维度去探索生活的美好。'
+  }
+})
+</script>
+
+<style lang="scss" scoped>
+.ai-evaluation {
+  margin: 20rpx;
+  padding: 24rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8rpx 32rpx 0 rgba(31, 38, 135, 0.1);
+  /* 品牌色边框备选 */
+  /* border: 2rpx solid #ff2442; */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.ai-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.ai-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  background: linear-gradient(to right, #ff2442, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ai-text {
+  font-size: 26rpx;
+  color: #444;
+  line-height: 1.6;
+}
+
+.footer {
+  margin-top: 16rpx;
+  text-align: right;
+}
+
+.ai-tip {
+  font-size: 20rpx;
+  color: #999;
+}
+</style>
