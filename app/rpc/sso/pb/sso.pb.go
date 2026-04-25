@@ -709,7 +709,11 @@ type UserInfo struct {
 	// @inject_tag: json:"avatar"
 	Avatar string `protobuf:"bytes,4,opt,name=avatar,proto3" json:"avatar"`
 	// @inject_tag: json:"create_time"
-	CreateTime    int64 `protobuf:"varint,5,opt,name=create_time,json=createTime,proto3" json:"create_time"`
+	CreateTime int64 `protobuf:"varint,5,opt,name=create_time,json=createTime,proto3" json:"create_time"`
+	// @inject_tag: json:"bio"
+	Bio string `protobuf:"bytes,6,opt,name=bio,proto3" json:"bio"`
+	// @inject_tag: json:"mood"
+	Mood          string `protobuf:"bytes,7,opt,name=mood,proto3" json:"mood"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -777,6 +781,20 @@ func (x *UserInfo) GetCreateTime() int64 {
 		return x.CreateTime
 	}
 	return 0
+}
+
+func (x *UserInfo) GetBio() string {
+	if x != nil {
+		return x.Bio
+	}
+	return ""
+}
+
+func (x *UserInfo) GetMood() string {
+	if x != nil {
+		return x.Mood
+	}
+	return ""
 }
 
 type GetUserInfoReq struct {
@@ -876,7 +894,11 @@ type UpdateUserInfoReq struct {
 	// @inject_tag: json:"nickname"
 	Nickname string `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname"`
 	// @inject_tag: json:"avatar"
-	Avatar        string `protobuf:"bytes,3,opt,name=avatar,proto3" json:"avatar"`
+	Avatar string `protobuf:"bytes,3,opt,name=avatar,proto3" json:"avatar"`
+	// @inject_tag: json:"bio"
+	Bio string `protobuf:"bytes,4,opt,name=bio,proto3" json:"bio"`
+	// @inject_tag: json:"mood"
+	Mood          string `protobuf:"bytes,5,opt,name=mood,proto3" json:"mood"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -932,6 +954,20 @@ func (x *UpdateUserInfoReq) GetAvatar() string {
 	return ""
 }
 
+func (x *UpdateUserInfoReq) GetBio() string {
+	if x != nil {
+		return x.Bio
+	}
+	return ""
+}
+
+func (x *UpdateUserInfoReq) GetMood() string {
+	if x != nil {
+		return x.Mood
+	}
+	return ""
+}
+
 var File_sso_proto protoreflect.FileDescriptor
 
 const file_sso_proto_rawDesc = "" +
@@ -978,22 +1014,26 @@ const file_sso_proto_rawDesc = "" +
 	"\n" +
 	"CommonResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\x8e\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xb4\x01\n" +
 	"\bUserInfo\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x16\n" +
 	"\x06avatar\x18\x04 \x01(\tR\x06avatar\x12\x1f\n" +
 	"\vcreate_time\x18\x05 \x01(\x03R\n" +
-	"createTime\")\n" +
+	"createTime\x12\x10\n" +
+	"\x03bio\x18\x06 \x01(\tR\x03bio\x12\x12\n" +
+	"\x04mood\x18\a \x01(\tR\x04mood\")\n" +
 	"\x0eGetUserInfoReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"4\n" +
 	"\x0fGetUserInfoResp\x12!\n" +
-	"\x04user\x18\x01 \x01(\v2\r.sso.UserInfoR\x04user\"`\n" +
+	"\x04user\x18\x01 \x01(\v2\r.sso.UserInfoR\x04user\"\x86\x01\n" +
 	"\x11UpdateUserInfoReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
 	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06avatar\x18\x03 \x01(\tR\x06avatar2\x96\x04\n" +
+	"\x06avatar\x18\x03 \x01(\tR\x06avatar\x12\x10\n" +
+	"\x03bio\x18\x04 \x01(\tR\x03bio\x12\x12\n" +
+	"\x04mood\x18\x05 \x01(\tR\x04mood2\x96\x04\n" +
 	"\x04auth\x12>\n" +
 	"\rSendEmailCode\x12\x15.sso.SendEmailCodeReq\x1a\x16.sso.SendEmailCodeResp\x12,\n" +
 	"\bRegister\x12\x10.sso.RegisterReq\x1a\x0e.sso.LoginResp\x12&\n" +

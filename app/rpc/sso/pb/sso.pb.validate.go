@@ -1661,6 +1661,10 @@ func (m *UserInfo) validate(all bool) error {
 
 	// no validation rules for CreateTime
 
+	// no validation rules for Bio
+
+	// no validation rules for Mood
+
 	if len(errors) > 0 {
 		return UserInfoMultiError(errors)
 	}
@@ -1996,6 +2000,10 @@ func (m *UpdateUserInfoReq) validate(all bool) error {
 	// no validation rules for Nickname
 
 	// no validation rules for Avatar
+
+	// no validation rules for Bio
+
+	// no validation rules for Mood
 
 	if len(errors) > 0 {
 		return UpdateUserInfoReqMultiError(errors)

@@ -201,6 +201,10 @@ message UserInfo {
   string avatar = 4;
   // @inject_tag: json:"create_time"
   int64 create_time = 5;
+  // @inject_tag: json:"bio"
+  string bio = 6;
+  // @inject_tag: json:"mood"
+  string mood = 7;
 }
 
 message GetUserInfoReq {
@@ -220,4 +224,8 @@ message UpdateUserInfoReq {
   string nickname = 2;
   // @inject_tag: json:"avatar"
   string avatar = 3;
+  // @inject_tag: json:"bio"
+  string bio = 4;
+  // @inject_tag: json:"mood"
+  string mood = 5;
 }

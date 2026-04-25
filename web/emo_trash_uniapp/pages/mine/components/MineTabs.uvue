@@ -1,0 +1,159 @@
+<template>
+  <view class="tabs-container">
+    <!-- 横向选项卡：强制水平 -->
+    <view class="tab-header">
+      <view 
+        v-for="(tab, index) in tabs" 
+        :key="index"
+        class="tab-item"
+        :class="{ active: activeTab === index }"
+        @click="$emit('tab-change', index)"
+      >
+        <text class="tab-text">{{ tab }}</text>
+        <view class="active-line" v-if="activeTab === index"></view>
+      </view>
+    </view>
+
+    <!-- 列表内容：全宽展示 -->
+    <view class="list-body">
+      <view v-if="list.length > 0" class="vertical-list">
+        <view v-for="item in list" :key="item.id" class="post-card" @click="$emit('click-post', item.id)">
+          <view class="card-header">
+            <view class="date-tag">{{ item.date }}</view>
+            <view class="social-info">
+              <text class="social-icon">❤️ {{ item.likes }}</text>
+              <text class="social-icon" style="margin-left: 20rpx;">💬 {{ item.comments || 0 }}</text>
+            </view>
+          </view>
+          <text class="card-content">{{ item.content }}</text>
+        </view>
+      </view>
+      
+      <!-- 空状态 -->
+      <view v-else class="empty-state">
+        <text class="empty-icon">🕳️</text>
+        <text class="empty-text">这里空空如也</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup>
+defineProps({
+  tabs: { type: Array, default: () => [] },
+  activeTab: { type: Number, default: 0 },
+  list: { type: Array, default: () => [] }
+})
+defineEmits(['tab-change', 'click-post'])
+</script>
+
+<style lang="scss" scoped>
+.tabs-container {
+  background: #ffffff;
+  border-radius: 60rpx 60rpx 0 0;
+  min-height: 800rpx;
+}
+
+.tab-header {
+  display: flex;
+  flex-direction: row; // 强制横向排版
+  justify-content: center;
+  padding: 40rpx 0 20rpx;
+  border-bottom: 1rpx solid #f2f2f7;
+}
+
+.tab-item {
+  margin: 0 40rpx;
+  position: relative;
+  padding-bottom: 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tab-text {
+  font-size: 32rpx;
+  color: #8e8e93;
+  font-weight: 500;
+}
+
+.active .tab-text {
+  color: #1a1a1a;
+  font-weight: 800;
+}
+
+.active-line {
+  position: absolute;
+  bottom: 0;
+  width: 40rpx;
+  height: 6rpx;
+  background-color: #7B68EE;
+  border-radius: 3rpx;
+}
+
+.list-body {
+  padding: 30rpx 24rpx; // 左右保留 24rpx 边距
+}
+
+.vertical-list {
+  display: flex;
+  flex-direction: column; // 垂直列表
+}
+
+.post-card {
+  width: 100%; // 占满全宽
+  background: #f8f8fa;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.date-tag {
+  background: rgba(123, 104, 238, 0.1);
+  color: #7B68EE;
+  font-size: 20rpx;
+  font-weight: 700;
+  padding: 6rpx 16rpx;
+  border-radius: 10rpx;
+}
+
+.social-info {
+  font-size: 22rpx;
+  color: #c7c7cc;
+}
+
+.card-content {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 150rpx;
+}
+
+.empty-icon {
+  font-size: 100rpx;
+  margin-bottom: 30rpx;
+}
+
+.empty-text {
+  font-size: 26rpx;
+  color: #c7c7cc;
+}
+</style>

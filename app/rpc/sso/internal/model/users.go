@@ -22,6 +22,8 @@ type User struct {
 	Password  string             `bson:"password"                   json:"-"` // bcrypt hash，不对外暴露
 	Nickname  string             `bson:"nickname"                   json:"nickname"`
 	Avatar    string             `bson:"avatar"                     json:"avatar"` // 头像URL
+	Bio       string             `bson:"bio"                        json:"bio"`    // 个人简介
+	Mood      string             `bson:"mood"                       json:"mood"`   // 当前情绪/心情标签
 	Status    UserStatus         `bson:"status"                     json:"status"` // 1=正常 0=禁用
 	CreatedAt time.Time          `bson:"created_at"                 json:"created_at"`
 	UpdatedAt time.Time          `bson:"updated_at"                 json:"updated_at"`
