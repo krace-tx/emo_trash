@@ -1,0 +1,137 @@
+import { request } from './request'
+
+/**
+ * 帖子信息
+ */
+export type PostInfo = {
+  id: string
+  author_id: string
+  author_name: string
+  author_avatar: string
+  title: string
+  content: string
+  images: string[]
+  video: string
+  ai_evaluation: string
+  like_count: number
+  comment_count: number
+  star_count: number
+  is_liked: boolean
+  is_starred: boolean
+  created_at: number
+}
+
+/**
+ * 发布帖子请求
+ */
+export type CreatePostReq = {
+  title?: string
+  content: string
+  images?: string[]
+  is_anonymous?: boolean
+}
+
+/**
+ * 更新帖子请求
+ */
+export type UpdatePostReq = {
+  id: string
+  title?: string
+  content?: string
+  images?: string[]
+}
+
+/**
+ * 帖子列表请求
+ */
+export type ListPostsReq = {
+  cursor?: string
+  page_size?: number
+  type?: 'discovery' | 'follow' | 'hot'
+}
+
+/**
+ * 帖子列表响应
+ */
+export type ListPostsResp = {
+  list: PostInfo[]
+  next_cursor: string
+  has_more: boolean
+}
+
+/**
+ * 发布帖子
+ */
+export function createPost(data: CreatePostReq): Promise<{id: string}> {
+  return request<{id: string}>({
+    url: '/post/v1/create',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 更新帖子
+ */
+export function updatePost(data: UpdatePostReq): Promise<boolean> {
+  return request<boolean>({
+    url: '/post/v1/update',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 删除帖子
+ */
+export function deletePost(id: string): Promise<boolean> {
+  return request<boolean>({
+    url: '/post/v1/delete',
+    method: 'POST',
+    data: { id }
+  })
+}
+
+/**
+ * 获取帖子详情
+ */
+export function getPostDetail(id: string): Promise<PostInfo> {
+  return request<PostInfo>({
+    url: '/post/v1/detail',
+    method: 'GET',
+    data: { id }
+  })
+}
+
+/**
+ * 获取帖子列表
+ */
+export function listPosts(params: ListPostsReq): Promise<ListPostsResp> {
+  return request<ListPostsResp>({
+    url: '/post/v1/list',
+    method: 'GET',
+    data: params
+  })
+}
+
+/**
+ * 点赞/取消点赞
+ */
+export function likePost(id: string): Promise<boolean> {
+  return request<boolean>({
+    url: '/post/v1/like',
+    method: 'POST',
+    data: { id }
+  })
+}
+
+/**
+ * 收藏/取消收藏
+ */
+export function starPost(id: string): Promise<boolean> {
+  return request<boolean>({
+    url: '/post/v1/star',
+    method: 'POST',
+    data: { id }
+  })
+}

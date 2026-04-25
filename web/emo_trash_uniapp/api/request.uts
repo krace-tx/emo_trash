@@ -10,9 +10,9 @@ export type ApiResponse<T> = {
   message: string
 }
 
-const BASE_URL = 'http://localhost:8888' // 建议后续移动到 config.uts
+const BASE_URL = 'http://localhost:8888' 
 
-export function request<T>(options: UniRequestOptions): Promise<T> {
+export function request<T>(options: RequestOptions): Promise<T> {
   return new Promise((resolve, reject) => {
     const userStore = useUserStore()
     
@@ -23,7 +23,7 @@ export function request<T>(options: UniRequestOptions): Promise<T> {
     
     // 设置请求头
     const header = options.header ?? {}
-    if (userStore.token) {
+    if (userStore.token != null) {
       header['Authorization'] = `Bearer ${userStore.token}`
     }
     options.header = header
@@ -57,6 +57,6 @@ export function request<T>(options: UniRequestOptions): Promise<T> {
         uni.showToast({ title: '网络异常', icon: 'error' })
         reject(err)
       }
-    })
+    } as RequestOptions)
   })
 }

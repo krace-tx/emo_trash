@@ -11,6 +11,19 @@ export type LoginData = {
 }
 
 /**
+ * 用户信息
+ */
+export type UserInfo = {
+  user_id: string
+  email: string
+  nickname: string
+  avatar: string
+  create_time: number
+  bio: string
+  mood: string
+}
+
+/**
  * 发送邮箱验证码
  * @param email 邮箱
  * @param scene 场景: register|login|reset_pwd
@@ -26,8 +39,8 @@ export function sendEmailCode(email: string, scene: string): Promise<boolean> {
 /**
  * 注册
  */
-export function register(data: any): Promise<boolean> {
-  return request<boolean>({
+export function register(data: any): Promise<LoginData> {
+  return request<LoginData>({
     url: '/sso/v1/auth/register',
     method: 'POST',
     data
@@ -68,6 +81,17 @@ export function changePassword(data: any): Promise<boolean> {
 }
 
 /**
+ * 验证 Token
+ */
+export function verifyToken(token: string): Promise<{user_id: string, email: string}> {
+  return request<{user_id: string, email: string}>({
+    url: '/sso/v1/auth/token/verify',
+    method: 'POST',
+    data: { token }
+  })
+}
+
+/**
  * 刷新 Token
  */
 export function refreshToken(token: string): Promise<LoginData> {
@@ -92,8 +116,8 @@ export function logout(token: string): Promise<boolean> {
 /**
  * 获取用户信息
  */
-export function getUserInfo(): Promise<any> {
-  return request<any>({
+export function getUserInfo(): Promise<UserInfo> {
+  return request<UserInfo>({
     url: '/sso/v1/user/info',
     method: 'GET'
   })

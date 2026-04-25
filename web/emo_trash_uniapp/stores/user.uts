@@ -1,12 +1,5 @@
 import { reactive } from 'vue'
-import { getUserInfo } from '@/api/sso'
-
-export type UserInfo = {
-  userId: string
-  email: string
-  nickname: string
-  avatar: string
-}
+import { getUserInfo, type UserInfo } from '@/api/sso'
 
 export const userStore = reactive({
   token: uni.getStorageSync('access_token') as string | null,
@@ -21,7 +14,7 @@ export const userStore = reactive({
     if (!this.token) return
     try {
       const info = await getUserInfo()
-      this.userInfo = info as UserInfo
+      this.userInfo = info
     } catch (e) {
       console.error('获取用户信息失败', e)
     }
