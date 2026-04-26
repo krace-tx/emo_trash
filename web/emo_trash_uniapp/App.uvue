@@ -4,10 +4,14 @@
 	// #endif
 
 	import { useUserStore } from './stores/user'
+  import { uiStore } from './stores/ui'
   import BaseToast from './components/BaseToast.uvue'
 
 	onLaunch(() => {
 		console.log('App Launch')
+    
+    // 初始化主题
+    uiStore.initTheme()
 		
 		// 初始跳转校验
 		const userStore = useUserStore()

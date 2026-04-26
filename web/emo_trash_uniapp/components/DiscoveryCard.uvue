@@ -1,23 +1,34 @@
 <template>
-  <view class="discovery-card" @click="$emit('click')">
-    <!-- 图片区域：仅在有图时显示，保持高度自适应 -->
-    <view v-if="post.images && post.images.length > 0" class="image-wrapper">
-      <image :src="post.images[0]" mode="widthFix" class="card-image"></image>
-    </view>
-    
-    <view class="card-body">
-      <!-- 标题：左对齐，最多两行 -->
-      <text class="card-title">{{ post.title || post.content }}</text>
+  <view class="card-container" @click="onClick">
+    <!-- 上层主内容：左文右图 -->
+    <view class="card-main">
+      <view class="text-content">
+        <text class="title">{{ post.title || '无题' }}</text>
+        <text class="excerpt">{{ post.content || '把不想带走的情绪丢在这里...' }}</text>
+      </view>
       
-      <!-- 底部互动区：横向排布 -->
-      <view class="card-footer">
-        <view class="footer-left">
-          <image :src="post.author_avatar || '/static/logo.png'" class="mini-avatar"></image>
-          <text class="author-name">{{ post.author_name }}</text>
+      <image 
+        v-if="post.images && post.images.length > 0" 
+        class="cover-image" 
+        :src="post.images[0]" 
+        mode="aspectFill"
+      ></image>
+    </view>
+
+    <!-- 下层互动区 -->
+    <view class="card-footer">
+      <view class="footer-left">
+        <view class="icon-bubble">
+          <view class="bubble-rect"></view>
+          <view class="bubble-tip"></view>
         </view>
-        <view class="footer-right">
-          <text class="heart-icon">{{ post.is_liked ? '♥' : '♡' }}</text>
-          <text class="count-text">{{ post.like_count }}</text>
+        <text class="likes-text">{{ post.like_count || 0 }}人也这样</text>
+      </view>
+      
+      <view class="footer-right">
+        <text class="time-text">{{ formatTime(post.created_at) }}</text>
+        <view class="more-btn">
+          <text class="icon-more">···</text>
         </view>
       </view>
     </view>
@@ -31,45 +42,77 @@ const props = defineProps({
     required: true
   }
 })
-defineEmits(['click'])
+
+const emit = defineEmits(['click'])
+
+function onClick() {
+  emit('click', props.post.id)
+}
+
+function formatTime(timestamp: number): string {
+  // 简易时间格式化，实际可接入更复杂的工具函数
+  const now = Date.now()
+  const diff = (now - timestamp) / 1000
+  if (diff < 60) return '刚刚'
+  if (diff < 3600) return Math.floor(diff / 60) + '分钟前'
+  if (diff < 86400) return Math.floor(diff / 3600) + '小时前'
+  return '1天前'
+}
 </script>
 
 <style lang="scss" scoped>
-.discovery-card {
+.card-container {
   background-color: #FFFFFF;
-  border-radius: 20rpx;
-  overflow: hidden;
-  margin-bottom: 16rpx;
-  box-shadow: 0 4rpx 16rpx rgba(107, 139, 164, 0.05);
+  border-radius: 32rpx;
+  padding: 36rpx 32rpx 28rpx 32rpx;
+  margin: 0 32rpx 24rpx 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(107, 139, 164, 0.04);
   display: flex;
   flex-direction: column;
 }
 
-.image-wrapper {
-  width: 100%;
-  line-height: 0; /* 消除底部间隙 */
+.card-main {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 28rpx;
 }
 
-.card-image {
-  width: 100%;
-  display: block;
+.text-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-right: 24rpx;
 }
 
-.card-body {
-  padding: 16rpx 20rpx 20rpx;
-}
-
-.card-title {
-  font-size: 26rpx;
-  color: #334155;
+.title {
+  font-size: 32rpx;
   font-weight: 600;
+  color: #334155; /* 深灰蓝色 */
   line-height: 1.4;
-  text-align: left; /* 强制左对齐 */
+  margin-bottom: 14rpx;
   display: -webkit-box;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
   overflow: hidden;
-  margin-bottom: 20rpx;
+}
+
+.excerpt {
+  font-size: 26rpx;
+  color: #707070; /* 中灰色 */
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cover-image {
+  width: 200rpx;
+  height: 130rpx;
+  border-radius: 16rpx;
+  background-color: #F8F9F9;
+  flex-shrink: 0;
 }
 
 .card-footer {
@@ -83,35 +126,53 @@ defineEmits(['click'])
   display: flex;
   flex-direction: row;
   align-items: center;
-  .mini-avatar {
-    width: 32rpx;
-    height: 32rpx;
-    border-radius: 50%;
-    margin-right: 8rpx;
-    background-color: #f5f7fa;
+  color: #6B8BA4;
+}
+
+.icon-bubble {
+  width: 24rpx;
+  height: 20rpx;
+  margin-right: 10rpx;
+  position: relative;
+  .bubble-rect {
+    width: 100%;
+    height: 16rpx;
+    border: 2rpx solid #6B8BA4;
+    border-radius: 4rpx;
   }
-  .author-name {
-    font-size: 20rpx;
-    color: #707070;
-    max-width: 120rpx;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .bubble-tip {
+    position: absolute;
+    bottom: -2rpx;
+    left: 4rpx;
+    width: 6rpx;
+    height: 6rpx;
+    border-left: 2rpx solid #6B8BA4;
+    border-bottom: 2rpx solid #6B8BA4;
+    background-color: #FFF;
+    transform: rotate(45deg);
   }
+}
+
+.likes-text {
+  font-size: 22rpx;
+  font-weight: 500;
 }
 
 .footer-right {
   display: flex;
   flex-direction: row;
   align-items: center;
-  .heart-icon {
-    font-size: 24rpx;
-    color: #6B8BA4;
-    margin-right: 4rpx;
-  }
-  .count-text {
-    font-size: 20rpx;
-    color: #707070;
-  }
+  color: #BDBDBD;
+}
+
+.time-text {
+  font-size: 22rpx;
+  margin-right: 16rpx;
+}
+
+.icon-more {
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 1;
 }
 </style>

@@ -44,25 +44,5 @@
 		"backgroundColor": "#FDFAF3",
 		"pageOrientation": "portrait"
 	},
-	"tabBar": {
-		"color": "#BDBDBD",
-		"selectedColor": "#6B8BA4",
-		"borderStyle": "white",
-		"backgroundColor": "#FDFAF3",
-		"list": [
-			{
-				"pagePath": "pages/index/index",
-				"text": "发现",
-				"iconPath": "static/tabbar/discovery.svg",
-				"selectedIconPath": "static/tabbar/discovery-active.svg"
-			},
-			{
-				"pagePath": "pages/mine/mine",
-				"text": "我",
-				"iconPath": "static/tabbar/mine.svg",
-				"selectedIconPath": "static/tabbar/mine-active.svg"
-			}
-		]
-	},
 	"uniIdRouter": {}
 }

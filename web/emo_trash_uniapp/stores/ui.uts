@@ -3,11 +3,32 @@ import { reactive } from 'vue'
 export type ToastType = 'success' | 'error' | 'none'
 
 export const uiStore = reactive({
+  activeTabPath: '/pages/index/index',
+  isNightMode: true, // 全局主题状态
   toast: {
     show: false,
     message: '',
     type: 'none' as ToastType,
     duration: 2000
+  },
+  
+  // 初始化主题（根据时间）
+  initTheme() {
+    const hours = new Date().getHours()
+    // 18点到次日6点默认为夜晚模式
+    this.isNightMode = hours >= 18 || hours < 6
+  },
+
+  // 切换主题
+  toggleTheme() {
+    this.isNightMode = !this.isNightMode
+    // #ifdef APP-PLUS
+    uni.vibrateShort({ type: 'light' })
+    // #endif
+  },
+
+  setActiveTab(path: string) {
+    this.activeTabPath = path
   },
   
   showToast(message: string, type: ToastType = 'none', duration: number = 2000) {

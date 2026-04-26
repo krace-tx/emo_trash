@@ -1,6 +1,6 @@
 <template>
-  <view class="page-container mine-page">
-    <BaseNavbar :placeholder="true" bgColor="#FDFAF3">
+  <BasePage>
+    <BaseNavbar :placeholder="true" bgColor="transparent">
       <template #default>
         <view class="nav-logo-wrapper">
           <image class="nav-logo" src="/static/logo.png" mode="aspectFit"></image>
@@ -62,12 +62,12 @@
       </view>
     </view>
     
-    <!-- 自定义底部导航 -->
     <BaseTabBar />
-  </view>
+  </BasePage>
 </template>
 
 <script setup>
+import BasePage from '@/components/BasePage.uvue'
 import BaseNavbar from '@/components/BaseNavbar.uvue'
 import BaseTabBar from '@/components/BaseTabBar.uvue'
 import { useUserStore } from '@/stores/user'
@@ -89,11 +89,6 @@ function handleLogout() {
 </script>
 
 <style lang="scss" scoped>
-.mine-page {
-  background-color: #FDFAF3;
-  min-height: 100vh;
-}
-
 .nav-logo-wrapper {
   display: flex;
   justify-content: center;
@@ -107,7 +102,7 @@ function handleLogout() {
 
 .content {
   padding: 40rpx 48rpx;
-  padding-bottom: 160rpx; /* 为底部 TabBar 留出空间 */
+  padding-bottom: 160rpx;
 }
 
 .profile-header {

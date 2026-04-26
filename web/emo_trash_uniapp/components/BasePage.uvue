@@ -1,0 +1,74 @@
+<template>
+  <view class="page-base" :class="uiStore.isNightMode ? 'theme-night' : 'theme-day'">
+    <!-- 动态背景层 -->
+    <view class="dynamic-bg"></view>
+    
+    <!-- 内容插槽 -->
+    <view class="page-content">
+      <slot></slot>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import { uiStore } from '@/stores/ui'
+</script>
+
+<style lang="scss" scoped>
+.page-base {
+  min-height: 100vh;
+  position: relative;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.dynamic-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 800rpx; /* 顶部背景图高度 */
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  z-index: 0;
+  transition: background-image 0.6s ease;
+  
+  /* 渐变遮罩，使背景图自然消融 */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 300rpx;
+    background: linear-gradient(to bottom, transparent, var(--page-bg));
+  }
+}
+
+.page-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+/* ================= 主题变量定义 ================= */
+.theme-night {
+  --page-bg: #F0F2F6;
+  --text-main: #334155;
+  --text-sub: #707070;
+  background-color: var(--page-bg);
+  .dynamic-bg {
+    background-image: url('/static/index/bg-night.png');
+  }
+}
+
+.theme-day {
+  --page-bg: #FDFAF3;
+  --text-main: #334155;
+  --text-sub: #8A96A8;
+  background-color: var(--page-bg);
+  .dynamic-bg {
+    background-image: url('/static/index/bg-day.png');
+  }
+}
+</style>
