@@ -1,6 +1,6 @@
 <template>
   <view class="page-container elegant-cure">
-    <BaseNavbar :showBack="true" bgColor="#FDFAF3" />
+    <BaseNavbar :showBack="true" />
 
     <view class="content">
       <view class="header-section">

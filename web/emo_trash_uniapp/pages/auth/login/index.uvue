@@ -1,6 +1,6 @@
 <template>
   <view class="page-container elegant-cure">
-    <BaseNavbar :placeholder="true" bgColor="transparent" />
+    <BaseNavbar />
     <view class="content">
       <!-- 顶部 Logo 区域 -->
       <view class="logo-section">

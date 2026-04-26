@@ -1,23 +1,42 @@
 <template>
-  <view v-if="placeholder" class="navbar-placeholder" :style="{ height: navbarHeight + 'px' }"></view>
-  <view class="navbar" :style="{ 
-    height: navbarHeight + 'px', 
-    paddingTop: statusBarHeight + 'px',
-    backgroundColor: bgColor 
-  }">
-    <view class="navbar-left" @click="onLeftClick">
-      <slot name="left">
-        <!-- 默认简约线性返回按钮 -->
-        <view v-if="showBack" class="back-icon-box">
-          <view class="back-arrow-line"></view>
-        </view>
-      </slot>
-    </view>
-    <view class="navbar-title">
-      <text class="title-text" :style="{ color: titleColor }">{{ title }}</text>
-    </view>
-    <view class="navbar-right">
-      <slot name="right"></slot>
+  <!-- 👻 幽灵占位块：当开启 placeholder 时，在文档流中占位，防止内容被遮挡 -->
+  <view 
+    v-if="placeholder" 
+    class="navbar-placeholder" 
+    :style="{ height: (statusBarHeight + navContentHeight) + 'px' }"
+  ></view>
+
+  <view 
+    class="navbar-container" 
+    :style="{ 
+      paddingTop: statusBarHeight + 'px',
+      backgroundColor: bgColor,
+      backdropFilter: blur ? 'blur(24rpx)' : 'none',
+      webkitBackdropFilter: blur ? 'blur(24rpx)' : 'none',
+      borderBottom: border ? '1rpx solid rgba(0,0,0,0.05)' : 'none'
+    }"
+  >
+    <view class="bar-contents" :style="{ height: navContentHeight + 'px' }">
+      <!-- 左侧区域 -->
+      <view class="bar-left" @click="onLeftClick">
+        <slot name="left">
+          <view v-if="showBack" class="back-btn-box">
+            <image class="back-icon" src="/static/icons/back.svg" mode="aspectFit"></image>
+          </view>
+        </slot>
+      </view>
+
+      <!-- 中间区域 -->
+      <view class="bar-center">
+        <slot name="center">
+          <text class="bar-title" :style="{ color: titleColor }">{{ title }}</text>
+        </slot>
+      </view>
+
+      <!-- 右侧区域 -->
+      <view class="bar-right">
+        <slot name="right"></slot>
+      </view>
     </view>
   </view>
 </template>
@@ -27,84 +46,115 @@ import { ref, onMounted } from 'vue'
 
 const props = defineProps({
   title: { type: String, default: '' },
-  bgColor: { type: String, default: '#FDFAF3' }, // 默认适配奶油色背景
   titleColor: { type: String, default: '#334155' },
+  bgColor: { type: String, default: 'transparent' },
   placeholder: { type: Boolean, default: true },
-  showBack: { type: Boolean, default: false }
+  showBack: { type: Boolean, default: false },
+  customBack: { type: Boolean, default: false }, // 新增：是否自定义返回逻辑
+  blur: { type: Boolean, default: false },
+  border: { type: Boolean, default: false }
 })
 
-const emit = defineEmits(['leftClick'])
+const emit = defineEmits(['leftClick', 'back']) // 新增 back 事件
 
 const statusBarHeight = ref(0)
-const navbarHeight = ref(44)
+const navContentHeight = ref(72) // 从 60 提升至 72
 
 onMounted(() => {
   const sys = uni.getSystemInfoSync()
   statusBarHeight.value = sys.statusBarHeight || 0
-  navbarHeight.value = (sys.statusBarHeight || 0) + 44
 })
 
 function onLeftClick() {
+  emit('leftClick')
+  
+  if (props.customBack) {
+    emit('back')
+    return
+  }
+
   if (props.showBack) {
-    uni.navigateBack()
+    const pages = getCurrentPages()
+    if (pages.length > 1) {
+      uni.navigateBack()
+    } else {
+      // 👻 幽灵路径保护：如果没有上一页，则回首页
+      uni.reLaunch({ url: '/pages/index/index' })
+    }
   }
   emit('leftClick')
 }
 </script>
 
 <style lang="scss" scoped>
-.navbar {
+.navbar-container {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32rpx;
   z-index: 1000;
-  box-sizing: border-box;
+  transition: background-color 0.3s ease;
 }
 
-.navbar-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  .title-text {
-    font-size: 32rpx;
-    font-weight: 500;
-  }
-}
-
-.navbar-left, .navbar-right {
-  min-width: 80rpx;
-  height: 44px; /* 固定导航栏高度部分 */
+.bar-contents {
   display: flex;
   flex-direction: row;
-  align-items: center;
-}
-
-.navbar-right {
-  justify-content: flex-end;
-}
-
-/* 简约线性返回按钮 CSS 绘制 */
-.back-icon-box {
-  width: 40rpx;
-  height: 40rpx;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: center; /* 垂直居中核心 */
+  justify-content: space-between;
+  padding: 0 40rpx;
   position: relative;
 }
 
-.back-arrow-line {
-  width: 20rpx;
-  height: 20rpx;
-  border-left: 3rpx solid #334155;
-  border-top: 3rpx solid #334155;
-  transform: rotate(-45deg);
-  margin-left: 8rpx;
+.bar-left {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* 左侧内容垂直居中 */
+  height: 100%;
+}
+
+.bar-center {
+  flex: 2; 
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center; /* 中间内容垂直居中 */
+  height: 100%;
+  .bar-title {
+    font-size: 36rpx;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2; 
+  }
+}
+
+.bar-right {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center; /* 右侧内容垂直居中 */
+  height: 100%;
+}
+
+/* 统一的极简返回按钮样式 */
+.back-btn-box {
+  width: 80rpx;
+  height: 100%; /* 撑满父容器高度以确保 flex 居中生效 */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  &:active { opacity: 0.6; }
+}
+
+.back-icon {
+  width: 44rpx;
+  height: 44rpx;
+  display: block;
+}
+
+.navbar-placeholder {
+  width: 100%;
 }
 </style>

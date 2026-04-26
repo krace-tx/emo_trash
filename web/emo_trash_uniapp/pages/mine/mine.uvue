@@ -14,6 +14,7 @@
     </BaseNavbar>
 
     <view class="content">
+      <!-- 这里无需手动添加 statusBarHeight 占位，因为 BaseNavbar 的 placeholder 已处理 -->
       <!-- ① 核心改进：带纵向渐变的主面板 -->
       <view class="main-profile-card">
         <!-- 用户信息组 -->

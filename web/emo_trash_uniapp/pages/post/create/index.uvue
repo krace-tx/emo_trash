@@ -2,38 +2,44 @@
   <view class="publish-page">
 
     <!-- ① 顶部导航栏 -->
-    <view class="custom-nav">
-      <view class="nav-left" @click="goBack">
-        <view class="back-circle">
-          <text class="back-arrow">←</text>
+    <BaseNavbar 
+      bgColor="rgba(249, 245, 238, 0.95)"
+      :showBack="true"
+      :customBack="true"
+      :placeholder="true"
+      @back="handleBack"
+    >
+      <template #center>
+        <view class="nav-middle">
+          <image
+            src="/static/post/title.png"
+            mode="aspectFit"
+            class="nav-title-img"
+            @error="onTitleImgError"
+            v-if="!titleImgError"
+          ></image>
+          <view class="nav-title-text" v-else>
+            <text class="title-word">EMO</text>
+            <text class="title-word title-word--light">TRASH</text>
+          </view>
         </view>
-      </view>
-      <view class="nav-middle">
-        <image
-          src="/static/post/title.png"
-          mode="aspectFit"
-          class="nav-title-img"
-          @error="onTitleImgError"
-          v-if="!titleImgError"
-        ></image>
-        <view class="nav-title-text" v-else>
-          <text class="title-word">EMO</text>
-          <text class="title-word title-word--light">TRASH</text>
-        </view>
-      </view>
-      <view class="nav-right">
-        <button
-          class="publish-btn"
-          :class="{ active: canPublish }"
-          :disabled="!canPublish"
+      </template>
+
+      <template #right>
+        <view 
+          class="send-btn" 
+          :class="{ active: canPublish }" 
           @click="submitPost"
         >
-          <text class="btn-text">发布</text>
-        </button>
-      </view>
-    </view>
+          <view class="send-icon">
+            <view class="plane-body"></view>
+          </view>
+        </view>
+      </template>
+    </BaseNavbar>
 
     <scroll-view scroll-y class="editor-scroll">
+      <!-- 手动占位已移除，由 BaseNavbar placeholder 自动处理 -->
 
       <!-- ② 用户信息区 (左右分流重构) -->
 
@@ -153,7 +159,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import BaseNavbar from '@/components/BaseNavbar.uvue'
 import { createPost } from '@/api/post'
 import { useUserStore } from '@/stores/user'
 
@@ -161,6 +168,12 @@ const userStore = useUserStore()
 const isPublishing = ref<boolean>(false)
 const localImages = ref<string[]>([])
 const titleImgError = ref<boolean>(false)
+const statusBarHeight = ref(0)
+
+onMounted(() => {
+  const sys = uni.getSystemInfoSync()
+  statusBarHeight.value = sys.statusBarHeight || 0
+})
 
 const formData = ref({
   title: '',
@@ -189,8 +202,32 @@ const canPublish = computed((): boolean => {
   return formData.value.content.trim().length > 0
 })
 
+function handleBack() {
+  if (formData.value.content.trim().length > 0 || formData.value.title.trim().length > 0) {
+    uni.showModal({
+      title: '放弃编辑？',
+      content: '现在离开，刚才记录的情绪将会丢失',
+      confirmText: '确定离开',
+      confirmColor: '#334155',
+      cancelText: '再写一会儿',
+      success: (res) => {
+        if (res.confirm) {
+          goBack()
+        }
+      }
+    })
+  } else {
+    goBack()
+  }
+}
+
 function goBack() { 
-  uni.navigateBack() 
+  const pages = getCurrentPages()
+  if (pages.length > 1) {
+    uni.navigateBack()
+  } else {
+    uni.reLaunch({ url: '/pages/index/index' })
+  }
 }
 
 function onTitleImgError() {
@@ -298,23 +335,17 @@ $radius-sm:   8rpx;
 .back-arrow { font-size: 36rpx; color: $ink-dark; }
 
 .nav-middle {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  height: 60rpx;
+  height: 100%;
   
   .nav-title-img {
-    width: 350rpx;
-    height: 120rpx;
-    /* 混合模式：保持与背景的融合感 */
+    width: 320rpx;
+    height: 100rpx;
     mix-blend-mode: multiply;
-    /* 色差强化方案：提升饱和度 + 微调色相 + 优化对比，使色彩更加鲜活明显 */
     filter: brightness(0.9) contrast(1.15) saturate(1.4) hue-rotate(1deg);
-    /* 略微降低透明度损失，增强色彩存在感，同时仍保留背景纹理呼吸感 */
     opacity: 0.9;
   }
   
@@ -328,13 +359,28 @@ $radius-sm:   8rpx;
   }
 }
 
-.publish-btn {
-  height: 60rpx; line-height: 60rpx; padding: 0 36rpx;
-  background-color: transparent; border: 1.5rpx solid #C5BEB5; border-radius: 30rpx;
-  .btn-text { font-size: 24rpx; color: $ink-muted; font-weight: 600; }
-  &.active {
-    background-color: $accent; border-color: $accent;
-    .btn-text { color: #FFF; }
+.send-btn {
+  width: 72rpx; height: 72rpx; 
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0.3; transition: all 0.3s ease;
+  &.active { opacity: 1; &:active { transform: scale(0.9) rotate(10deg); } }
+}
+
+.send-icon {
+  width: 48rpx; height: 48rpx; position: relative;
+  .plane-body {
+    width: 0; height: 0;
+    border-left: 24rpx solid transparent;
+    border-right: 24rpx solid transparent;
+    border-bottom: 48rpx solid $accent;
+    transform: rotate(45deg);
+    &::after {
+      content: ''; position: absolute; left: -24rpx; top: 36rpx;
+      width: 0; height: 0;
+      border-left: 24rpx solid transparent;
+      border-right: 24rpx solid transparent;
+      border-bottom: 12rpx solid $bg;
+    }
   }
 }
 
