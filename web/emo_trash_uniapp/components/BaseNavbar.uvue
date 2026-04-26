@@ -94,6 +94,7 @@ function onLeftClick() {
   right: 0;
   z-index: 1000;
   transition: background-color 0.3s ease;
+  pointer-events: none; /* 防止容器层遮挡下方点击 */
 }
 
 .bar-contents {
@@ -103,6 +104,7 @@ function onLeftClick() {
   justify-content: space-between;
   padding: 0 40rpx;
   position: relative;
+  pointer-events: auto; /* 恢复内部按钮的点击 */
 }
 
 .bar-left {
@@ -152,6 +154,8 @@ function onLeftClick() {
   width: 44rpx;
   height: 44rpx;
   display: block;
+  /* 魔法：强制将 SVG 变为纯黑 */
+  filter: brightness(0);
 }
 
 .navbar-placeholder {

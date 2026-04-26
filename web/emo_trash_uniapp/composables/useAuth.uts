@@ -50,6 +50,25 @@ export function useAuth() {
       uiStore.showToast('邮箱格式不正确', 'error')
       return false
     }
+    
+    // 🛠️ 开发者后门：本地测试账号逻辑
+    if (email == 'test@emo.com' && pass == '12345678') {
+      loading.value = true
+      // 模拟网络延迟
+      await new Promise<void>(resolve => setTimeout(resolve, 800))
+      userStore.setToken('mock_token_for_test_account')
+      userStore.setUserInfo({
+        id: '999',
+        email: 'test@emo.com',
+        nickname: '测试拾荒者',
+        avatar: '/static/logo.png',
+        bio: '这是一个本地测试账号，无需服务器即可使用。'
+      })
+      loading.value = false
+      uiStore.showToast('测试账号登录成功', 'success')
+      return true
+    }
+
     if (!validatePassword(pass)) {
       uiStore.showToast('密码长度需为8-32位', 'error')
       return false

@@ -3,7 +3,7 @@
 
     <!-- ① 顶部导航栏 -->
     <BaseNavbar 
-      bgColor="rgba(249, 245, 238, 0.95)"
+      bgColor="rgba(241, 245, 249, 0.92)" 
       :showBack="true"
       :customBack="true"
       :placeholder="true"
@@ -31,9 +31,7 @@
           :class="{ active: canPublish }" 
           @click="submitPost"
         >
-          <view class="send-icon">
-            <view class="plane-body"></view>
-          </view>
+          <image class="send-icon-img" src="/static/icons/send.svg" mode="aspectFit"></image>
         </view>
       </template>
     </BaseNavbar>
@@ -149,7 +147,7 @@
             :checked="formData.is_anonymous"
             @change="onAnonymousChange"
             color="#86929B"
-            style="transform: scale(0.75);"
+            style="transform: scale(1.2);"
           />
         </view>
       </view>
@@ -297,17 +295,17 @@ async function submitPost() {
 </script>
 
 <style lang="scss" scoped>
-$bg:          #F9F5EE;
+$bg:          #F1F5F9; /* 蓝灰底色 Slate-100 */
 $surface:     #FFFFFF;
-$ink-dark:    #1C1917;
-$ink-mid:     #44403C;
-$ink-light:   #78716C;
-$ink-muted:   #A8A29E;
-$border:      #E7E0D8;
-$accent:      #3D3530;
-$accent-warm: #8B6F5E;
-$error:       #C0392B;
-$radius-sm:   8rpx;
+$ink-dark:    #0F172A; /* Slate-900 */
+$ink-mid:     #334155; /* Slate-700 */
+$ink-light:   #64748B; /* Slate-500 */
+$ink-muted:   #94A3B8; /* Slate-400 */
+$border:      #E2E8F0; /* Slate-200 */
+$accent:      #1E293B; /* Slate-800 */
+$accent-warm: #475569; /* Slate-600 */
+$error:       #E06C75;
+$radius-sm:   12rpx;
 
 .publish-page {
   display: flex;
@@ -354,34 +352,34 @@ $radius-sm:   8rpx;
     flex-direction: row; 
     align-items: baseline; 
     gap: 8rpx;
-    .title-word { font-size: 30rpx; font-weight: 700; color: $ink-dark; letter-spacing: 4rpx; }
+    .title-word { font-size: 34rpx; font-weight: 700; color: $ink-dark; letter-spacing: 4rpx; }
     .title-word--light { font-weight: 300; color: $ink-light; }
   }
 }
 
+/* 确保发送按钮和左侧返回键绝对水平对齐 */
 .send-btn {
-  width: 72rpx; height: 72rpx; 
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0.3; transition: all 0.3s ease;
-  &.active { opacity: 1; &:active { transform: scale(0.9) rotate(10deg); } }
+  height: 100%; /* 核心：撑满 Navbar 的右侧插槽高度 */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 10rpx; /* 微调触控区和视觉边缘 */
+  opacity: 0.25; /* 未输入时半透明度 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.active {
+    opacity: 1; /* 输入后完全亮起，与返回键颜色完全一致 */
+    &:active { transform: scale(0.9) translateX(4rpx); }
+  }
 }
 
-.send-icon {
-  width: 48rpx; height: 48rpx; position: relative;
-  .plane-body {
-    width: 0; height: 0;
-    border-left: 24rpx solid transparent;
-    border-right: 24rpx solid transparent;
-    border-bottom: 48rpx solid $accent;
-    transform: rotate(45deg);
-    &::after {
-      content: ''; position: absolute; left: -24rpx; top: 36rpx;
-      width: 0; height: 0;
-      border-left: 24rpx solid transparent;
-      border-right: 24rpx solid transparent;
-      border-bottom: 12rpx solid $bg;
-    }
-  }
+.send-icon-img {
+  width: 2.5rem;
+  height: 75%;
+  display: block; /* 替代无用的 flex，确保图片独占区域不受干扰 */
+
+  /* 核心魔法：将任何非白色的图片强行变成纯黑 */
+  filter: brightness(0);
 }
 
 /* ================= 编辑区域 ================= */
@@ -391,18 +389,19 @@ $radius-sm:   8rpx;
   margin-bottom: 40rpx;
   .box-header {
     display: flex; flex-direction: row; align-items: center; margin-bottom: 16rpx;
-    .label-no { font-size: 20rpx; color: $ink-muted; font-weight: 800; margin-right: 12rpx; }
-    .label-text { font-size: 22rpx; color: $ink-light; font-weight: 600; text-transform: uppercase; letter-spacing: 2rpx; }
-    .media-count { margin-left: auto; font-size: 18rpx; color: $ink-muted; }
+    .label-no { font-size: 32rpx; color: $ink-muted; font-weight: 800; margin-right: 12rpx; }
+    .label-text { font-size: 32rpx; color: $ink-light; font-weight: 600; text-transform: uppercase; letter-spacing: 2rpx; }
+    .media-count { margin-left: auto; font-size: 20rpx; color: $ink-muted; }
   }
 }
 
 .input-wrapper {
-  background-color: rgba(255, 255, 255, 0.4);
-  border: 1.5rpx solid $border;
-  border-radius: 20rpx;
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1rpx solid $border;
+  border-radius: 24rpx;
   padding: 24rpx 28rpx;
   transition: all 0.3s ease;
+  box-shadow: 0 4rpx 12rpx rgba(107, 139, 164, 0.03);
   .title-input { font-size: 34rpx; color: $ink-dark; font-weight: 600; width: 100%; background: transparent; }
 }
 
@@ -413,7 +412,7 @@ $radius-sm:   8rpx;
 }
 
 .no-border .input-wrapper { border: none; background: transparent; padding: 0; }
-.ph-color { color: #C9C0B8; font-weight: 300; }
+.ph-color { color: #CBD5E1; font-weight: 300; }
 
 .error-tip {
   display: flex; flex-direction: row; align-items: center; margin: -20rpx 0 40rpx 10rpx; transition: opacity 0.3s;
@@ -438,7 +437,7 @@ $radius-sm:   8rpx;
 }
 
 .bottom-toolbar {
-  position: fixed; bottom: 0; left: 0; right: 0; background-color: rgba(249, 245, 238, 0.98);
+  position: fixed; bottom: 0; left: 0; right: 0; background-color: rgba(241, 245, 249, 0.98);
   border-top: 1rpx solid $border; padding: 20rpx 40rpx calc(20rpx + env(safe-area-inset-bottom));
 }
 .toolbar-inner { display: flex; flex-direction: row; align-items: center; }
@@ -473,7 +472,7 @@ $radius-sm:   8rpx;
 
 .toolbar-divider { width: 1rpx; height: 40rpx; background-color: $border; margin: 0 30rpx; }
 .anonymous-row { flex: 1; display: flex; flex-direction: row; align-items: center; justify-content: space-between;
-  .anon-label { font-size: 24rpx; color: $ink-mid; font-weight: 600; }
-  .anon-desc { font-size: 18rpx; color: $ink-muted; margin-top: 2rpx; }
+  .anon-label { font-size: 32rpx; color: $ink-mid; font-weight: 600; }
+  .anon-desc { font-size: 24rpx; color: $ink-muted; margin-top: 2rpx; }
 }
 </style>
