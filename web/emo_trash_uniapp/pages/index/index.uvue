@@ -193,13 +193,13 @@ function toCreatePost() { uni.navigateTo({ url: '/pages/post/create/index' }) }
   display: flex;
   flex-direction: row;
   align-items: center;
-  .status-icon { width: 40rpx; height: 40rpx; margin-right: 20rpx; opacity: 0.9; }
+  .status-icon { width: 44rpx; height: 44rpx; margin-right: 20rpx; opacity: 0.9; }
   .greeting-box {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    .time-text { font-size: 28rpx; color: #334155; font-weight: 700; line-height: 1; margin-bottom: 4rpx; }
-    .greeting-text { font-size: 18rpx; color: #707070; font-weight: 300; }
+    .time-text { font-size: 32rpx; color: #334155; font-weight: 700; line-height: 1.1; margin-bottom: 4rpx; }
+    .greeting-text { font-size: 22rpx; color: #707070; font-weight: 300; }
   }
 }
 
@@ -207,16 +207,16 @@ function toCreatePost() { uni.navigateTo({ url: '/pages/post/create/index' }) }
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 12rpx 28rpx;
+  padding: 12rpx 32rpx;
   background-color: var(--glass-bg);
   backdrop-filter: blur(8rpx);
   border-radius: 100rpx;
   border: 1rpx solid rgba(255, 255, 255, 0.1);
-  .toggle-text { font-size: 20rpx; color: #334155; margin-left: 12rpx; font-weight: 500; }
+  .toggle-text { font-size: 24rpx; color: #334155; margin-left: 14rpx; font-weight: 500; }
 }
 
-.icon-moon { width: 22rpx; height: 22rpx; border-radius: 50%; box-shadow: -5rpx 5rpx 0 0 #334155; }
-.icon-sun { width: 20rpx; height: 20rpx; border: 2rpx solid #334155; border-radius: 50%; }
+.icon-moon { width: 26rpx; height: 26rpx; border-radius: 50%; box-shadow: -6rpx 6rpx 0 0 #334155; }
+.icon-sun { width: 24rpx; height: 24rpx; border: 2rpx solid #334155; border-radius: 50%; }
 
 /* ================= 2. 引言区 ================= */
 .quote-wrapper {
