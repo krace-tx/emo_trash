@@ -55,6 +55,13 @@
 				"navigationStyle": "custom",
 				"backgroundColor": "#FDFAF3"
 			}
+		},
+		{
+			"path": "pages/post/detail/index",
+			"style": {
+				"navigationStyle": "custom",
+				"backgroundColor": "#FDFAF3"
+			}
 		}
 	],
 	"globalStyle": {

@@ -161,8 +161,8 @@ function processItems(items: PostInfo[]) {
 }
 
 function loadMore() { if (hasMore.value) fetchPosts() }
-function toDetail(id : string) { uni.navigateTo({ url: `/pages/post/detail?id=${id}` }) }
-function toCreatePost() { uni.navigateTo({ url: '/pages/post/create' }) }
+function toDetail(id : string) { uni.navigateTo({ url: `/pages/post/detail/index?id=${id}` }) }
+function toCreatePost() { uni.navigateTo({ url: '/pages/post/create/index' }) }
 </script>
 
 <style lang="scss" scoped>

@@ -1,40 +1,40 @@
-import { PostInfo } from './post'
+import { type PostInfo } from './post'
 
 export const MOCK_POSTS: PostInfo[] = [
   {
     id: '1',
     author_id: 'u1',
-    author_name: '深海潜水员',
+    author_name: '思绪旅行者',
     author_avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop',
-    title: '今天的情绪是深蓝色的',
-    content: '下班地铁上盯着窗外发呆，耳机里循环同一首歌，好像也没在听，只是需要一点声音填满空白。',
+    title: '起风的时候，情绪也跟着失去了方向',
+    content: '有时候真的不知道为什么会难受。白天在人群中笑得很大声，晚上一个人看着天花板，却觉得像被世界抛弃了一样。\n\n也许是不想再假装坚强了吧。允许自己偶尔崩溃，也是一种勇敢对吗？',
     images: [
-      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=500&q=80'
-    ], // 夜晚 / 蓝色调 / 情绪感
+      'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80',
+      'https://images.unsplash.com/photo-1516410529446-2c777cb7366d?w=800&q=80',
+      'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?w=800&q=80'
+    ],
     video: '',
-    ai_evaluation: '',
+    ai_evaluation: '这是一段典型的深夜抑郁情绪，建议尝试深呼吸并听一些舒缓的音乐。',
     like_count: 128,
-    comment_count: 24,
-    star_count: 56,
+    comment_count: 2,
+    star_count: 45,
     is_liked: false,
     is_starred: false,
-    created_at: Date.now() - 1000 * 60 * 60 * 2
+    created_at: Date.now() - 3600000
   },
   {
     id: '2',
     author_id: 'u2',
-    author_name: '微光',
+    author_name: '拾荒者小 A',
     author_avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
     title: '碎碎念：关于明天的期待',
-    content: '刚把明天的待办写在便签上，贴在电脑边。虽然还是有点焦虑，但至少事情开始变得可控了。',
-    images: [
-      'https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=500&q=80'
-    ], // 桌面 / 计划 / 生活感
+    content: '今天在路边看到一朵开得很倔强的小花，突然觉得，其实生活也没那么糟。',
+    images: ['https://images.unsplash.com/photo-1507290439931-a861b5a38200?w=800&q=80'],
     video: '',
     ai_evaluation: '',
-    like_count: 89,
-    comment_count: 12,
-    star_count: 30,
+    like_count: 56,
+    comment_count: 0,
+    star_count: 12,
     is_liked: true,
     is_starred: false,
     created_at: Date.now() - 1000 * 60 * 60 * 5
