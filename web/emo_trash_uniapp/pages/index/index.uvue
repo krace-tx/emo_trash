@@ -1,7 +1,16 @@
 <template>
   <BasePage>
     <!-- 1. 固定顶部状态栏 (Top Bar) -->
-    <view class="fixed-top-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+    <!-- 动态背景：根据滚动高度计算透明度 -->
+    <view 
+      class="fixed-top-bar" 
+      :style="{ 
+        paddingTop: statusBarHeight + 'px',
+        backgroundColor: dynamicTopbarBg,
+        backdropFilter: isScrolled ? 'blur(24rpx)' : 'none',
+        webkitBackdropFilter: isScrolled ? 'blur(24rpx)' : 'none'
+      }"
+    >
       <view class="status-left">
         <image class="status-icon" src="/static/icons/sprout.svg" mode="aspectFit"></image>
         <view class="greeting-box">
@@ -24,6 +33,7 @@
       class="main-scroll" 
       scroll-y="true" 
       @scrolltolower="loadMore"
+      @scroll="onPageScroll"
       :enhanced="true"
       :show-scrollbar="false"
     >
@@ -31,11 +41,9 @@
         <!-- 顶部占位 -->
         <view class="top-placeholder" :style="{ height: (statusBarHeight + 50) + 'px' }"></view>
 
-        <!-- 3. 悬挂标点引言区 (Hanging Punctuation) -->
+        <!-- 3. 引言区 (Quote Area) -->
         <view class="quote-wrapper">
-          <!-- 核心：绝对定位的装饰性背景引号 -->
           <text class="bg-quote-mark">“</text>
-
           <view class="text-group">
             <text class="quote-main">有时候真的不知道\n为什么会难受</text>
             <text class="quote-author">—— 某个匿名的人</text>
@@ -45,13 +53,11 @@
         <!-- 4. 单列 Feed 内容流 -->
         <view class="feed-list">
           <block v-for="(item, index) in postList" :key="item.id">
-            <!-- 普通帖子卡片 -->
             <DiscoveryCard 
               v-if="item.type === 'post'" 
               :post="item.data!"
               @click="toDetail(item.id)"
             />
-            <!-- 中插特殊引导卡片 (Quote Card) -->
             <CtaCard v-else-if="item.type === 'cta'" @click="toCreatePost" />
           </block>
         </view>
@@ -69,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import BasePage from '@/components/BasePage.uvue'
 import DiscoveryCard from '@/components/DiscoveryCard.uvue'
 import CtaCard from '@/components/CtaCard.uvue'
@@ -83,11 +89,27 @@ type FeedItem = { type: 'post' | 'cta', id: string, data: PostInfo | null }
 const statusBarHeight = ref(0)
 const currentTime = ref('')
 const greetingText = ref('夜深了，早点休息')
+const scrollTop = ref(0) // 记录当前滚动高度
 
 const postList = ref<FeedItem[]>([])
 const hasMore = ref(true)
 const cursor = ref('')
 const ctaInserted = ref(false)
+
+// 动态计算背景色
+const isScrolled = computed(() => scrollTop.value > 20)
+const dynamicTopbarBg = computed(() => {
+  if (scrollTop.value <= 0) return 'transparent'
+  
+  // 滚动 100rpx 达到最大不透明度
+  const opacity = Math.min(1, scrollTop.value / 100)
+  
+  if (uiStore.isNightMode) {
+    return `rgba(240, 242, 246, ${opacity * 0.12})` // 适配夜晚主题底色
+  } else {
+    return `rgba(253, 250, 243, ${opacity * 0.65})` // 适配白天主题底色
+  }
+})
 
 onMounted(() => {
   const sys = uni.getSystemInfoSync()
@@ -99,6 +121,10 @@ onMounted(() => {
 onShow(() => {
   uni.setStorageSync('current_tab_path', '/pages/index/index')
 })
+
+function onPageScroll(e : UniScrollEvent) {
+  scrollTop.value = e.detail.scrollTop
+}
 
 function updateTime() {
   const now = new Date(); const h = now.getHours(); const m = now.getMinutes()
@@ -160,7 +186,7 @@ function toCreatePost() { uni.navigateTo({ url: '/pages/post/create' }) }
   align-items: center;
   padding: 0 40rpx;
   height: 120rpx;
-  transition: all 0.5s ease;
+  transition: background-color 0.3s ease; /* 背景色平滑过渡 */
 }
 
 .status-left {
@@ -182,7 +208,7 @@ function toCreatePost() { uni.navigateTo({ url: '/pages/post/create' }) }
   flex-direction: row;
   align-items: center;
   padding: 12rpx 28rpx;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--glass-bg);
   backdrop-filter: blur(8rpx);
   border-radius: 100rpx;
   border: 1rpx solid rgba(255, 255, 255, 0.1);
@@ -192,24 +218,21 @@ function toCreatePost() { uni.navigateTo({ url: '/pages/post/create' }) }
 .icon-moon { width: 22rpx; height: 22rpx; border-radius: 50%; box-shadow: -5rpx 5rpx 0 0 #334155; }
 .icon-sun { width: 20rpx; height: 20rpx; border: 2rpx solid #334155; border-radius: 50%; }
 
-/* ================= 2. 悬挂标点引言区 ================= */
+/* ================= 2. 引言区 ================= */
 .quote-wrapper {
   position: relative;
-  /* 核心：左侧强行留出 100rpx 的空白空间 */
   padding: 60rpx 60rpx 100rpx 100rpx;
   margin-top: 20rpx;
 }
 
 .bg-quote-mark {
   position: absolute;
-  /* 精准咬合：悬挂在正文左侧偏上位置 */
   top: 30rpx; 
   left: 40rpx; 
-  
   font-size: 120rpx;
   line-height: 1;
   font-family: Georgia, serif; 
-  color: var(--quote-mark-color, rgba(0, 0, 0, 0.06));
+  color: var(--quote-mark-color);
   z-index: 0;
 }
 
@@ -222,7 +245,6 @@ function toCreatePost() { uni.navigateTo({ url: '/pages/post/create' }) }
 
 .quote-main {
   font-size: 44rpx;
-  /* 高级宋体字栈 */
   font-family: "Source Han Serif SC", "Source Han Serif CN", "Noto Serif CJK SC", serif; 
   color: #334155;
   line-height: 1.6;
@@ -238,7 +260,6 @@ function toCreatePost() { uni.navigateTo({ url: '/pages/post/create' }) }
   font-style: italic;
 }
 
-/* ================= 其他列表适配 ================= */
 .feed-list { padding-top: 10rpx; }
 .top-placeholder { width: 100%; }
 .tabbar-placeholder { height: 140rpx; }

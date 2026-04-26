@@ -56,6 +56,10 @@ import { uiStore } from '@/stores/ui'
   --page-bg: #F0F2F6;
   --text-main: #334155;
   --text-sub: #707070;
+  --topbar-bg: rgba(255, 255, 255, 0.12); /* 夜晚模式顶部栏透明度 */
+  --quote-mark-color: rgba(255, 255, 255, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  
   background-color: var(--page-bg);
   .dynamic-bg {
     background-image: url('/static/index/bg-night.png');
@@ -66,6 +70,10 @@ import { uiStore } from '@/stores/ui'
   --page-bg: #FDFAF3;
   --text-main: #334155;
   --text-sub: #8A96A8;
+  --topbar-bg: rgba(253, 250, 243, 0.65); /* 清晨模式顶部栏透明度 */
+  --quote-mark-color: rgba(107, 139, 164, 0.12);
+  --glass-bg: rgba(107, 139, 164, 0.08);
+
   background-color: var(--page-bg);
   .dynamic-bg {
     background-image: url('/static/index/bg-day.png');
