@@ -1,0 +1,389 @@
+<template>
+  <BasePage>
+    <BaseNavbar title="我收藏的情绪" :showBack="true" :placeholder="true" />
+    
+    <scroll-view 
+      scroll-y 
+      class="post-list" 
+      @scrolltolower="loadMore"
+      :refresher-enabled="true"
+      :refresher-triggered="isRefreshing"
+      @refresherrefresh="onRefresh"
+    >
+      <view class="list-container">
+        <view v-for="(item, index) in posts" :key="item.id" class="post-card" @click="toDetail(item.id)">
+          <view class="post-header-row">
+            <view class="author-info">
+              <image class="avatar" :src="item.author_avatar || '/static/logo.png'" mode="aspectFill"></image>
+              <text class="name">{{ item.author_name || '匿名拾荒者' }}</text>
+            </view>
+            <view class="unstar-btn" @click.stop="handleUnstar(item.id, index)">
+              <text class="unstar-icon">★</text>
+            </view>
+          </view>
+          
+          <view class="post-body">
+            <text class="post-title" v-if="item.title">{{ item.title }}</text>
+            <text class="post-content">{{ item.content }}</text>
+            
+            <view class="image-preview" v-if="item.images.length > 0">
+              <image 
+                class="preview-img" 
+                :src="item.images[0]" 
+                mode="aspectFill"
+              ></image>
+              <view class="img-count" v-if="item.images.length > 1">
+                <text class="count-text">+{{ item.images.length }}</text>
+              </view>
+            </view>
+          </view>
+          
+          <view class="post-footer">
+            <text class="post-time">{{ formatTime(item.created_at) }}</text>
+            <view class="post-stats">
+              <view class="stat-item">
+                <text class="stat-icon">❤️</text>
+                <text class="stat-num">{{ item.like_count }}</text>
+              </view>
+              <view class="stat-item">
+                <text class="stat-icon">🐚</text>
+                <text class="stat-num">{{ item.comment_count }}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 空状态 -->
+        <view v-if="posts.length === 0 && !isLoading" class="empty-state">
+          <view class="empty-box">
+            <text class="empty-icon">✨</text>
+            <text class="empty-title">这里空空如也</text>
+            <text class="empty-desc">去广场寻找那些触动你的情绪吧</text>
+            <view class="go-btn" @click="toSquare">
+              <text class="go-text">去广场看看</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="loading-status" v-if="posts.length > 0">
+          <text class="status-text">{{ loadingText }}</text>
+        </view>
+      </view>
+      <view class="safe-bottom"></view>
+    </scroll-view>
+  </BasePage>
+</template>
+
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+import BasePage from '@/components/BasePage.uvue'
+import BaseNavbar from '@/components/BaseNavbar.uvue'
+import { listStarredPosts, starPost, type PostInfo } from '@/api/post'
+
+const posts = ref<PostInfo[]>([])
+const cursor = ref('')
+const hasMore = ref(true)
+const isLoading = ref(false)
+const isRefreshing = ref(false)
+
+const loadingText = computed((): string => {
+  if (isLoading.value) return '正在翻阅收藏...'
+  if (!hasMore.value) return '到底了，这是全部的收藏'
+  return '向上滑动加载更多'
+})
+
+onMounted(() => {
+  fetchPosts(true)
+})
+
+async function fetchPosts(isFirst: boolean = false) {
+  if (isLoading.value) return
+  if (!isFirst && !hasMore.value) return
+  
+  isLoading.value = true
+  if (isFirst) {
+    cursor.value = ''
+    hasMore.value = true
+  }
+  
+  try {
+    const res = await listStarredPosts({
+      cursor: cursor.value,
+      page_size: 10
+    })
+    
+    if (isFirst) {
+      posts.value = res.list
+    } else {
+      posts.value = posts.value.concat(res.list)
+    }
+    
+    cursor.value = res.next_cursor
+    hasMore.value = res.has_more
+  } catch (e) {
+    uni.showToast({ title: '暂时无法读取收藏', icon: 'none' })
+  } finally {
+    isLoading.value = false
+    isRefreshing.value = false
+  }
+}
+
+async function onRefresh() {
+  isRefreshing.value = true
+  await fetchPosts(true)
+}
+
+async function handleUnstar(id: string, index: number) {
+  // #ifdef APP-PLUS
+  uni.vibrateShort({ type: 'light' })
+  // #endif
+  
+  uni.showModal({
+    title: '取消收藏？',
+    content: '这段情绪将从你的收藏夹中移出',
+    confirmText: '确定',
+    confirmColor: '#6B8BA4',
+    success: async (res) => {
+      if (res.confirm) {
+        try {
+          const success = await starPost(id)
+          if (success) {
+            posts.value.splice(index, 1)
+            uni.showToast({ title: '已取消', icon: 'none' })
+            // 同步刷新首页列表状态
+            uni.$emit('refreshPosts')
+          }
+        } catch (e) {
+          uni.showToast({ title: '操作失败', icon: 'none' })
+        }
+      }
+    }
+  })
+}
+
+function loadMore() {
+  fetchPosts()
+}
+
+function toDetail(id: string) {
+  uni.navigateTo({ url: `/pages/post/detail/index?id=${id}` })
+}
+
+function toSquare() {
+  uni.reLaunch({ url: '/pages/index/index' })
+}
+
+function formatTime(timestamp: number): string {
+  const date = new Date(timestamp * 1000)
+  const now = new Date()
+  if (date.getFullYear() === now.getFullYear()) {
+    return `${date.getMonth() + 1}月${date.getDate()}日`
+  }
+  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
+}
+</script>
+
+<style lang="scss" scoped>
+.post-list { 
+  flex: 1; 
+  background-color: #F8FAFC;
+}
+
+.list-container { 
+  padding: 30rpx 40rpx; 
+}
+
+.post-card {
+  background-color: #FFFFFF;
+  border-radius: 32rpx;
+  padding: 36rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(107, 139, 164, 0.04);
+  transition: transform 0.2s;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  .post-header-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24rpx;
+    
+    .author-info {
+      display: flex; 
+      flex-direction: row; 
+      align-items: center;
+      .avatar { 
+        width: 52rpx; 
+        height: 52rpx; 
+        border-radius: 50%; 
+        margin-right: 16rpx; 
+        border: 1rpx solid #F1F5F9;
+      }
+      .name { 
+        font-size: 26rpx; 
+        color: #64748B; 
+        font-weight: 500; 
+      }
+    }
+    
+    .unstar-btn {
+      width: 60rpx;
+      height: 60rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: -10rpx;
+      
+      .unstar-icon { 
+        font-size: 36rpx; 
+        color: #6B8BA4; 
+      }
+      &:active { opacity: 0.6; }
+    }
+  }
+  
+  .post-body {
+    margin-bottom: 30rpx;
+    
+    .post-title { 
+      display: block; 
+      font-size: 32rpx; 
+      font-weight: 600; 
+      color: #1E293B; 
+      margin-bottom: 12rpx; 
+      font-family: "Source Han Serif SC", serif;
+    }
+    
+    .post-content { 
+      display: block; 
+      font-size: 28rpx; 
+      color: #475569; 
+      line-height: 1.6; 
+      overflow: hidden; 
+      text-overflow: ellipsis; 
+      display: -webkit-box; 
+      -webkit-line-clamp: 3; 
+      -webkit-box-orient: vertical; 
+    }
+
+    .image-preview {
+      margin-top: 20rpx;
+      position: relative;
+      width: 200rpx;
+      height: 200rpx;
+      border-radius: 16rpx;
+      overflow: hidden;
+      
+      .preview-img {
+        width: 100%;
+        height: 100%;
+      }
+      
+      .img-count {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .count-text { color: #FFFFFF; font-size: 24rpx; font-weight: 600; }
+      }
+    }
+  }
+  
+  .post-footer {
+    display: flex; 
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: center;
+    padding-top: 24rpx;
+    border-top: 1rpx solid #F1F5F9;
+    
+    .post-time { 
+      font-size: 22rpx; 
+      color: #94A3B8; 
+    }
+    
+    .post-stats { 
+      display: flex; 
+      flex-direction: row; 
+      gap: 24rpx; 
+      
+      .stat-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        .stat-icon { font-size: 24rpx; margin-right: 6rpx; }
+        .stat-num { font-size: 22rpx; color: #64748B; }
+      }
+    }
+  }
+}
+
+/* 空状态样式 */
+.empty-state {
+  padding-top: 160rpx;
+  display: flex;
+  justify-content: center;
+  
+  .empty-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    
+    .empty-icon {
+      font-size: 100rpx;
+      margin-bottom: 40rpx;
+      opacity: 0.8;
+    }
+    
+    .empty-title {
+      font-size: 32rpx;
+      color: #334155;
+      font-weight: 600;
+      margin-bottom: 16rpx;
+    }
+    
+    .empty-desc {
+      font-size: 26rpx;
+      color: #94A3B8;
+      text-align: center;
+      line-height: 1.5;
+      margin-bottom: 60rpx;
+    }
+    
+    .go-btn {
+      padding: 20rpx 60rpx;
+      background-color: #6B8BA4;
+      border-radius: 40rpx;
+      box-shadow: 0 8rpx 20rpx rgba(107, 139, 164, 0.2);
+      
+      .go-text {
+        color: #FFFFFF;
+        font-size: 28rpx;
+        font-weight: 600;
+      }
+      
+      &:active {
+        opacity: 0.9;
+        transform: scale(0.95);
+      }
+    }
+  }
+}
+
+.loading-status { 
+  padding: 40rpx 0 100rpx; 
+  text-align: center; 
+  .status-text { font-size: 24rpx; color: #CBD5E1; } 
+}
+
+.safe-bottom {
+  height: env(safe-area-inset-bottom);
+}
+</style>

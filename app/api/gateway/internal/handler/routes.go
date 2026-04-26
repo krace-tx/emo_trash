@@ -21,6 +21,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
+					Path:    "/comment/create",
+					Handler: post.CreateCommentHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/comment/delete",
+					Handler: post.DeleteCommentHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/comment/list",
+					Handler: post.ListCommentsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/create",
 					Handler: post.CreatePostHandler(serverCtx),
 				},
@@ -43,6 +58,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/list",
 					Handler: post.ListPostsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/list/my",
+					Handler: post.ListMyPostsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/list/starred",
+					Handler: post.ListStarredPostsHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
@@ -78,9 +103,24 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: sso.ResetPasswordHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodGet,
+				Path:    "/auth/qrcode/generate",
+				Handler: sso.GenerateQrcodeHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/auth/qrcode/status",
+				Handler: sso.CheckQrcodeStatusHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/auth/register",
 				Handler: sso.RegisterHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/thirdparty/login",
+				Handler: sso.LoginByThirdPartyHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
@@ -108,8 +148,23 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/auth/qrcode/confirm",
+					Handler: sso.ConfirmQrcodeLoginHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/auth/token/verify",
 					Handler: sso.VerifyTokenHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/common/comfort",
+					Handler: sso.GetComfortMessageHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/common/upload",
+					Handler: sso.UploadMediaHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
@@ -120,6 +175,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/user/info/update",
 					Handler: sso.UpdateUserInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/user/stats",
+					Handler: sso.GetUserStatsHandler(serverCtx),
 				},
 			}...,
 		),

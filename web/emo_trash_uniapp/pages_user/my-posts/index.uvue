@@ -1,0 +1,421 @@
+<template>
+  <BasePage>
+    <BaseNavbar title="情绪记忆" :showBack="true" :placeholder="true" />
+    
+    <scroll-view 
+      scroll-y 
+      class="timeline-scroll" 
+      @scrolltolower="loadMore"
+      :refresher-enabled="true"
+      :refresher-triggered="isRefreshing"
+      @refresherrefresh="onRefresh"
+    >
+      <view class="timeline-container">
+        <!-- 时间轴主体 -->
+        <view class="timeline-line"></view>
+        
+        <view v-for="(item, index) in posts" :key="item.id" class="memory-item">
+          <!-- 左侧日期标识 -->
+          <view class="date-side">
+            <text class="day">{{ getDay(item.created_at) }}</text>
+            <text class="month">{{ getMonth(item.created_at) }}</text>
+            <view class="timeline-dot"></view>
+          </view>
+          
+          <!-- 右侧内容卡片 -->
+          <view class="content-side" @click="toDetail(item.id)">
+            <view class="memory-card">
+              <view class="card-header">
+                <view class="mood-badge" v-if="item.ai_evaluation">
+                  <text class="mood-emoji">{{ getMoodEmoji(item.content) }}</text>
+                </view>
+                <view class="more-btn" @click.stop="showMoreAction(item, index)">
+                  <text class="more-icon">•••</text>
+                </view>
+              </view>
+              
+              <view class="card-body">
+                <text class="memory-title" v-if="item.title">{{ item.title }}</text>
+                <text class="memory-text">{{ item.content }}</text>
+                
+                <view class="image-gallery" v-if="item.images.length > 0">
+                  <image 
+                    class="main-img" 
+                    :src="item.images[0]" 
+                    mode="aspectFill"
+                  ></image>
+                  <view class="img-badge" v-if="item.images.length > 1">
+                    <text class="badge-text">+{{ item.images.length }}</text>
+                  </view>
+                </view>
+              </view>
+              
+              <view class="card-footer">
+                <view class="interaction">
+                  <view class="stat">
+                    <text class="icon">❤️</text>
+                    <text class="num">{{ item.like_count }}</text>
+                  </view>
+                  <view class="stat">
+                    <text class="icon">🐚</text>
+                    <text class="num">{{ item.comment_count }}</text>
+                  </view>
+                </view>
+                <text class="privacy-tag" v-if="item.video === 'anonymous'">匿名</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 空状态 -->
+        <view v-if="posts.length === 0 && !isLoading" class="empty-journal">
+          <view class="empty-box">
+            <text class="empty-illu">✒️</text>
+            <text class="empty-tip">记忆的画卷还是一片空白</text>
+            <view class="write-btn" @click="toCreate">
+              <text class="btn-text">开始记录</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="loading-area" v-if="posts.length > 0">
+          <text class="loading-text">{{ loadingText }}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </BasePage>
+</template>
+
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+import BasePage from '@/components/BasePage.uvue'
+import BaseNavbar from '@/components/BaseNavbar.uvue'
+import { listMyPosts, deletePost, type PostInfo } from '@/api/post'
+
+const posts = ref<PostInfo[]>([])
+const cursor = ref('')
+const hasMore = ref(true)
+const isLoading = ref(false)
+const isRefreshing = ref(false)
+
+const loadingText = computed((): string => {
+  if (isLoading.value) return '正在翻阅时光...'
+  if (!hasMore.value) return '所有的记忆都在这里了'
+  return '向上滑动加载更多'
+})
+
+onMounted(() => {
+  fetchPosts(true)
+})
+
+async function fetchPosts(isFirst: boolean = false) {
+  if (isLoading.value) return
+  if (!isFirst && !hasMore.value) return
+  
+  isLoading.value = true
+  if (isFirst) {
+    cursor.value = ''
+    hasMore.value = true
+  }
+  
+  try {
+    const res = await listMyPosts({
+      cursor: cursor.value,
+      page_size: 10
+    })
+    
+    if (isFirst) {
+      posts.value = res.list
+    } else {
+      posts.value = posts.value.concat(res.list)
+    }
+    
+    cursor.value = res.next_cursor
+    hasMore.value = res.has_more
+  } catch (e) {
+    uni.showToast({ title: '暂时无法读取记忆', icon: 'none' })
+  } finally {
+    isLoading.value = false
+    isRefreshing.value = false
+  }
+}
+
+async function onRefresh() {
+  isRefreshing.value = true
+  await fetchPosts(true)
+}
+
+function showMoreAction(item: PostInfo, index: number) {
+  uni.showActionSheet({
+    itemList: ['编辑内容', '彻底丢弃'],
+    itemColor: '#334155',
+    success: async (res) => {
+      if (res.tapIndex === 1) {
+        handleDelete(item.id, index)
+      }
+    }
+  })
+}
+
+async function handleDelete(id: string, index: number) {
+  uni.showModal({
+    title: '彻底丢弃这段记忆？',
+    content: '删除后将无法找回。',
+    confirmText: '确定',
+    confirmColor: '#EF4444',
+    success: async (res) => {
+      if (res.confirm) {
+        uni.showLoading({ title: '正在清理...' })
+        try {
+          const success = await deletePost(id)
+          if (success) {
+            posts.value.splice(index, 1)
+            uni.showToast({ title: '已消失', icon: 'none' })
+            uni.$emit('refreshPosts')
+          }
+        } catch (e) {
+          uni.showToast({ title: '操作失败', icon: 'none' })
+        } finally {
+          uni.hideLoading()
+        }
+      }
+    }
+  })
+}
+
+function loadMore() {
+  fetchPosts()
+}
+
+function toDetail(id: string) {
+  uni.navigateTo({ url: `/pages/post/detail/index?id=${id}` })
+}
+
+function toCreate() {
+  uni.navigateTo({ url: '/pages/post/create/index' })
+}
+
+// 辅助方法：获取日期
+function getDay(ts: number): string {
+  const d = new Date(ts * 1000)
+  return d.getDate().toString().padStart(2, '0')
+}
+
+// 辅助方法：获取月份（简写）
+function getMonth(ts: number): string {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const d = new Date(ts * 1000)
+  return months[d.getMonth()]
+}
+
+// 辅助方法：根据内容模拟一个心情图标（实际中可从后端获取）
+function getMoodEmoji(content: string): string {
+  const emojis = ['🍃', '☁️', '🌊', '🌙', '☕', '✨']
+  return emojis[Math.abs(content.length % emojis.length)]
+}
+
+function formatTime(timestamp: number): string {
+  const date = new Date(timestamp * 1000)
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+}
+</script>
+
+<style lang="scss" scoped>
+.timeline-scroll {
+  flex: 1;
+  background-color: #FDFAF3; /* 象牙白底色，更有纸质感 */
+}
+
+.timeline-container {
+  padding: 40rpx 30rpx 100rpx;
+  position: relative;
+  min-height: 100vh;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 100rpx;
+  top: 60rpx;
+  bottom: 100rpx;
+  width: 2rpx;
+  background-color: #E2E8F0;
+}
+
+.memory-item {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 60rpx;
+  position: relative;
+}
+
+/* 左侧日期样式 */
+.date-side {
+  width: 100rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20rpx;
+  
+  .day {
+    font-size: 36rpx;
+    font-weight: 700;
+    color: #1E293B;
+    font-family: "Georgia", serif;
+  }
+  
+  .month {
+    font-size: 20rpx;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 2rpx;
+  }
+  
+  .timeline-dot {
+    position: absolute;
+    left: 100rpx;
+    top: 36rpx;
+    width: 16rpx;
+    height: 16rpx;
+    background-color: #FFFFFF;
+    border: 4rpx solid #6B8BA4;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+}
+
+/* 右侧内容卡片样式 */
+.content-side {
+  flex: 1;
+  padding-left: 40rpx;
+}
+
+.memory-card {
+  background-color: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 32rpx;
+  box-shadow: 0 10rpx 30rpx rgba(107, 139, 164, 0.05);
+  border: 1rpx solid rgba(226, 232, 240, 0.5);
+  
+  &:active {
+    transform: scale(0.99);
+    background-color: #F8FAFC;
+  }
+  
+  .card-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20rpx;
+    
+    .mood-badge {
+      background-color: #F1F5F9;
+      width: 56rpx;
+      height: 56rpx;
+      border-radius: 16rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .mood-emoji { font-size: 32rpx; }
+    }
+    
+    .more-btn {
+      padding: 10rpx;
+      .more-icon { font-size: 24rpx; color: #CBD5E1; letter-spacing: 2rpx; }
+    }
+  }
+  
+  .card-body {
+    .memory-title {
+      display: block;
+      font-size: 32rpx;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 12rpx;
+      font-family: "Source Han Serif SC", serif;
+    }
+    
+    .memory-text {
+      display: block;
+      font-size: 28rpx;
+      color: #475569;
+      line-height: 1.7;
+      letter-spacing: 1rpx;
+    }
+    
+    .image-gallery {
+      margin-top: 24rpx;
+      position: relative;
+      width: 100%;
+      height: 300rpx;
+      border-radius: 20rpx;
+      overflow: hidden;
+      
+      .main-img { width: 100%; height: 100%; }
+      .img-badge {
+        position: absolute; right: 20rpx; bottom: 20rpx;
+        background-color: rgba(0,0,0,0.4);
+        padding: 4rpx 16rpx; border-radius: 100rpx;
+        .badge-text { color: #FFFFFF; font-size: 20rpx; }
+      }
+    }
+  }
+  
+  .card-footer {
+    margin-top: 30rpx;
+    padding-top: 24rpx;
+    border-top: 1rpx dashed #F1F5F9;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    
+    .interaction {
+      display: flex;
+      flex-direction: row;
+      gap: 30rpx;
+      .stat {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        .icon { font-size: 24rpx; margin-right: 8rpx; }
+        .num { font-size: 22rpx; color: #94A3B8; font-family: "Georgia", serif; }
+      }
+    }
+    
+    .privacy-tag {
+      font-size: 20rpx;
+      color: #CBD5E1;
+      font-style: italic;
+    }
+  }
+}
+
+/* 空状态样式 */
+.empty-journal {
+  padding-top: 300rpx;
+  display: flex;
+  justify-content: center;
+  
+  .empty-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .empty-illu { font-size: 100rpx; margin-bottom: 30rpx; opacity: 0.5; }
+    .empty-tip { font-size: 28rpx; color: #94A3B8; margin-bottom: 60rpx; font-family: "Source Han Serif SC", serif; }
+    
+    .write-btn {
+      padding: 24rpx 80rpx;
+      background-color: #6B8BA4;
+      border-radius: 100rpx;
+      box-shadow: 0 10rpx 24rpx rgba(107, 139, 164, 0.2);
+      .btn-text { color: #FFFFFF; font-size: 28rpx; font-weight: 600; }
+      &:active { opacity: 0.9; }
+    }
+  }
+}
+
+.loading-area { padding: 80rpx 0; text-align: center; .loading-text { font-size: 22rpx; color: #CBD5E1; letter-spacing: 2rpx; } }
+</style>

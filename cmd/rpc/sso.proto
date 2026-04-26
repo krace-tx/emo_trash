@@ -36,6 +36,35 @@ service auth {
 
   // 更新用户信息
   rpc UpdateUserInfo(UpdateUserInfoReq) returns (CommonResp);
+
+  // --- 用户统计相关 ---
+
+  // 获取用户统计
+  rpc GetUserStats(GetUserStatsReq) returns (GetUserStatsResp);
+
+  // --- 治愈与情感服务相关 ---
+
+  // 获取每日温柔文案
+  rpc GetComfortMessage(GetComfortMessageReq) returns (GetComfortMessageResp);
+
+  // --- 三方与扫码登录相关 ---
+
+  // 三方登录
+  rpc LoginByThirdParty(LoginByThirdPartyReq) returns (LoginResp);
+
+  // 生成二维码
+  rpc GenerateQrcode(GenerateQrcodeReq) returns (GenerateQrcodeResp);
+
+  // 检查二维码状态
+  rpc CheckQrcodeStatus(CheckQrcodeStatusReq) returns (CheckQrcodeStatusResp);
+
+  // 确认二维码登录
+  rpc ConfirmQrcodeLogin(ConfirmQrcodeLoginReq) returns (CommonResp);
+
+  // --- 基础设施相关 ---
+
+  // 媒体上传
+  rpc UploadMedia(UploadMediaReq) returns (UploadMediaResp);
 }
 
 // ============ 验证码 ============
@@ -231,4 +260,91 @@ message UpdateUserInfoReq {
   string bio = 4;
   // @inject_tag: json:"mood"
   string mood = 5;
+}
+
+// ============ 用户统计 ============
+message GetUserStatsReq {
+  // @inject_tag: json:"user_id"
+  string user_id = 1;
+}
+
+message GetUserStatsResp {
+  // @inject_tag: json:"post_count"
+  int64 post_count = 1;
+  // @inject_tag: json:"resonance_count"
+  int64 resonance_count = 2;
+  // @inject_tag: json:"join_days"
+  int64 join_days = 3;
+}
+
+// ============ 治愈与情感服务 ============
+message GetComfortMessageReq {}
+
+message GetComfortMessageResp {
+  // @inject_tag: json:"title"
+  string title = 1;
+  // @inject_tag: json:"subtitle"
+  string subtitle = 2;
+  // @inject_tag: json:"button_text"
+  string button_text = 3;
+  // @inject_tag: json:"illustration_url"
+  string illustration_url = 4;
+}
+
+// ============ 三方与扫码登录 ============
+message LoginByThirdPartyReq {
+  // @inject_tag: json:"platform"
+  string platform = 1; // wechat | qq | alipay
+  // @inject_tag: json:"code"
+  string code = 2;
+}
+
+message GenerateQrcodeReq {
+  // @inject_tag: json:"device_id"
+  string device_id = 1;
+}
+
+message GenerateQrcodeResp {
+  // @inject_tag: json:"qid"
+  string qid = 1;
+  // @inject_tag: json:"image_url"
+  string image_url = 2;
+}
+
+message CheckQrcodeStatusReq {
+  // @inject_tag: json:"qid"
+  string qid = 1;
+}
+
+message CheckQrcodeStatusResp {
+  // @inject_tag: json:"status"
+  string status = 1; // WAITING | SCANNED | CONFIRMED | EXPIRED
+  // @inject_tag: json:"access_token"
+  string access_token = 2;
+  // @inject_tag: json:"refresh_token"
+  string refresh_token = 3;
+}
+
+message ConfirmQrcodeLoginReq {
+  // @inject_tag: json:"qid"
+  string qid = 1;
+  // @inject_tag: json:"user_id"
+  string user_id = 2;
+}
+
+// ============ 基础设施相关 ============
+message UploadMediaReq {
+  // @inject_tag: json:"user_id"
+  string user_id = 1;
+  // @inject_tag: json:"usage"
+  string usage = 2; // avatar | post
+  // @inject_tag: json:"content"
+  bytes content = 3;
+  // @inject_tag: json:"filename"
+  string filename = 4;
+}
+
+message UploadMediaResp {
+  // @inject_tag: json:"url"
+  string url = 1;
 }

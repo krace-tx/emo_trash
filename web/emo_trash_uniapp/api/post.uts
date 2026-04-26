@@ -135,3 +135,80 @@ export function starPost(id: string): Promise<boolean> {
     data: { id }
   })
 }
+
+/**
+ * 获取我发布的帖子列表
+ */
+export function listMyPosts(params: ListPostsReq): Promise<ListPostsResp> {
+  return request<ListPostsResp>({
+    url: '/post/v1/list/my',
+    method: 'GET',
+    data: params
+  })
+}
+
+/**
+ * 获取我收藏的帖子列表
+ */
+export function listStarredPosts(params: ListPostsReq): Promise<ListPostsResp> {
+  return request<ListPostsResp>({
+    url: '/post/v1/list/starred',
+    method: 'GET',
+    data: params
+  })
+}
+
+/**
+ * 回声 (评论) 信息
+ */
+export type CommentInfo = {
+  id: string
+  post_id: string
+  author_id: string
+  author_name: string
+  author_avatar: string
+  content: string
+  created_at: number
+}
+
+/**
+ * 获取回声列表响应
+ */
+export type ListCommentsResp = {
+  list: CommentInfo[]
+  next_cursor: string
+  has_more: boolean
+}
+
+/**
+ * 发表回声
+ */
+export function createComment(postId: string, content: string): Promise<boolean> {
+  return request<boolean>({
+    url: '/post/v1/comment/create',
+    method: 'POST',
+    data: { post_id: postId, content: content }
+  })
+}
+
+/**
+ * 删除回声
+ */
+export function deleteComment(id: string): Promise<boolean> {
+  return request<boolean>({
+    url: '/post/v1/comment/delete',
+    method: 'POST',
+    data: { id }
+  })
+}
+
+/**
+ * 获取回声列表
+ */
+export function listComments(postId: string, cursor: string = '', pageSize: number = 20): Promise<ListCommentsResp> {
+  return request<ListCommentsResp>({
+    url: '/post/v1/comment/list',
+    method: 'GET',
+    data: { post_id: postId, cursor: cursor, page_size: pageSize }
+  })
+}

@@ -977,6 +977,658 @@ func (x *UpdateUserInfoReq) GetMood() string {
 	return ""
 }
 
+// ============ 用户统计 ============
+type GetUserStatsReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"user_id"
+	UserId        string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserStatsReq) Reset() {
+	*x = GetUserStatsReq{}
+	mi := &file_sso_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserStatsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserStatsReq) ProtoMessage() {}
+
+func (x *GetUserStatsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserStatsReq.ProtoReflect.Descriptor instead.
+func (*GetUserStatsReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GetUserStatsReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetUserStatsResp struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"post_count"
+	PostCount int64 `protobuf:"varint,1,opt,name=post_count,json=postCount,proto3" json:"post_count"`
+	// @inject_tag: json:"resonance_count"
+	ResonanceCount int64 `protobuf:"varint,2,opt,name=resonance_count,json=resonanceCount,proto3" json:"resonance_count"`
+	// @inject_tag: json:"join_days"
+	JoinDays      int64 `protobuf:"varint,3,opt,name=join_days,json=joinDays,proto3" json:"join_days"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserStatsResp) Reset() {
+	*x = GetUserStatsResp{}
+	mi := &file_sso_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserStatsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserStatsResp) ProtoMessage() {}
+
+func (x *GetUserStatsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserStatsResp.ProtoReflect.Descriptor instead.
+func (*GetUserStatsResp) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetUserStatsResp) GetPostCount() int64 {
+	if x != nil {
+		return x.PostCount
+	}
+	return 0
+}
+
+func (x *GetUserStatsResp) GetResonanceCount() int64 {
+	if x != nil {
+		return x.ResonanceCount
+	}
+	return 0
+}
+
+func (x *GetUserStatsResp) GetJoinDays() int64 {
+	if x != nil {
+		return x.JoinDays
+	}
+	return 0
+}
+
+// ============ 治愈与情感服务 ============
+type GetComfortMessageReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetComfortMessageReq) Reset() {
+	*x = GetComfortMessageReq{}
+	mi := &file_sso_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetComfortMessageReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetComfortMessageReq) ProtoMessage() {}
+
+func (x *GetComfortMessageReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetComfortMessageReq.ProtoReflect.Descriptor instead.
+func (*GetComfortMessageReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{18}
+}
+
+type GetComfortMessageResp struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"title"
+	Title string `protobuf:"bytes,1,opt,name=title,proto3" json:"title"`
+	// @inject_tag: json:"subtitle"
+	Subtitle string `protobuf:"bytes,2,opt,name=subtitle,proto3" json:"subtitle"`
+	// @inject_tag: json:"button_text"
+	ButtonText string `protobuf:"bytes,3,opt,name=button_text,json=buttonText,proto3" json:"button_text"`
+	// @inject_tag: json:"illustration_url"
+	IllustrationUrl string `protobuf:"bytes,4,opt,name=illustration_url,json=illustrationUrl,proto3" json:"illustration_url"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *GetComfortMessageResp) Reset() {
+	*x = GetComfortMessageResp{}
+	mi := &file_sso_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetComfortMessageResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetComfortMessageResp) ProtoMessage() {}
+
+func (x *GetComfortMessageResp) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetComfortMessageResp.ProtoReflect.Descriptor instead.
+func (*GetComfortMessageResp) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *GetComfortMessageResp) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *GetComfortMessageResp) GetSubtitle() string {
+	if x != nil {
+		return x.Subtitle
+	}
+	return ""
+}
+
+func (x *GetComfortMessageResp) GetButtonText() string {
+	if x != nil {
+		return x.ButtonText
+	}
+	return ""
+}
+
+func (x *GetComfortMessageResp) GetIllustrationUrl() string {
+	if x != nil {
+		return x.IllustrationUrl
+	}
+	return ""
+}
+
+// ============ 三方与扫码登录 ============
+type LoginByThirdPartyReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"platform"
+	Platform string `protobuf:"bytes,1,opt,name=platform,proto3" json:"platform"` // wechat | qq | alipay
+	// @inject_tag: json:"code"
+	Code          string `protobuf:"bytes,2,opt,name=code,proto3" json:"code"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoginByThirdPartyReq) Reset() {
+	*x = LoginByThirdPartyReq{}
+	mi := &file_sso_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoginByThirdPartyReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginByThirdPartyReq) ProtoMessage() {}
+
+func (x *LoginByThirdPartyReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginByThirdPartyReq.ProtoReflect.Descriptor instead.
+func (*LoginByThirdPartyReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *LoginByThirdPartyReq) GetPlatform() string {
+	if x != nil {
+		return x.Platform
+	}
+	return ""
+}
+
+func (x *LoginByThirdPartyReq) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+type GenerateQrcodeReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"device_id"
+	DeviceId      string `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateQrcodeReq) Reset() {
+	*x = GenerateQrcodeReq{}
+	mi := &file_sso_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateQrcodeReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateQrcodeReq) ProtoMessage() {}
+
+func (x *GenerateQrcodeReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateQrcodeReq.ProtoReflect.Descriptor instead.
+func (*GenerateQrcodeReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *GenerateQrcodeReq) GetDeviceId() string {
+	if x != nil {
+		return x.DeviceId
+	}
+	return ""
+}
+
+type GenerateQrcodeResp struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"qid"
+	Qid string `protobuf:"bytes,1,opt,name=qid,proto3" json:"qid"`
+	// @inject_tag: json:"image_url"
+	ImageUrl      string `protobuf:"bytes,2,opt,name=image_url,json=imageUrl,proto3" json:"image_url"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateQrcodeResp) Reset() {
+	*x = GenerateQrcodeResp{}
+	mi := &file_sso_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateQrcodeResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateQrcodeResp) ProtoMessage() {}
+
+func (x *GenerateQrcodeResp) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateQrcodeResp.ProtoReflect.Descriptor instead.
+func (*GenerateQrcodeResp) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *GenerateQrcodeResp) GetQid() string {
+	if x != nil {
+		return x.Qid
+	}
+	return ""
+}
+
+func (x *GenerateQrcodeResp) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
+type CheckQrcodeStatusReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"qid"
+	Qid           string `protobuf:"bytes,1,opt,name=qid,proto3" json:"qid"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckQrcodeStatusReq) Reset() {
+	*x = CheckQrcodeStatusReq{}
+	mi := &file_sso_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckQrcodeStatusReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckQrcodeStatusReq) ProtoMessage() {}
+
+func (x *CheckQrcodeStatusReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckQrcodeStatusReq.ProtoReflect.Descriptor instead.
+func (*CheckQrcodeStatusReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *CheckQrcodeStatusReq) GetQid() string {
+	if x != nil {
+		return x.Qid
+	}
+	return ""
+}
+
+type CheckQrcodeStatusResp struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"status"
+	Status string `protobuf:"bytes,1,opt,name=status,proto3" json:"status"` // WAITING | SCANNED | CONFIRMED | EXPIRED
+	// @inject_tag: json:"access_token"
+	AccessToken string `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token"`
+	// @inject_tag: json:"refresh_token"
+	RefreshToken  string `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckQrcodeStatusResp) Reset() {
+	*x = CheckQrcodeStatusResp{}
+	mi := &file_sso_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckQrcodeStatusResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckQrcodeStatusResp) ProtoMessage() {}
+
+func (x *CheckQrcodeStatusResp) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckQrcodeStatusResp.ProtoReflect.Descriptor instead.
+func (*CheckQrcodeStatusResp) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *CheckQrcodeStatusResp) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *CheckQrcodeStatusResp) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *CheckQrcodeStatusResp) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+type ConfirmQrcodeLoginReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"qid"
+	Qid string `protobuf:"bytes,1,opt,name=qid,proto3" json:"qid"`
+	// @inject_tag: json:"user_id"
+	UserId        string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmQrcodeLoginReq) Reset() {
+	*x = ConfirmQrcodeLoginReq{}
+	mi := &file_sso_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmQrcodeLoginReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmQrcodeLoginReq) ProtoMessage() {}
+
+func (x *ConfirmQrcodeLoginReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmQrcodeLoginReq.ProtoReflect.Descriptor instead.
+func (*ConfirmQrcodeLoginReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ConfirmQrcodeLoginReq) GetQid() string {
+	if x != nil {
+		return x.Qid
+	}
+	return ""
+}
+
+func (x *ConfirmQrcodeLoginReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+// ============ 基础设施相关 ============
+type UploadMediaReq struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"user_id"
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
+	// @inject_tag: json:"usage"
+	Usage string `protobuf:"bytes,2,opt,name=usage,proto3" json:"usage"` // avatar | post
+	// @inject_tag: json:"content"
+	Content []byte `protobuf:"bytes,3,opt,name=content,proto3" json:"content"`
+	// @inject_tag: json:"filename"
+	Filename      string `protobuf:"bytes,4,opt,name=filename,proto3" json:"filename"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadMediaReq) Reset() {
+	*x = UploadMediaReq{}
+	mi := &file_sso_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadMediaReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadMediaReq) ProtoMessage() {}
+
+func (x *UploadMediaReq) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadMediaReq.ProtoReflect.Descriptor instead.
+func (*UploadMediaReq) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *UploadMediaReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UploadMediaReq) GetUsage() string {
+	if x != nil {
+		return x.Usage
+	}
+	return ""
+}
+
+func (x *UploadMediaReq) GetContent() []byte {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+func (x *UploadMediaReq) GetFilename() string {
+	if x != nil {
+		return x.Filename
+	}
+	return ""
+}
+
+type UploadMediaResp struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// @inject_tag: json:"url"
+	Url           string `protobuf:"bytes,1,opt,name=url,proto3" json:"url"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadMediaResp) Reset() {
+	*x = UploadMediaResp{}
+	mi := &file_sso_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadMediaResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadMediaResp) ProtoMessage() {}
+
+func (x *UploadMediaResp) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadMediaResp.ProtoReflect.Descriptor instead.
+func (*UploadMediaResp) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *UploadMediaResp) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
 var File_sso_proto protoreflect.FileDescriptor
 
 const file_sso_proto_rawDesc = "" +
@@ -1043,7 +1695,45 @@ const file_sso_proto_rawDesc = "" +
 	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x16\n" +
 	"\x06avatar\x18\x03 \x01(\tR\x06avatar\x12\x10\n" +
 	"\x03bio\x18\x04 \x01(\tR\x03bio\x12\x12\n" +
-	"\x04mood\x18\x05 \x01(\tR\x04mood2\x96\x04\n" +
+	"\x04mood\x18\x05 \x01(\tR\x04mood\"*\n" +
+	"\x0fGetUserStatsReq\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"w\n" +
+	"\x10GetUserStatsResp\x12\x1d\n" +
+	"\n" +
+	"post_count\x18\x01 \x01(\x03R\tpostCount\x12'\n" +
+	"\x0fresonance_count\x18\x02 \x01(\x03R\x0eresonanceCount\x12\x1b\n" +
+	"\tjoin_days\x18\x03 \x01(\x03R\bjoinDays\"\x16\n" +
+	"\x14GetComfortMessageReq\"\x95\x01\n" +
+	"\x15GetComfortMessageResp\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x1a\n" +
+	"\bsubtitle\x18\x02 \x01(\tR\bsubtitle\x12\x1f\n" +
+	"\vbutton_text\x18\x03 \x01(\tR\n" +
+	"buttonText\x12)\n" +
+	"\x10illustration_url\x18\x04 \x01(\tR\x0fillustrationUrl\"F\n" +
+	"\x14LoginByThirdPartyReq\x12\x1a\n" +
+	"\bplatform\x18\x01 \x01(\tR\bplatform\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\"0\n" +
+	"\x11GenerateQrcodeReq\x12\x1b\n" +
+	"\tdevice_id\x18\x01 \x01(\tR\bdeviceId\"C\n" +
+	"\x12GenerateQrcodeResp\x12\x10\n" +
+	"\x03qid\x18\x01 \x01(\tR\x03qid\x12\x1b\n" +
+	"\timage_url\x18\x02 \x01(\tR\bimageUrl\"(\n" +
+	"\x14CheckQrcodeStatusReq\x12\x10\n" +
+	"\x03qid\x18\x01 \x01(\tR\x03qid\"w\n" +
+	"\x15CheckQrcodeStatusResp\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\x12!\n" +
+	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\"B\n" +
+	"\x15ConfirmQrcodeLoginReq\x12\x10\n" +
+	"\x03qid\x18\x01 \x01(\tR\x03qid\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\"u\n" +
+	"\x0eUploadMediaReq\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
+	"\x05usage\x18\x02 \x01(\tR\x05usage\x12\x18\n" +
+	"\acontent\x18\x03 \x01(\fR\acontent\x12\x1a\n" +
+	"\bfilename\x18\x04 \x01(\tR\bfilename\"#\n" +
+	"\x0fUploadMediaResp\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url2\xeb\a\n" +
 	"\x04auth\x12>\n" +
 	"\rSendEmailCode\x12\x15.sso.SendEmailCodeReq\x1a\x16.sso.SendEmailCodeResp\x12,\n" +
 	"\bRegister\x12\x10.sso.RegisterReq\x1a\x0e.sso.LoginResp\x12&\n" +
@@ -1054,7 +1744,14 @@ const file_sso_proto_rawDesc = "" +
 	"\vVerifyToken\x12\x0e.sso.VerifyReq\x1a\x0f.sso.VerifyResp\x12)\n" +
 	"\x06Logout\x12\x0e.sso.LogoutReq\x1a\x0f.sso.CommonResp\x128\n" +
 	"\vGetUserInfo\x12\x13.sso.GetUserInfoReq\x1a\x14.sso.GetUserInfoResp\x129\n" +
-	"\x0eUpdateUserInfo\x12\x16.sso.UpdateUserInfoReq\x1a\x0f.sso.CommonRespB\x06Z\x04./pbb\x06proto3"
+	"\x0eUpdateUserInfo\x12\x16.sso.UpdateUserInfoReq\x1a\x0f.sso.CommonResp\x12;\n" +
+	"\fGetUserStats\x12\x14.sso.GetUserStatsReq\x1a\x15.sso.GetUserStatsResp\x12J\n" +
+	"\x11GetComfortMessage\x12\x19.sso.GetComfortMessageReq\x1a\x1a.sso.GetComfortMessageResp\x12>\n" +
+	"\x11LoginByThirdParty\x12\x19.sso.LoginByThirdPartyReq\x1a\x0e.sso.LoginResp\x12A\n" +
+	"\x0eGenerateQrcode\x12\x16.sso.GenerateQrcodeReq\x1a\x17.sso.GenerateQrcodeResp\x12J\n" +
+	"\x11CheckQrcodeStatus\x12\x19.sso.CheckQrcodeStatusReq\x1a\x1a.sso.CheckQrcodeStatusResp\x12A\n" +
+	"\x12ConfirmQrcodeLogin\x12\x1a.sso.ConfirmQrcodeLoginReq\x1a\x0f.sso.CommonResp\x128\n" +
+	"\vUploadMedia\x12\x13.sso.UploadMediaReq\x1a\x14.sso.UploadMediaRespB\x06Z\x04./pbb\x06proto3"
 
 var (
 	file_sso_proto_rawDescOnce sync.Once
@@ -1068,24 +1765,36 @@ func file_sso_proto_rawDescGZIP() []byte {
 	return file_sso_proto_rawDescData
 }
 
-var file_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_sso_proto_goTypes = []any{
-	(*SendEmailCodeReq)(nil),  // 0: sso.SendEmailCodeReq
-	(*SendEmailCodeResp)(nil), // 1: sso.SendEmailCodeResp
-	(*RegisterReq)(nil),       // 2: sso.RegisterReq
-	(*LoginReq)(nil),          // 3: sso.LoginReq
-	(*LoginResp)(nil),         // 4: sso.LoginResp
-	(*ResetPasswordReq)(nil),  // 5: sso.ResetPasswordReq
-	(*ChangePasswordReq)(nil), // 6: sso.ChangePasswordReq
-	(*RefreshTokenReq)(nil),   // 7: sso.RefreshTokenReq
-	(*VerifyReq)(nil),         // 8: sso.VerifyReq
-	(*VerifyResp)(nil),        // 9: sso.VerifyResp
-	(*LogoutReq)(nil),         // 10: sso.LogoutReq
-	(*CommonResp)(nil),        // 11: sso.CommonResp
-	(*UserInfo)(nil),          // 12: sso.UserInfo
-	(*GetUserInfoReq)(nil),    // 13: sso.GetUserInfoReq
-	(*GetUserInfoResp)(nil),   // 14: sso.GetUserInfoResp
-	(*UpdateUserInfoReq)(nil), // 15: sso.UpdateUserInfoReq
+	(*SendEmailCodeReq)(nil),      // 0: sso.SendEmailCodeReq
+	(*SendEmailCodeResp)(nil),     // 1: sso.SendEmailCodeResp
+	(*RegisterReq)(nil),           // 2: sso.RegisterReq
+	(*LoginReq)(nil),              // 3: sso.LoginReq
+	(*LoginResp)(nil),             // 4: sso.LoginResp
+	(*ResetPasswordReq)(nil),      // 5: sso.ResetPasswordReq
+	(*ChangePasswordReq)(nil),     // 6: sso.ChangePasswordReq
+	(*RefreshTokenReq)(nil),       // 7: sso.RefreshTokenReq
+	(*VerifyReq)(nil),             // 8: sso.VerifyReq
+	(*VerifyResp)(nil),            // 9: sso.VerifyResp
+	(*LogoutReq)(nil),             // 10: sso.LogoutReq
+	(*CommonResp)(nil),            // 11: sso.CommonResp
+	(*UserInfo)(nil),              // 12: sso.UserInfo
+	(*GetUserInfoReq)(nil),        // 13: sso.GetUserInfoReq
+	(*GetUserInfoResp)(nil),       // 14: sso.GetUserInfoResp
+	(*UpdateUserInfoReq)(nil),     // 15: sso.UpdateUserInfoReq
+	(*GetUserStatsReq)(nil),       // 16: sso.GetUserStatsReq
+	(*GetUserStatsResp)(nil),      // 17: sso.GetUserStatsResp
+	(*GetComfortMessageReq)(nil),  // 18: sso.GetComfortMessageReq
+	(*GetComfortMessageResp)(nil), // 19: sso.GetComfortMessageResp
+	(*LoginByThirdPartyReq)(nil),  // 20: sso.LoginByThirdPartyReq
+	(*GenerateQrcodeReq)(nil),     // 21: sso.GenerateQrcodeReq
+	(*GenerateQrcodeResp)(nil),    // 22: sso.GenerateQrcodeResp
+	(*CheckQrcodeStatusReq)(nil),  // 23: sso.CheckQrcodeStatusReq
+	(*CheckQrcodeStatusResp)(nil), // 24: sso.CheckQrcodeStatusResp
+	(*ConfirmQrcodeLoginReq)(nil), // 25: sso.ConfirmQrcodeLoginReq
+	(*UploadMediaReq)(nil),        // 26: sso.UploadMediaReq
+	(*UploadMediaResp)(nil),       // 27: sso.UploadMediaResp
 }
 var file_sso_proto_depIdxs = []int32{
 	12, // 0: sso.GetUserInfoResp.user:type_name -> sso.UserInfo
@@ -1099,18 +1808,32 @@ var file_sso_proto_depIdxs = []int32{
 	10, // 8: sso.auth.Logout:input_type -> sso.LogoutReq
 	13, // 9: sso.auth.GetUserInfo:input_type -> sso.GetUserInfoReq
 	15, // 10: sso.auth.UpdateUserInfo:input_type -> sso.UpdateUserInfoReq
-	1,  // 11: sso.auth.SendEmailCode:output_type -> sso.SendEmailCodeResp
-	4,  // 12: sso.auth.Register:output_type -> sso.LoginResp
-	4,  // 13: sso.auth.Login:output_type -> sso.LoginResp
-	11, // 14: sso.auth.ResetPassword:output_type -> sso.CommonResp
-	11, // 15: sso.auth.ChangePassword:output_type -> sso.CommonResp
-	4,  // 16: sso.auth.RefreshToken:output_type -> sso.LoginResp
-	9,  // 17: sso.auth.VerifyToken:output_type -> sso.VerifyResp
-	11, // 18: sso.auth.Logout:output_type -> sso.CommonResp
-	14, // 19: sso.auth.GetUserInfo:output_type -> sso.GetUserInfoResp
-	11, // 20: sso.auth.UpdateUserInfo:output_type -> sso.CommonResp
-	11, // [11:21] is the sub-list for method output_type
-	1,  // [1:11] is the sub-list for method input_type
+	16, // 11: sso.auth.GetUserStats:input_type -> sso.GetUserStatsReq
+	18, // 12: sso.auth.GetComfortMessage:input_type -> sso.GetComfortMessageReq
+	20, // 13: sso.auth.LoginByThirdParty:input_type -> sso.LoginByThirdPartyReq
+	21, // 14: sso.auth.GenerateQrcode:input_type -> sso.GenerateQrcodeReq
+	23, // 15: sso.auth.CheckQrcodeStatus:input_type -> sso.CheckQrcodeStatusReq
+	25, // 16: sso.auth.ConfirmQrcodeLogin:input_type -> sso.ConfirmQrcodeLoginReq
+	26, // 17: sso.auth.UploadMedia:input_type -> sso.UploadMediaReq
+	1,  // 18: sso.auth.SendEmailCode:output_type -> sso.SendEmailCodeResp
+	4,  // 19: sso.auth.Register:output_type -> sso.LoginResp
+	4,  // 20: sso.auth.Login:output_type -> sso.LoginResp
+	11, // 21: sso.auth.ResetPassword:output_type -> sso.CommonResp
+	11, // 22: sso.auth.ChangePassword:output_type -> sso.CommonResp
+	4,  // 23: sso.auth.RefreshToken:output_type -> sso.LoginResp
+	9,  // 24: sso.auth.VerifyToken:output_type -> sso.VerifyResp
+	11, // 25: sso.auth.Logout:output_type -> sso.CommonResp
+	14, // 26: sso.auth.GetUserInfo:output_type -> sso.GetUserInfoResp
+	11, // 27: sso.auth.UpdateUserInfo:output_type -> sso.CommonResp
+	17, // 28: sso.auth.GetUserStats:output_type -> sso.GetUserStatsResp
+	19, // 29: sso.auth.GetComfortMessage:output_type -> sso.GetComfortMessageResp
+	4,  // 30: sso.auth.LoginByThirdParty:output_type -> sso.LoginResp
+	22, // 31: sso.auth.GenerateQrcode:output_type -> sso.GenerateQrcodeResp
+	24, // 32: sso.auth.CheckQrcodeStatus:output_type -> sso.CheckQrcodeStatusResp
+	11, // 33: sso.auth.ConfirmQrcodeLogin:output_type -> sso.CommonResp
+	27, // 34: sso.auth.UploadMedia:output_type -> sso.UploadMediaResp
+	18, // [18:35] is the sub-list for method output_type
+	1,  // [1:18] is the sub-list for method input_type
 	1,  // [1:1] is the sub-list for extension type_name
 	1,  // [1:1] is the sub-list for extension extendee
 	0,  // [0:1] is the sub-list for field type_name
@@ -1127,7 +1850,7 @@ func file_sso_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_sso_proto_rawDesc), len(file_sso_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -64,3 +64,33 @@ func (s *PostServer) StarPost(ctx context.Context, in *pb.StarPostReq) (*pb.Comm
 	l := postlogic.NewStarPostLogic(ctx, s.svcCtx)
 	return l.StarPost(in)
 }
+
+// 创建评论
+func (s *PostServer) CreateComment(ctx context.Context, in *pb.CreateCommentReq) (*pb.CommonResp, error) {
+	l := postlogic.NewCreateCommentLogic(ctx, s.svcCtx)
+	return l.CreateComment(in)
+}
+
+// 删除评论
+func (s *PostServer) DeleteComment(ctx context.Context, in *pb.DeleteCommentReq) (*pb.CommonResp, error) {
+	l := postlogic.NewDeleteCommentLogic(ctx, s.svcCtx)
+	return l.DeleteComment(in)
+}
+
+// 评论列表
+func (s *PostServer) ListComments(ctx context.Context, in *pb.ListCommentsReq) (*pb.ListCommentsResp, error) {
+	l := postlogic.NewListCommentsLogic(ctx, s.svcCtx)
+	return l.ListComments(in)
+}
+
+// 我发布的帖子列表
+func (s *PostServer) ListMyPosts(ctx context.Context, in *pb.ListMyPostsReq) (*pb.ListPostsResp, error) {
+	l := postlogic.NewListMyPostsLogic(ctx, s.svcCtx)
+	return l.ListMyPosts(in)
+}
+
+// 我收藏的帖子列表
+func (s *PostServer) ListStarredPosts(ctx context.Context, in *pb.ListStarredPostsReq) (*pb.ListPostsResp, error) {
+	l := postlogic.NewListStarredPostsLogic(ctx, s.svcCtx)
+	return l.ListStarredPosts(in)
+}

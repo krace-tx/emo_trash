@@ -13,55 +13,107 @@
 				"navigationStyle": "custom",
 				"backgroundColor": "#FDFAF3"
 			}
+		}
+	],
+	"subPackages": [
+		{
+			"root": "pages/auth",
+			"pages": [
+				{
+					"path": "login/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				},
+				{
+					"path": "register/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				},
+				{
+					"path": "reset-password/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				}
+			]
 		},
 		{
-			"path": "pages/auth/login/index",
-			"style": {
-				"navigationStyle": "custom",
-				"backgroundColor": "#FDFAF3"
-			}
+			"root": "pages/post",
+			"pages": [
+				{
+					"path": "create/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				},
+				{
+					"path": "detail/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				}
+			]
 		},
 		{
-			"path": "pages/auth/register/index",
-			"style": {
-				"navigationStyle": "custom",
-				"backgroundColor": "#FDFAF3"
-			}
-		},
-		{
-			"path": "pages/auth/reset-password/index",
-			"style": {
-				"navigationStyle": "custom",
-				"backgroundColor": "#FDFAF3"
-			}
-		},
-		{
-			"path": "pages_user/settings/index",
-			"style": {
-				"navigationStyle": "custom",
-				"backgroundColor": "#F7F8FA"
-			}
-		},
-		{
-			"path": "pages_user/letter/index",
-			"style": {
-				"navigationStyle": "custom",
-				"backgroundColor": "#FDFAF3"
-			}
-		},
-		{
-			"path": "pages/post/create/index",
-			"style": {
-				"navigationStyle": "custom",
-				"backgroundColor": "#FDFAF3"
-			}
-		},
-		{
-			"path": "pages/post/detail/index",
-			"style": {
-				"navigationStyle": "custom",
-				"backgroundColor": "#FDFAF3"
-			}
+			"root": "pages_user",
+			"pages": [
+				{
+					"path": "settings/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#F7F8FA"
+					}
+				},
+				{
+					"path": "letter/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				},
+				{
+					"path": "my-posts/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				},
+				{
+					"path": "my-starred/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				},
+				{
+					"path": "edit-profile/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				},
+				{
+					"path": "change-password/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				},
+				{
+					"path": "my-hugs/index",
+					"style": {
+						"navigationStyle": "custom",
+						"backgroundColor": "#FDFAF3"
+					}
+				}
+			]
 		}
 	],
 	"globalStyle": {
@@ -71,6 +123,12 @@
 		"navigationBarBackgroundColor": "#FDFAF3",
 		"backgroundColor": "#FDFAF3",
 		"pageOrientation": "portrait"
+	},
+	"preloadRule": {
+		"pages/index/index": {
+			"network": "all",
+			"packages": ["pages/post", "pages_user"]
+		}
 	},
 	"uniIdRouter": {}
 }

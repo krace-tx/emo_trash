@@ -11,7 +11,7 @@
       <view class="bar-contents">
         <!-- 左侧：品牌/用户信息 -->
         <view class="bar-left">
-          <image class="status-icon" src="/static/icons/sprout.svg" mode="aspectFit"></image>
+          <image class="status-icon" :src="randomMoodIcon" mode="aspectFit" @error="onIconError"></image>
           <view class="greeting-box">
             <text class="time-text">{{ currentTime }}</text>
             <text class="greeting-text">{{ greetingText }}</text>
@@ -100,6 +100,19 @@ const postList = ref<FeedItem[]>([])
 const hasMore = ref(true)
 const cursor = ref('')
 const ctaInserted = ref(false)
+
+const MOOD_ICONS = [
+  '/static/icons/mood-calm.svg',
+  '/static/icons/mood-dreamy.svg',
+  '/static/icons/mood-happy.svg',
+  '/static/icons/mood-sad.svg',
+  '/static/icons/mood-thinking.svg'
+]
+const randomMoodIcon = ref(MOOD_ICONS[Math.floor(Math.random() * MOOD_ICONS.length)])
+
+function onIconError() {
+  randomMoodIcon.value = '/static/icons/sprout.svg'
+}
 
 // 动态计算背景色
 const isScrolled = computed(() : boolean => scrollTop.value > 10)

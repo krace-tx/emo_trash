@@ -51,14 +51,14 @@ type (
 
     // 获取帖子详情请求
     GetPostDetailReq {
-        Id string `json:"id"`
+        Id string `form:"id"`
     }
 
     // 帖子列表请求
     ListPostsReq {
-        Cursor string `json:"cursor,optional"` // 分页游标
-        PageSize int `json:"page_size,optional,default=20"` // 分页大小
-        Type string `json:"type,optional,options=discovery|follow|hot"` // 列表类型
+        Cursor string `form:"cursor,optional"` // 分页游标
+        PageSize int `form:"page_size,optional,default=20"` // 分页大小
+        Type string `form:"type,optional,options=discovery|follow|hot"` // 列表类型
     }
 
     ListPostsResp {
@@ -75,5 +75,50 @@ type (
     // 收藏/取消收藏请求
     StarPostReq {
         Id string `json:"id"`
+    }
+
+    // --- 回声 (评论) 相关 ---
+
+    CommentInfo {
+        Id string `json:"id"`
+        PostId string `json:"post_id"`
+        AuthorId string `json:"author_id"`
+        AuthorName string `json:"author_name"`
+        AuthorAvatar string `json:"author_avatar"`
+        Content string `json:"content"`
+        CreatedAt int64 `json:"created_at"`
+    }
+
+    CreateCommentReq {
+        PostId string `json:"post_id"`
+        Content string `json:"content"`
+    }
+
+    DeleteCommentReq {
+        Id string `json:"id"`
+    }
+
+    ListCommentsReq {
+        PostId string `form:"post_id"`
+        Cursor string `form:"cursor,optional"`
+        PageSize int `form:"page_size,optional,default=20"`
+    }
+
+    ListCommentsResp {
+        List []CommentInfo `json:"list"`
+        NextCursor string `json:"next_cursor"`
+        HasMore bool `json:"has_more"`
+    }
+
+    // --- 互动列表相关 ---
+
+    ListMyPostsReq {
+        Cursor string `form:"cursor,optional"`
+        PageSize int `form:"page_size,optional,default=20"`
+    }
+
+    ListStarredPostsReq {
+        Cursor string `form:"cursor,optional"`
+        PageSize int `form:"page_size,optional,default=20"`
     }
 )

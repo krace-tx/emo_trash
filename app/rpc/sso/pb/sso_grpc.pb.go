@@ -19,16 +19,23 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Auth_SendEmailCode_FullMethodName  = "/sso.auth/SendEmailCode"
-	Auth_Register_FullMethodName       = "/sso.auth/Register"
-	Auth_Login_FullMethodName          = "/sso.auth/Login"
-	Auth_ResetPassword_FullMethodName  = "/sso.auth/ResetPassword"
-	Auth_ChangePassword_FullMethodName = "/sso.auth/ChangePassword"
-	Auth_RefreshToken_FullMethodName   = "/sso.auth/RefreshToken"
-	Auth_VerifyToken_FullMethodName    = "/sso.auth/VerifyToken"
-	Auth_Logout_FullMethodName         = "/sso.auth/Logout"
-	Auth_GetUserInfo_FullMethodName    = "/sso.auth/GetUserInfo"
-	Auth_UpdateUserInfo_FullMethodName = "/sso.auth/UpdateUserInfo"
+	Auth_SendEmailCode_FullMethodName      = "/sso.auth/SendEmailCode"
+	Auth_Register_FullMethodName           = "/sso.auth/Register"
+	Auth_Login_FullMethodName              = "/sso.auth/Login"
+	Auth_ResetPassword_FullMethodName      = "/sso.auth/ResetPassword"
+	Auth_ChangePassword_FullMethodName     = "/sso.auth/ChangePassword"
+	Auth_RefreshToken_FullMethodName       = "/sso.auth/RefreshToken"
+	Auth_VerifyToken_FullMethodName        = "/sso.auth/VerifyToken"
+	Auth_Logout_FullMethodName             = "/sso.auth/Logout"
+	Auth_GetUserInfo_FullMethodName        = "/sso.auth/GetUserInfo"
+	Auth_UpdateUserInfo_FullMethodName     = "/sso.auth/UpdateUserInfo"
+	Auth_GetUserStats_FullMethodName       = "/sso.auth/GetUserStats"
+	Auth_GetComfortMessage_FullMethodName  = "/sso.auth/GetComfortMessage"
+	Auth_LoginByThirdParty_FullMethodName  = "/sso.auth/LoginByThirdParty"
+	Auth_GenerateQrcode_FullMethodName     = "/sso.auth/GenerateQrcode"
+	Auth_CheckQrcodeStatus_FullMethodName  = "/sso.auth/CheckQrcodeStatus"
+	Auth_ConfirmQrcodeLogin_FullMethodName = "/sso.auth/ConfirmQrcodeLogin"
+	Auth_UploadMedia_FullMethodName        = "/sso.auth/UploadMedia"
 )
 
 // AuthClient is the client API for Auth service.
@@ -55,6 +62,20 @@ type AuthClient interface {
 	GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
 	// 更新用户信息
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 获取用户统计
+	GetUserStats(ctx context.Context, in *GetUserStatsReq, opts ...grpc.CallOption) (*GetUserStatsResp, error)
+	// 获取每日温柔文案
+	GetComfortMessage(ctx context.Context, in *GetComfortMessageReq, opts ...grpc.CallOption) (*GetComfortMessageResp, error)
+	// 三方登录
+	LoginByThirdParty(ctx context.Context, in *LoginByThirdPartyReq, opts ...grpc.CallOption) (*LoginResp, error)
+	// 生成二维码
+	GenerateQrcode(ctx context.Context, in *GenerateQrcodeReq, opts ...grpc.CallOption) (*GenerateQrcodeResp, error)
+	// 检查二维码状态
+	CheckQrcodeStatus(ctx context.Context, in *CheckQrcodeStatusReq, opts ...grpc.CallOption) (*CheckQrcodeStatusResp, error)
+	// 确认二维码登录
+	ConfirmQrcodeLogin(ctx context.Context, in *ConfirmQrcodeLoginReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 媒体上传
+	UploadMedia(ctx context.Context, in *UploadMediaReq, opts ...grpc.CallOption) (*UploadMediaResp, error)
 }
 
 type authClient struct {
@@ -165,6 +186,76 @@ func (c *authClient) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, 
 	return out, nil
 }
 
+func (c *authClient) GetUserStats(ctx context.Context, in *GetUserStatsReq, opts ...grpc.CallOption) (*GetUserStatsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserStatsResp)
+	err := c.cc.Invoke(ctx, Auth_GetUserStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) GetComfortMessage(ctx context.Context, in *GetComfortMessageReq, opts ...grpc.CallOption) (*GetComfortMessageResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetComfortMessageResp)
+	err := c.cc.Invoke(ctx, Auth_GetComfortMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) LoginByThirdParty(ctx context.Context, in *LoginByThirdPartyReq, opts ...grpc.CallOption) (*LoginResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoginResp)
+	err := c.cc.Invoke(ctx, Auth_LoginByThirdParty_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) GenerateQrcode(ctx context.Context, in *GenerateQrcodeReq, opts ...grpc.CallOption) (*GenerateQrcodeResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GenerateQrcodeResp)
+	err := c.cc.Invoke(ctx, Auth_GenerateQrcode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) CheckQrcodeStatus(ctx context.Context, in *CheckQrcodeStatusReq, opts ...grpc.CallOption) (*CheckQrcodeStatusResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckQrcodeStatusResp)
+	err := c.cc.Invoke(ctx, Auth_CheckQrcodeStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) ConfirmQrcodeLogin(ctx context.Context, in *ConfirmQrcodeLoginReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Auth_ConfirmQrcodeLogin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) UploadMedia(ctx context.Context, in *UploadMediaReq, opts ...grpc.CallOption) (*UploadMediaResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadMediaResp)
+	err := c.cc.Invoke(ctx, Auth_UploadMedia_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServer is the server API for Auth service.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility.
@@ -189,6 +280,20 @@ type AuthServer interface {
 	GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoResp, error)
 	// 更新用户信息
 	UpdateUserInfo(context.Context, *UpdateUserInfoReq) (*CommonResp, error)
+	// 获取用户统计
+	GetUserStats(context.Context, *GetUserStatsReq) (*GetUserStatsResp, error)
+	// 获取每日温柔文案
+	GetComfortMessage(context.Context, *GetComfortMessageReq) (*GetComfortMessageResp, error)
+	// 三方登录
+	LoginByThirdParty(context.Context, *LoginByThirdPartyReq) (*LoginResp, error)
+	// 生成二维码
+	GenerateQrcode(context.Context, *GenerateQrcodeReq) (*GenerateQrcodeResp, error)
+	// 检查二维码状态
+	CheckQrcodeStatus(context.Context, *CheckQrcodeStatusReq) (*CheckQrcodeStatusResp, error)
+	// 确认二维码登录
+	ConfirmQrcodeLogin(context.Context, *ConfirmQrcodeLoginReq) (*CommonResp, error)
+	// 媒体上传
+	UploadMedia(context.Context, *UploadMediaReq) (*UploadMediaResp, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -228,6 +333,27 @@ func (UnimplementedAuthServer) GetUserInfo(context.Context, *GetUserInfoReq) (*G
 }
 func (UnimplementedAuthServer) UpdateUserInfo(context.Context, *UpdateUserInfoReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserInfo not implemented")
+}
+func (UnimplementedAuthServer) GetUserStats(context.Context, *GetUserStatsReq) (*GetUserStatsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUserStats not implemented")
+}
+func (UnimplementedAuthServer) GetComfortMessage(context.Context, *GetComfortMessageReq) (*GetComfortMessageResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetComfortMessage not implemented")
+}
+func (UnimplementedAuthServer) LoginByThirdParty(context.Context, *LoginByThirdPartyReq) (*LoginResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method LoginByThirdParty not implemented")
+}
+func (UnimplementedAuthServer) GenerateQrcode(context.Context, *GenerateQrcodeReq) (*GenerateQrcodeResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GenerateQrcode not implemented")
+}
+func (UnimplementedAuthServer) CheckQrcodeStatus(context.Context, *CheckQrcodeStatusReq) (*CheckQrcodeStatusResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckQrcodeStatus not implemented")
+}
+func (UnimplementedAuthServer) ConfirmQrcodeLogin(context.Context, *ConfirmQrcodeLoginReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmQrcodeLogin not implemented")
+}
+func (UnimplementedAuthServer) UploadMedia(context.Context, *UploadMediaReq) (*UploadMediaResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UploadMedia not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 func (UnimplementedAuthServer) testEmbeddedByValue()              {}
@@ -430,6 +556,132 @@ func _Auth_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_GetUserStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserStatsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GetUserStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_GetUserStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GetUserStats(ctx, req.(*GetUserStatsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_GetComfortMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetComfortMessageReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GetComfortMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_GetComfortMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GetComfortMessage(ctx, req.(*GetComfortMessageReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_LoginByThirdParty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginByThirdPartyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).LoginByThirdParty(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_LoginByThirdParty_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).LoginByThirdParty(ctx, req.(*LoginByThirdPartyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_GenerateQrcode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateQrcodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GenerateQrcode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_GenerateQrcode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GenerateQrcode(ctx, req.(*GenerateQrcodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_CheckQrcodeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckQrcodeStatusReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).CheckQrcodeStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_CheckQrcodeStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).CheckQrcodeStatus(ctx, req.(*CheckQrcodeStatusReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_ConfirmQrcodeLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmQrcodeLoginReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).ConfirmQrcodeLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_ConfirmQrcodeLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).ConfirmQrcodeLogin(ctx, req.(*ConfirmQrcodeLoginReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_UploadMedia_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadMediaReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).UploadMedia(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_UploadMedia_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).UploadMedia(ctx, req.(*UploadMediaReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -476,6 +728,34 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserInfo",
 			Handler:    _Auth_UpdateUserInfo_Handler,
+		},
+		{
+			MethodName: "GetUserStats",
+			Handler:    _Auth_GetUserStats_Handler,
+		},
+		{
+			MethodName: "GetComfortMessage",
+			Handler:    _Auth_GetComfortMessage_Handler,
+		},
+		{
+			MethodName: "LoginByThirdParty",
+			Handler:    _Auth_LoginByThirdParty_Handler,
+		},
+		{
+			MethodName: "GenerateQrcode",
+			Handler:    _Auth_GenerateQrcode_Handler,
+		},
+		{
+			MethodName: "CheckQrcodeStatus",
+			Handler:    _Auth_CheckQrcodeStatus_Handler,
+		},
+		{
+			MethodName: "ConfirmQrcodeLogin",
+			Handler:    _Auth_ConfirmQrcodeLogin_Handler,
+		},
+		{
+			MethodName: "UploadMedia",
+			Handler:    _Auth_UploadMedia_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -14,17 +14,23 @@ import (
 )
 
 type (
-	CommonResp        = pb.CommonResp
-	CreatePostReq     = pb.CreatePostReq
-	CreatePostResp    = pb.CreatePostResp
-	DeletePostReq     = pb.DeletePostReq
-	GetPostDetailReq  = pb.GetPostDetailReq
-	GetPostDetailResp = pb.GetPostDetailResp
-	LikePostReq       = pb.LikePostReq
-	ListPostsReq      = pb.ListPostsReq
-	ListPostsResp     = pb.ListPostsResp
-	StarPostReq       = pb.StarPostReq
-	UpdatePostReq     = pb.UpdatePostReq
+	CommonResp          = pb.CommonResp
+	CreateCommentReq    = pb.CreateCommentReq
+	CreatePostReq       = pb.CreatePostReq
+	CreatePostResp      = pb.CreatePostResp
+	DeleteCommentReq    = pb.DeleteCommentReq
+	DeletePostReq       = pb.DeletePostReq
+	GetPostDetailReq    = pb.GetPostDetailReq
+	GetPostDetailResp   = pb.GetPostDetailResp
+	LikePostReq         = pb.LikePostReq
+	ListCommentsReq     = pb.ListCommentsReq
+	ListCommentsResp    = pb.ListCommentsResp
+	ListMyPostsReq      = pb.ListMyPostsReq
+	ListPostsReq        = pb.ListPostsReq
+	ListPostsResp       = pb.ListPostsResp
+	ListStarredPostsReq = pb.ListStarredPostsReq
+	StarPostReq         = pb.StarPostReq
+	UpdatePostReq       = pb.UpdatePostReq
 
 	Post interface {
 		// 发布帖子
@@ -41,6 +47,16 @@ type (
 		LikePost(ctx context.Context, in *LikePostReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 收藏/取消收藏
 		StarPost(ctx context.Context, in *StarPostReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 创建评论
+		CreateComment(ctx context.Context, in *CreateCommentReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 删除评论
+		DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 评论列表
+		ListComments(ctx context.Context, in *ListCommentsReq, opts ...grpc.CallOption) (*ListCommentsResp, error)
+		// 我发布的帖子列表
+		ListMyPosts(ctx context.Context, in *ListMyPostsReq, opts ...grpc.CallOption) (*ListPostsResp, error)
+		// 我收藏的帖子列表
+		ListStarredPosts(ctx context.Context, in *ListStarredPostsReq, opts ...grpc.CallOption) (*ListPostsResp, error)
 	}
 
 	defaultPost struct {
@@ -94,4 +110,34 @@ func (m *defaultPost) LikePost(ctx context.Context, in *LikePostReq, opts ...grp
 func (m *defaultPost) StarPost(ctx context.Context, in *StarPostReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewPostClient(m.cli.Conn())
 	return client.StarPost(ctx, in, opts...)
+}
+
+// 创建评论
+func (m *defaultPost) CreateComment(ctx context.Context, in *CreateCommentReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewPostClient(m.cli.Conn())
+	return client.CreateComment(ctx, in, opts...)
+}
+
+// 删除评论
+func (m *defaultPost) DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewPostClient(m.cli.Conn())
+	return client.DeleteComment(ctx, in, opts...)
+}
+
+// 评论列表
+func (m *defaultPost) ListComments(ctx context.Context, in *ListCommentsReq, opts ...grpc.CallOption) (*ListCommentsResp, error) {
+	client := pb.NewPostClient(m.cli.Conn())
+	return client.ListComments(ctx, in, opts...)
+}
+
+// 我发布的帖子列表
+func (m *defaultPost) ListMyPosts(ctx context.Context, in *ListMyPostsReq, opts ...grpc.CallOption) (*ListPostsResp, error) {
+	client := pb.NewPostClient(m.cli.Conn())
+	return client.ListMyPosts(ctx, in, opts...)
+}
+
+// 我收藏的帖子列表
+func (m *defaultPost) ListStarredPosts(ctx context.Context, in *ListStarredPostsReq, opts ...grpc.CallOption) (*ListPostsResp, error) {
+	client := pb.NewPostClient(m.cli.Conn())
+	return client.ListStarredPosts(ctx, in, opts...)
 }

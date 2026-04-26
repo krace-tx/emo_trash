@@ -2086,3 +2086,1267 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateUserInfoReqValidationError{}
+
+// Validate checks the field values on GetUserStatsReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetUserStatsReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUserStatsReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUserStatsReqMultiError, or nil if none found.
+func (m *GetUserStatsReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUserStatsReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return GetUserStatsReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUserStatsReqMultiError is an error wrapping multiple validation errors
+// returned by GetUserStatsReq.ValidateAll() if the designated constraints
+// aren't met.
+type GetUserStatsReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUserStatsReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUserStatsReqMultiError) AllErrors() []error { return m }
+
+// GetUserStatsReqValidationError is the validation error returned by
+// GetUserStatsReq.Validate if the designated constraints aren't met.
+type GetUserStatsReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserStatsReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserStatsReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserStatsReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserStatsReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserStatsReqValidationError) ErrorName() string { return "GetUserStatsReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetUserStatsReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserStatsReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserStatsReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserStatsReqValidationError{}
+
+// Validate checks the field values on GetUserStatsResp with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetUserStatsResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUserStatsResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUserStatsRespMultiError, or nil if none found.
+func (m *GetUserStatsResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUserStatsResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PostCount
+
+	// no validation rules for ResonanceCount
+
+	// no validation rules for JoinDays
+
+	if len(errors) > 0 {
+		return GetUserStatsRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUserStatsRespMultiError is an error wrapping multiple validation errors
+// returned by GetUserStatsResp.ValidateAll() if the designated constraints
+// aren't met.
+type GetUserStatsRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUserStatsRespMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUserStatsRespMultiError) AllErrors() []error { return m }
+
+// GetUserStatsRespValidationError is the validation error returned by
+// GetUserStatsResp.Validate if the designated constraints aren't met.
+type GetUserStatsRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserStatsRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserStatsRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserStatsRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserStatsRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserStatsRespValidationError) ErrorName() string { return "GetUserStatsRespValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetUserStatsRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserStatsResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserStatsRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserStatsRespValidationError{}
+
+// Validate checks the field values on GetComfortMessageReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetComfortMessageReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetComfortMessageReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetComfortMessageReqMultiError, or nil if none found.
+func (m *GetComfortMessageReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetComfortMessageReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetComfortMessageReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetComfortMessageReqMultiError is an error wrapping multiple validation
+// errors returned by GetComfortMessageReq.ValidateAll() if the designated
+// constraints aren't met.
+type GetComfortMessageReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetComfortMessageReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetComfortMessageReqMultiError) AllErrors() []error { return m }
+
+// GetComfortMessageReqValidationError is the validation error returned by
+// GetComfortMessageReq.Validate if the designated constraints aren't met.
+type GetComfortMessageReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetComfortMessageReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetComfortMessageReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetComfortMessageReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetComfortMessageReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetComfortMessageReqValidationError) ErrorName() string {
+	return "GetComfortMessageReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetComfortMessageReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetComfortMessageReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetComfortMessageReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetComfortMessageReqValidationError{}
+
+// Validate checks the field values on GetComfortMessageResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetComfortMessageResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetComfortMessageResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetComfortMessageRespMultiError, or nil if none found.
+func (m *GetComfortMessageResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetComfortMessageResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Title
+
+	// no validation rules for Subtitle
+
+	// no validation rules for ButtonText
+
+	// no validation rules for IllustrationUrl
+
+	if len(errors) > 0 {
+		return GetComfortMessageRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetComfortMessageRespMultiError is an error wrapping multiple validation
+// errors returned by GetComfortMessageResp.ValidateAll() if the designated
+// constraints aren't met.
+type GetComfortMessageRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetComfortMessageRespMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetComfortMessageRespMultiError) AllErrors() []error { return m }
+
+// GetComfortMessageRespValidationError is the validation error returned by
+// GetComfortMessageResp.Validate if the designated constraints aren't met.
+type GetComfortMessageRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetComfortMessageRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetComfortMessageRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetComfortMessageRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetComfortMessageRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetComfortMessageRespValidationError) ErrorName() string {
+	return "GetComfortMessageRespValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetComfortMessageRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetComfortMessageResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetComfortMessageRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetComfortMessageRespValidationError{}
+
+// Validate checks the field values on LoginByThirdPartyReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *LoginByThirdPartyReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LoginByThirdPartyReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// LoginByThirdPartyReqMultiError, or nil if none found.
+func (m *LoginByThirdPartyReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LoginByThirdPartyReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Platform
+
+	// no validation rules for Code
+
+	if len(errors) > 0 {
+		return LoginByThirdPartyReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// LoginByThirdPartyReqMultiError is an error wrapping multiple validation
+// errors returned by LoginByThirdPartyReq.ValidateAll() if the designated
+// constraints aren't met.
+type LoginByThirdPartyReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LoginByThirdPartyReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LoginByThirdPartyReqMultiError) AllErrors() []error { return m }
+
+// LoginByThirdPartyReqValidationError is the validation error returned by
+// LoginByThirdPartyReq.Validate if the designated constraints aren't met.
+type LoginByThirdPartyReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LoginByThirdPartyReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LoginByThirdPartyReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LoginByThirdPartyReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LoginByThirdPartyReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LoginByThirdPartyReqValidationError) ErrorName() string {
+	return "LoginByThirdPartyReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e LoginByThirdPartyReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLoginByThirdPartyReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LoginByThirdPartyReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LoginByThirdPartyReqValidationError{}
+
+// Validate checks the field values on GenerateQrcodeReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GenerateQrcodeReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GenerateQrcodeReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GenerateQrcodeReqMultiError, or nil if none found.
+func (m *GenerateQrcodeReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GenerateQrcodeReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DeviceId
+
+	if len(errors) > 0 {
+		return GenerateQrcodeReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// GenerateQrcodeReqMultiError is an error wrapping multiple validation errors
+// returned by GenerateQrcodeReq.ValidateAll() if the designated constraints
+// aren't met.
+type GenerateQrcodeReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GenerateQrcodeReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GenerateQrcodeReqMultiError) AllErrors() []error { return m }
+
+// GenerateQrcodeReqValidationError is the validation error returned by
+// GenerateQrcodeReq.Validate if the designated constraints aren't met.
+type GenerateQrcodeReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GenerateQrcodeReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GenerateQrcodeReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GenerateQrcodeReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GenerateQrcodeReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GenerateQrcodeReqValidationError) ErrorName() string {
+	return "GenerateQrcodeReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GenerateQrcodeReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGenerateQrcodeReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GenerateQrcodeReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GenerateQrcodeReqValidationError{}
+
+// Validate checks the field values on GenerateQrcodeResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GenerateQrcodeResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GenerateQrcodeResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GenerateQrcodeRespMultiError, or nil if none found.
+func (m *GenerateQrcodeResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GenerateQrcodeResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Qid
+
+	// no validation rules for ImageUrl
+
+	if len(errors) > 0 {
+		return GenerateQrcodeRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// GenerateQrcodeRespMultiError is an error wrapping multiple validation errors
+// returned by GenerateQrcodeResp.ValidateAll() if the designated constraints
+// aren't met.
+type GenerateQrcodeRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GenerateQrcodeRespMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GenerateQrcodeRespMultiError) AllErrors() []error { return m }
+
+// GenerateQrcodeRespValidationError is the validation error returned by
+// GenerateQrcodeResp.Validate if the designated constraints aren't met.
+type GenerateQrcodeRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GenerateQrcodeRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GenerateQrcodeRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GenerateQrcodeRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GenerateQrcodeRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GenerateQrcodeRespValidationError) ErrorName() string {
+	return "GenerateQrcodeRespValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GenerateQrcodeRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGenerateQrcodeResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GenerateQrcodeRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GenerateQrcodeRespValidationError{}
+
+// Validate checks the field values on CheckQrcodeStatusReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CheckQrcodeStatusReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckQrcodeStatusReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckQrcodeStatusReqMultiError, or nil if none found.
+func (m *CheckQrcodeStatusReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckQrcodeStatusReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Qid
+
+	if len(errors) > 0 {
+		return CheckQrcodeStatusReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckQrcodeStatusReqMultiError is an error wrapping multiple validation
+// errors returned by CheckQrcodeStatusReq.ValidateAll() if the designated
+// constraints aren't met.
+type CheckQrcodeStatusReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckQrcodeStatusReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckQrcodeStatusReqMultiError) AllErrors() []error { return m }
+
+// CheckQrcodeStatusReqValidationError is the validation error returned by
+// CheckQrcodeStatusReq.Validate if the designated constraints aren't met.
+type CheckQrcodeStatusReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckQrcodeStatusReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckQrcodeStatusReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckQrcodeStatusReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckQrcodeStatusReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckQrcodeStatusReqValidationError) ErrorName() string {
+	return "CheckQrcodeStatusReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CheckQrcodeStatusReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckQrcodeStatusReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckQrcodeStatusReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckQrcodeStatusReqValidationError{}
+
+// Validate checks the field values on CheckQrcodeStatusResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CheckQrcodeStatusResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckQrcodeStatusResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckQrcodeStatusRespMultiError, or nil if none found.
+func (m *CheckQrcodeStatusResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckQrcodeStatusResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Status
+
+	// no validation rules for AccessToken
+
+	// no validation rules for RefreshToken
+
+	if len(errors) > 0 {
+		return CheckQrcodeStatusRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckQrcodeStatusRespMultiError is an error wrapping multiple validation
+// errors returned by CheckQrcodeStatusResp.ValidateAll() if the designated
+// constraints aren't met.
+type CheckQrcodeStatusRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckQrcodeStatusRespMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckQrcodeStatusRespMultiError) AllErrors() []error { return m }
+
+// CheckQrcodeStatusRespValidationError is the validation error returned by
+// CheckQrcodeStatusResp.Validate if the designated constraints aren't met.
+type CheckQrcodeStatusRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckQrcodeStatusRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckQrcodeStatusRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckQrcodeStatusRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckQrcodeStatusRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckQrcodeStatusRespValidationError) ErrorName() string {
+	return "CheckQrcodeStatusRespValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CheckQrcodeStatusRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckQrcodeStatusResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckQrcodeStatusRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckQrcodeStatusRespValidationError{}
+
+// Validate checks the field values on ConfirmQrcodeLoginReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ConfirmQrcodeLoginReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ConfirmQrcodeLoginReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ConfirmQrcodeLoginReqMultiError, or nil if none found.
+func (m *ConfirmQrcodeLoginReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ConfirmQrcodeLoginReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Qid
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return ConfirmQrcodeLoginReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// ConfirmQrcodeLoginReqMultiError is an error wrapping multiple validation
+// errors returned by ConfirmQrcodeLoginReq.ValidateAll() if the designated
+// constraints aren't met.
+type ConfirmQrcodeLoginReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ConfirmQrcodeLoginReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ConfirmQrcodeLoginReqMultiError) AllErrors() []error { return m }
+
+// ConfirmQrcodeLoginReqValidationError is the validation error returned by
+// ConfirmQrcodeLoginReq.Validate if the designated constraints aren't met.
+type ConfirmQrcodeLoginReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ConfirmQrcodeLoginReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ConfirmQrcodeLoginReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ConfirmQrcodeLoginReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ConfirmQrcodeLoginReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ConfirmQrcodeLoginReqValidationError) ErrorName() string {
+	return "ConfirmQrcodeLoginReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ConfirmQrcodeLoginReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sConfirmQrcodeLoginReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ConfirmQrcodeLoginReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ConfirmQrcodeLoginReqValidationError{}
+
+// Validate checks the field values on UploadMediaReq with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UploadMediaReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UploadMediaReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UploadMediaReqMultiError,
+// or nil if none found.
+func (m *UploadMediaReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UploadMediaReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	// no validation rules for Usage
+
+	// no validation rules for Content
+
+	// no validation rules for Filename
+
+	if len(errors) > 0 {
+		return UploadMediaReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// UploadMediaReqMultiError is an error wrapping multiple validation errors
+// returned by UploadMediaReq.ValidateAll() if the designated constraints
+// aren't met.
+type UploadMediaReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UploadMediaReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UploadMediaReqMultiError) AllErrors() []error { return m }
+
+// UploadMediaReqValidationError is the validation error returned by
+// UploadMediaReq.Validate if the designated constraints aren't met.
+type UploadMediaReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UploadMediaReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UploadMediaReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UploadMediaReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UploadMediaReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UploadMediaReqValidationError) ErrorName() string { return "UploadMediaReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UploadMediaReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUploadMediaReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UploadMediaReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UploadMediaReqValidationError{}
+
+// Validate checks the field values on UploadMediaResp with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UploadMediaResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UploadMediaResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UploadMediaRespMultiError, or nil if none found.
+func (m *UploadMediaResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UploadMediaResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Url
+
+	if len(errors) > 0 {
+		return UploadMediaRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// UploadMediaRespMultiError is an error wrapping multiple validation errors
+// returned by UploadMediaResp.ValidateAll() if the designated constraints
+// aren't met.
+type UploadMediaRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UploadMediaRespMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UploadMediaRespMultiError) AllErrors() []error { return m }
+
+// UploadMediaRespValidationError is the validation error returned by
+// UploadMediaResp.Validate if the designated constraints aren't met.
+type UploadMediaRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UploadMediaRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UploadMediaRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UploadMediaRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UploadMediaRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UploadMediaRespValidationError) ErrorName() string { return "UploadMediaRespValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UploadMediaRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUploadMediaResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UploadMediaRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UploadMediaRespValidationError{}

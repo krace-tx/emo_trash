@@ -8,11 +8,11 @@
         <view class="cell" @click="notDeveloped">
           <text class="cell-title">账号与绑定设置</text>
           <view class="cell-right">
-            <text class="cell-value">138****1234</text>
+            <text class="cell-value">{{ userStore.userInfo?.email || '未绑定' }}</text>
             <text class="arrow">›</text>
           </view>
         </view>
-        <view class="cell" @click="notDeveloped">
+        <view class="cell" @click="toChangePassword">
           <text class="cell-title">修改密码</text>
           <text class="arrow">›</text>
         </view>
@@ -20,11 +20,11 @@
 
       <!-- 第二组：隐私与偏好 -->
       <view class="setting-group">
-        <view class="cell" @click="notDeveloped">
-          <text class="cell-title">主题风格</text>
+        <view class="cell" @click="toggleTheme">
+          <text class="cell-title">深夜模式</text>
           <view class="cell-right">
-            <text class="cell-value">跟随系统</text>
-            <text class="arrow">›</text>
+            <text class="cell-value">{{ uiStore.isNightMode ? '开启' : '关闭' }}</text>
+            <switch :checked="uiStore.isNightMode" color="#6B8BA4" style="transform: scale(0.7); margin-left: 10rpx;" @change="toggleTheme" />
           </view>
         </view>
         <view class="cell" @click="notDeveloped">
@@ -54,7 +54,7 @@
 
       <!-- 第四组：关于 -->
       <view class="setting-group">
-        <view class="cell" @click="notDeveloped">
+        <view class="cell" @click="showAbout">
           <text class="cell-title">关于 Emo Trash</text>
           <view class="cell-right">
             <text class="cell-value">Version 1.0.0</text>
@@ -83,6 +83,7 @@
 import { ref } from 'vue'
 import BaseNavbar from '@/components/BaseNavbar.uvue'
 import { useUserStore } from '@/stores/user'
+import { uiStore } from '@/stores/ui'
 
 const userStore = useUserStore()
 const cacheSize = ref((Math.random() * 20 + 5).toFixed(1))
@@ -91,6 +92,23 @@ function notDeveloped() {
   uni.showToast({
     title: '功能开发中',
     icon: 'none'
+  })
+}
+
+function toChangePassword() {
+  uni.navigateTo({ url: '/pages_user/change-password/index' })
+}
+
+function toggleTheme() {
+  uiStore.toggleTheme()
+}
+
+function showAbout() {
+  uni.showModal({
+    title: '关于 Emo Trash',
+    content: '这是一款为你寄存坏情绪的“废品站”。\n\n在这里，你可以放心地丢掉所有不开心，轻装上阵面对明天。',
+    showCancel: false,
+    confirmText: '我知道了'
   })
 }
 

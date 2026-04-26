@@ -1,9 +1,11 @@
 import { reactive } from 'vue'
-import { getUserInfo, type UserInfo } from '@/api/sso'
+import { getUserInfo, getUserStats, getComfortMessage, type UserInfo, type UserStats, type ComfortMessage } from '@/api/sso'
 
 export const userStore = reactive({
   token: uni.getStorageSync('access_token') as string | null,
   userInfo: null as UserInfo | null,
+  userStats: null as UserStats | null,
+  comfortMessage: null as ComfortMessage | null,
   
   setToken(token: string) {
     this.token = token
@@ -19,6 +21,25 @@ export const userStore = reactive({
       console.error('获取用户信息失败', e)
     }
   },
+
+  async fetchUserStats() {
+    if (!this.token) return
+    try {
+      const stats = await getUserStats()
+      this.userStats = stats
+    } catch (e) {
+      console.error('获取用户统计失败', e)
+    }
+  },
+
+  async fetchComfortMessage() {
+    try {
+      const comfort = await getComfortMessage()
+      this.comfortMessage = comfort
+    } catch (e) {
+      console.error('获取治愈文案失败', e)
+    }
+  },
   
   setUserInfo(userInfo: UserInfo) {
     this.userInfo = userInfo
@@ -27,6 +48,7 @@ export const userStore = reactive({
   logout() {
     this.token = null
     this.userInfo = null
+    this.userStats = null
     uni.removeStorageSync('access_token')
   }
 })

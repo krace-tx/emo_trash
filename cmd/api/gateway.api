@@ -31,6 +31,15 @@ service gateway {
 
 	@handler RefreshToken
 	post /auth/token/refresh (RefreshTokenReq) returns (CommonResp)
+
+	@handler LoginByThirdParty
+	post /auth/thirdparty/login (LoginByThirdPartyReq) returns (CommonResp)
+
+	@handler GenerateQrcode
+	get /auth/qrcode/generate (GenerateQrcodeReq) returns (CommonResp)
+
+	@handler CheckQrcodeStatus
+	get /auth/qrcode/status (CheckQrcodeStatusReq) returns (CommonResp)
 }
 
 // 授权服务 - 需要自定义 Auth 中间件
@@ -55,6 +64,18 @@ service gateway {
 
 	@handler UpdateUserInfo
 	post /user/info/update (UpdateUserInfoReq) returns (CommonResp)
+
+	@handler GetUserStats
+	get /user/stats (GetUserStatsReq) returns (CommonResp)
+
+	@handler GetComfortMessage
+	get /common/comfort (GetComfortMessageReq) returns (CommonResp)
+
+	@handler ConfirmQrcodeLogin
+	post /auth/qrcode/confirm (ConfirmQrcodeLoginReq) returns (CommonResp)
+
+	@handler UploadMedia
+	post /common/upload (UploadMediaReq) returns (CommonResp)
 }
 
 @server (
@@ -84,5 +105,20 @@ service gateway {
 
 	@handler StarPost
 	post /star (StarPostReq) returns (CommonResp)
+
+	@handler ListMyPosts
+	get /list/my (ListMyPostsReq) returns (CommonResp)
+
+	@handler ListStarredPosts
+	get /list/starred (ListStarredPostsReq) returns (CommonResp)
+
+	@handler CreateComment
+	post /comment/create (CreateCommentReq) returns (CommonResp)
+
+	@handler DeleteComment
+	post /comment/delete (DeleteCommentReq) returns (CommonResp)
+
+	@handler ListComments
+	get /comment/list (ListCommentsReq) returns (CommonResp)
 }
 

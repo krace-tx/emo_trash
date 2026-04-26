@@ -82,3 +82,45 @@ func (s *AuthServer) UpdateUserInfo(ctx context.Context, in *pb.UpdateUserInfoRe
 	l := authlogic.NewUpdateUserInfoLogic(ctx, s.svcCtx)
 	return l.UpdateUserInfo(in)
 }
+
+// 获取用户统计
+func (s *AuthServer) GetUserStats(ctx context.Context, in *pb.GetUserStatsReq) (*pb.GetUserStatsResp, error) {
+	l := authlogic.NewGetUserStatsLogic(ctx, s.svcCtx)
+	return l.GetUserStats(in)
+}
+
+// 获取每日温柔文案
+func (s *AuthServer) GetComfortMessage(ctx context.Context, in *pb.GetComfortMessageReq) (*pb.GetComfortMessageResp, error) {
+	l := authlogic.NewGetComfortMessageLogic(ctx, s.svcCtx)
+	return l.GetComfortMessage(in)
+}
+
+// 三方登录
+func (s *AuthServer) LoginByThirdParty(ctx context.Context, in *pb.LoginByThirdPartyReq) (*pb.LoginResp, error) {
+	l := authlogic.NewLoginByThirdPartyLogic(ctx, s.svcCtx)
+	return l.LoginByThirdParty(in)
+}
+
+// 生成二维码
+func (s *AuthServer) GenerateQrcode(ctx context.Context, in *pb.GenerateQrcodeReq) (*pb.GenerateQrcodeResp, error) {
+	l := authlogic.NewGenerateQrcodeLogic(ctx, s.svcCtx)
+	return l.GenerateQrcode(in)
+}
+
+// 检查二维码状态
+func (s *AuthServer) CheckQrcodeStatus(ctx context.Context, in *pb.CheckQrcodeStatusReq) (*pb.CheckQrcodeStatusResp, error) {
+	l := authlogic.NewCheckQrcodeStatusLogic(ctx, s.svcCtx)
+	return l.CheckQrcodeStatus(in)
+}
+
+// 确认二维码登录
+func (s *AuthServer) ConfirmQrcodeLogin(ctx context.Context, in *pb.ConfirmQrcodeLoginReq) (*pb.CommonResp, error) {
+	l := authlogic.NewConfirmQrcodeLoginLogic(ctx, s.svcCtx)
+	return l.ConfirmQrcodeLogin(in)
+}
+
+// 媒体上传
+func (s *AuthServer) UploadMedia(ctx context.Context, in *pb.UploadMediaReq) (*pb.UploadMediaResp, error) {
+	l := authlogic.NewUploadMediaLogic(ctx, s.svcCtx)
+	return l.UploadMedia(in)
+}

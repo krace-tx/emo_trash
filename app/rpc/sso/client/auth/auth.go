@@ -14,21 +14,33 @@ import (
 )
 
 type (
-	ChangePasswordReq = pb.ChangePasswordReq
-	CommonResp        = pb.CommonResp
-	GetUserInfoReq    = pb.GetUserInfoReq
-	GetUserInfoResp   = pb.GetUserInfoResp
-	LoginReq          = pb.LoginReq
-	LoginResp         = pb.LoginResp
-	LogoutReq         = pb.LogoutReq
-	RefreshTokenReq   = pb.RefreshTokenReq
-	RegisterReq       = pb.RegisterReq
-	ResetPasswordReq  = pb.ResetPasswordReq
-	SendEmailCodeReq  = pb.SendEmailCodeReq
-	SendEmailCodeResp = pb.SendEmailCodeResp
-	UpdateUserInfoReq = pb.UpdateUserInfoReq
-	VerifyReq         = pb.VerifyReq
-	VerifyResp        = pb.VerifyResp
+	ChangePasswordReq     = pb.ChangePasswordReq
+	CheckQrcodeStatusReq  = pb.CheckQrcodeStatusReq
+	CheckQrcodeStatusResp = pb.CheckQrcodeStatusResp
+	CommonResp            = pb.CommonResp
+	ConfirmQrcodeLoginReq = pb.ConfirmQrcodeLoginReq
+	GenerateQrcodeReq     = pb.GenerateQrcodeReq
+	GenerateQrcodeResp    = pb.GenerateQrcodeResp
+	GetComfortMessageReq  = pb.GetComfortMessageReq
+	GetComfortMessageResp = pb.GetComfortMessageResp
+	GetUserInfoReq        = pb.GetUserInfoReq
+	GetUserInfoResp       = pb.GetUserInfoResp
+	GetUserStatsReq       = pb.GetUserStatsReq
+	GetUserStatsResp      = pb.GetUserStatsResp
+	LoginByThirdPartyReq  = pb.LoginByThirdPartyReq
+	LoginReq              = pb.LoginReq
+	LoginResp             = pb.LoginResp
+	LogoutReq             = pb.LogoutReq
+	RefreshTokenReq       = pb.RefreshTokenReq
+	RegisterReq           = pb.RegisterReq
+	ResetPasswordReq      = pb.ResetPasswordReq
+	SendEmailCodeReq      = pb.SendEmailCodeReq
+	SendEmailCodeResp     = pb.SendEmailCodeResp
+	UpdateUserInfoReq     = pb.UpdateUserInfoReq
+	UploadMediaReq        = pb.UploadMediaReq
+	UploadMediaResp       = pb.UploadMediaResp
+	VerifyReq             = pb.VerifyReq
+	VerifyResp            = pb.VerifyResp
 
 	Auth interface {
 		// 发送邮箱验证码
@@ -51,6 +63,20 @@ type (
 		GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
 		// 更新用户信息
 		UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 获取用户统计
+		GetUserStats(ctx context.Context, in *GetUserStatsReq, opts ...grpc.CallOption) (*GetUserStatsResp, error)
+		// 获取每日温柔文案
+		GetComfortMessage(ctx context.Context, in *GetComfortMessageReq, opts ...grpc.CallOption) (*GetComfortMessageResp, error)
+		// 三方登录
+		LoginByThirdParty(ctx context.Context, in *LoginByThirdPartyReq, opts ...grpc.CallOption) (*LoginResp, error)
+		// 生成二维码
+		GenerateQrcode(ctx context.Context, in *GenerateQrcodeReq, opts ...grpc.CallOption) (*GenerateQrcodeResp, error)
+		// 检查二维码状态
+		CheckQrcodeStatus(ctx context.Context, in *CheckQrcodeStatusReq, opts ...grpc.CallOption) (*CheckQrcodeStatusResp, error)
+		// 确认二维码登录
+		ConfirmQrcodeLogin(ctx context.Context, in *ConfirmQrcodeLoginReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 媒体上传
+		UploadMedia(ctx context.Context, in *UploadMediaReq, opts ...grpc.CallOption) (*UploadMediaResp, error)
 	}
 
 	defaultAuth struct {
@@ -122,4 +148,46 @@ func (m *defaultAuth) GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts 
 func (m *defaultAuth) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewAuthClient(m.cli.Conn())
 	return client.UpdateUserInfo(ctx, in, opts...)
+}
+
+// 获取用户统计
+func (m *defaultAuth) GetUserStats(ctx context.Context, in *GetUserStatsReq, opts ...grpc.CallOption) (*GetUserStatsResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.GetUserStats(ctx, in, opts...)
+}
+
+// 获取每日温柔文案
+func (m *defaultAuth) GetComfortMessage(ctx context.Context, in *GetComfortMessageReq, opts ...grpc.CallOption) (*GetComfortMessageResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.GetComfortMessage(ctx, in, opts...)
+}
+
+// 三方登录
+func (m *defaultAuth) LoginByThirdParty(ctx context.Context, in *LoginByThirdPartyReq, opts ...grpc.CallOption) (*LoginResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.LoginByThirdParty(ctx, in, opts...)
+}
+
+// 生成二维码
+func (m *defaultAuth) GenerateQrcode(ctx context.Context, in *GenerateQrcodeReq, opts ...grpc.CallOption) (*GenerateQrcodeResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.GenerateQrcode(ctx, in, opts...)
+}
+
+// 检查二维码状态
+func (m *defaultAuth) CheckQrcodeStatus(ctx context.Context, in *CheckQrcodeStatusReq, opts ...grpc.CallOption) (*CheckQrcodeStatusResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.CheckQrcodeStatus(ctx, in, opts...)
+}
+
+// 确认二维码登录
+func (m *defaultAuth) ConfirmQrcodeLogin(ctx context.Context, in *ConfirmQrcodeLoginReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.ConfirmQrcodeLogin(ctx, in, opts...)
+}
+
+// 媒体上传
+func (m *defaultAuth) UploadMedia(ctx context.Context, in *UploadMediaReq, opts ...grpc.CallOption) (*UploadMediaResp, error) {
+	client := pb.NewAuthClient(m.cli.Conn())
+	return client.UploadMedia(ctx, in, opts...)
 }

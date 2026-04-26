@@ -86,4 +86,65 @@ type (
         Bio string `json:"bio,optional"` // 简介(可选)
         Mood string `json:"mood,optional"` // 情绪标签(可选)
     }
+
+    // --- 用户统计相关 ---
+
+    UserStats {
+        PostCount int64 `json:"post_count"` // 情绪条数
+        LikeCount int64 `json:"like_count"` // 获得共鸣数
+        JoinDays int64 `json:"join_days"` // 入驻天数
+    }
+
+    GetUserStatsReq {}
+
+    // --- 治愈与情感服务相关 ---
+
+    GetComfortMessageReq {}
+
+    GetComfortMessageResp {
+        Title string `json:"title"`
+        Subtitle string `json:"subtitle"`
+        ButtonText string `json:"button_text"`
+        IllustrationUrl string `json:"illustration_url"`
+    }
+
+    // --- 三方与扫码登录相关 ---
+
+    LoginByThirdPartyReq {
+        Platform string `json:"platform,options=wechat|qq|alipay"`
+        Code string `json:"code"` // 三方授权码
+    }
+
+    GenerateQrcodeReq {
+        DeviceId string `form:"device_id"`
+    }
+
+    GenerateQrcodeResp {
+        Qid string `json:"qid"`
+        ImageUrl string `json:"image_url"`
+    }
+
+    CheckQrcodeStatusReq {
+        Qid string `form:"qid"`
+    }
+
+    CheckQrcodeStatusResp {
+        Status string `json:"status"` // WAITING|SCANNED|CONFIRMED|EXPIRED
+        Token string `json:"token,optional"` // 仅当CONFIRMED时返回
+        RefreshToken string `json:"refresh_token,optional"`
+    }
+
+    ConfirmQrcodeLoginReq {
+        Qid string `json:"qid"`
+    }
+
+    // --- 媒体上传相关 ---
+
+    UploadMediaReq {
+        Usage string `json:"usage,options=avatar|post"` // 用途
+    }
+
+    UploadMediaResp {
+        Url string `json:"url"`
+    }
 )

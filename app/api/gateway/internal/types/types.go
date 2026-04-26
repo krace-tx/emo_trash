@@ -8,11 +8,40 @@ type ChangePasswordReq struct {
 	NewPassword string `json:"new_password,required,min=8,max=32"` // 新密码(必填)
 }
 
+type CheckQrcodeStatusReq struct {
+	Qid string `form:"qid"`
+}
+
+type CheckQrcodeStatusResp struct {
+	Status       string `json:"status"`         // WAITING|SCANNED|CONFIRMED|EXPIRED
+	Token        string `json:"token,optional"` // 仅当CONFIRMED时返回
+	RefreshToken string `json:"refresh_token,optional"`
+}
+
+type CommentInfo struct {
+	Id           string `json:"id"`
+	PostId       string `json:"post_id"`
+	AuthorId     string `json:"author_id"`
+	AuthorName   string `json:"author_name"`
+	AuthorAvatar string `json:"author_avatar"`
+	Content      string `json:"content"`
+	CreatedAt    int64  `json:"created_at"`
+}
+
 type CommonResp struct {
 	Code    uint32      `json:"code"`    // 状态码
 	Success bool        `json:"success"` // 操作结果
 	Data    interface{} `json:"data"`    // 响应数据
 	Message string      `json:"message"` // 提示信息
+}
+
+type ConfirmQrcodeLoginReq struct {
+	Qid string `json:"qid"`
+}
+
+type CreateCommentReq struct {
+	PostId  string `json:"post_id"`
+	Content string `json:"content"`
 }
 
 type CreatePostReq struct {
@@ -22,31 +51,84 @@ type CreatePostReq struct {
 	IsAnonymous bool     `json:"is_anonymous,default=true"` // 是否匿名
 }
 
+type DeleteCommentReq struct {
+	Id string `json:"id"`
+}
+
 type DeletePostReq struct {
 	Id string `json:"id"`
 }
 
+type GenerateQrcodeReq struct {
+	DeviceId string `form:"device_id"`
+}
+
+type GenerateQrcodeResp struct {
+	Qid      string `json:"qid"`
+	ImageUrl string `json:"image_url"`
+}
+
+type GetComfortMessageReq struct {
+}
+
+type GetComfortMessageResp struct {
+	Title           string `json:"title"`
+	Subtitle        string `json:"subtitle"`
+	ButtonText      string `json:"button_text"`
+	IllustrationUrl string `json:"illustration_url"`
+}
+
 type GetPostDetailReq struct {
-	Id string `json:"id"`
+	Id string `form:"id"`
 }
 
 type GetUserInfoReq struct {
+}
+
+type GetUserStatsReq struct {
 }
 
 type LikePostReq struct {
 	Id string `json:"id"`
 }
 
+type ListCommentsReq struct {
+	PostId   string `form:"post_id"`
+	Cursor   string `form:"cursor,optional"`
+	PageSize int    `form:"page_size,optional,default=20"`
+}
+
+type ListCommentsResp struct {
+	List       []CommentInfo `json:"list"`
+	NextCursor string        `json:"next_cursor"`
+	HasMore    bool          `json:"has_more"`
+}
+
+type ListMyPostsReq struct {
+	Cursor   string `form:"cursor,optional"`
+	PageSize int    `form:"page_size,optional,default=20"`
+}
+
 type ListPostsReq struct {
-	Cursor   string `json:"cursor,optional"`                            // 分页游标
-	PageSize int    `json:"page_size,optional,default=20"`              // 分页大小
-	Type     string `json:"type,optional,options=discovery|follow|hot"` // 列表类型
+	Cursor   string `form:"cursor,optional"`                            // 分页游标
+	PageSize int    `form:"page_size,optional,default=20"`              // 分页大小
+	Type     string `form:"type,optional,options=discovery|follow|hot"` // 列表类型
 }
 
 type ListPostsResp struct {
 	List       []PostInfo `json:"list"`
 	NextCursor string     `json:"next_cursor"`
 	HasMore    bool       `json:"has_more"`
+}
+
+type ListStarredPostsReq struct {
+	Cursor   string `form:"cursor,optional"`
+	PageSize int    `form:"page_size,optional,default=20"`
+}
+
+type LoginByThirdPartyReq struct {
+	Platform string `json:"platform,options=wechat|qq|alipay"`
+	Code     string `json:"code"` // 三方授权码
 }
 
 type LoginReq struct {
@@ -115,6 +197,14 @@ type UpdateUserInfoReq struct {
 	Mood     string `json:"mood,optional"`     // 情绪标签(可选)
 }
 
+type UploadMediaReq struct {
+	Usage string `json:"usage,options=avatar|post"` // 用途
+}
+
+type UploadMediaResp struct {
+	Url string `json:"url"`
+}
+
 type UserInfo struct {
 	UserId     string `json:"user_id"`     // 用户ID
 	Email      string `json:"email"`       // 邮箱
@@ -123,6 +213,12 @@ type UserInfo struct {
 	CreateTime int64  `json:"create_time"` // 创建时间
 	Bio        string `json:"bio"`         // 简介
 	Mood       string `json:"mood"`        // 情绪标签
+}
+
+type UserStats struct {
+	PostCount int64 `json:"post_count"` // 情绪条数
+	LikeCount int64 `json:"like_count"` // 获得共鸣数
+	JoinDays  int64 `json:"join_days"`  // 入驻天数
 }
 
 type VerifyReq struct {

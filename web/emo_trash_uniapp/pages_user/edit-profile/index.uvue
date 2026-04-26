@@ -1,0 +1,160 @@
+<template>
+  <BasePage>
+    <BaseNavbar title="修改我的状态" :showBack="true" :placeholder="true">
+      <template #right>
+        <view class="save-btn" @click="handleSave">
+          <text class="save-text">保存</text>
+        </view>
+      </template>
+    </BaseNavbar>
+
+    <view class="content">
+      <!-- 头像修改 -->
+      <view class="avatar-section" @click="changeAvatar">
+        <image class="avatar" :src="formData.avatar || '/static/logo.png'" mode="aspectFill"></image>
+        <view class="camera-icon">
+          <text class="icon">📷</text>
+        </view>
+      </view>
+
+      <view class="form-list">
+        <view class="form-item">
+          <text class="label">昵称</text>
+          <input class="input" v-model="formData.nickname" placeholder="输入昵称" />
+        </view>
+
+        <view class="form-item area-item">
+          <text class="label">签名 / 此刻状态</text>
+          <textarea class="textarea" v-model="formData.bio" placeholder="写点什么记录此刻..." maxlength="100"></textarea>
+          <text class="count">{{ formData.bio.length }}/100</text>
+        </view>
+      </view>
+
+      <!-- 底部保存按钮 -->
+      <view class="footer-action">
+        <view class="primary-save-btn" @click="handleSave">
+          <text class="btn-text">保存修改</text>
+        </view>
+      </view>
+    </view>
+  </BasePage>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import BasePage from '@/components/BasePage.uvue'
+import BaseNavbar from '@/components/BaseNavbar.uvue'
+import { useUserStore } from '@/stores/user'
+import { updateUserInfo, uploadMedia } from '@/api/sso'
+
+const userStore = useUserStore()
+const formData = ref({
+  nickname: userStore.userInfo?.nickname || '',
+  avatar: userStore.userInfo?.avatar || '',
+  bio: userStore.userInfo?.bio || ''
+})
+
+onMounted(() => {
+  if (userStore.userInfo != null) {
+    formData.value.nickname = userStore.userInfo!.nickname
+    formData.value.avatar = userStore.userInfo!.avatar
+    formData.value.bio = userStore.userInfo!.bio
+  }
+})
+
+async function changeAvatar() {
+  uni.chooseImage({
+    count: 1,
+    success: async (res) => {
+      const tempPath = res.tempFilePaths[0]
+      uni.showLoading({ title: '上传中...' })
+      try {
+        const url = await uploadMedia(tempPath, 'avatar')
+        formData.value.avatar = url
+        uni.showToast({ title: '上传成功', icon: 'none' })
+      } catch (e) {
+        uni.showToast({ title: '上传失败', icon: 'none' })
+      } finally {
+        uni.hideLoading()
+      }
+    }
+  })
+}
+
+async function handleSave() {
+  uni.showLoading({ title: '保存中...' })
+  try {
+    const success = await updateUserInfo({
+      nickname: formData.value.nickname,
+      avatar: formData.value.avatar,
+      bio: formData.value.bio
+    })
+    if (success) {
+      await userStore.fetchUserInfo()
+      uni.showToast({ title: '保存成功', icon: 'success' })
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1500)
+    }
+  } catch (e) {
+    uni.showToast({ title: '保存失败', icon: 'none' })
+  } finally {
+    uni.hideLoading()
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.content { padding: 40rpx; }
+
+.avatar-section {
+  display: flex; justify-content: center; margin: 40rpx 0 80rpx; position: relative; align-self: center;
+  .avatar { width: 180rpx; height: 180rpx; border-radius: 50%; border: 4rpx solid #FFFFFF; box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.05); }
+  .camera-icon { position: absolute; right: 0; bottom: 0; background-color: #6B8BA4; width: 56rpx; height: 56rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4rpx solid #FFFFFF; .icon { font-size: 24rpx; } }
+}
+
+.form-list {
+  background-color: #FFFFFF; border-radius: 32rpx; padding: 20rpx 40rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02);
+  .form-item {
+    padding: 30rpx 0; border-bottom: 1rpx solid #F1F5F9;
+    &:last-child { border-bottom: none; }
+    .label { font-size: 24rpx; color: #94A3B8; margin-bottom: 16rpx; display: block; }
+    .input { font-size: 30rpx; color: #1E293B; height: 60rpx; }
+  }
+  .area-item {
+    .textarea { width: 100%; height: 200rpx; font-size: 28rpx; color: #1E293B; line-height: 1.6; }
+    .count { text-align: right; font-size: 20rpx; color: #CBD5E1; display: block; }
+  }
+}
+
+.save-btn {
+  padding: 0 32rpx; height: 100%; display: flex; align-items: center;
+  .save-text { font-size: 30rpx; color: #6B8BA4; font-weight: 600; }
+}
+
+.footer-action {
+  margin-top: 80rpx;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.primary-save-btn {
+  height: 100rpx;
+  background-color: #6B8BA4;
+  border-radius: 50rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8rpx 24rpx rgba(107, 139, 164, 0.2);
+  
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+  
+  .btn-text {
+    color: #FFFFFF;
+    font-size: 32rpx;
+    font-weight: 600;
+  }
+}
+</style>

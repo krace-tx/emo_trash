@@ -8,7 +8,7 @@
       :placeholder="true"
     >
       <template #right>
-        <view class="nav-right-more">
+        <view class="nav-right-more" @click="handleMore">
           <image class="more-icon" src="/static/icons/more.svg" mode="aspectFit"></image>
         </view>
       </template>
@@ -64,14 +64,15 @@
         
         <!-- 扁平化回声列表 -->
         <view class="echo-list" v-if="echoes.length > 0">
-          <view class="echo-item" v-for="(echo, idx) in echoes" :key="idx">
+          <view class="echo-item" v-for="(echo, idx) in echoes" :key="idx" @longpress="handleCommentLongPress(echo, idx)">
             <view class="echo-avatar-box">
-              <text class="echo-avatar-icon">🐚</text>
+              <image class="echo-avatar-img" :src="echo.author_avatar || '/static/logo.png'" mode="aspectFill" v-if="echo.author_avatar"></image>
+              <text class="echo-avatar-icon" v-else>🐚</text>
             </view>
             <view class="echo-content-box">
-              <text class="echo-name">{{ echo.name }}</text>
+              <text class="echo-name">{{ echo.author_name || '匿名拾荒者' }}</text>
               <text class="echo-text">{{ echo.content }}</text>
-              <text class="echo-time">{{ echo.time }}</text>
+              <text class="echo-time">{{ formatTime(echo.created_at) }}</text>
             </view>
           </view>
         </view>
@@ -120,12 +121,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import BasePage from '@/components/BasePage.uvue'
 import BaseNavbar from '@/components/BaseNavbar.uvue'
-import { getPostDetail, likePost, starPost, type PostInfo } from '@/api/post'
-import { MOCK_POSTS } from '@/api/mock'
+import { getPostDetail, likePost, starPost, listComments, createComment, deletePost, deleteComment, type PostInfo, type CommentInfo } from '@/api/post'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
 
 // 治愈系语录库
 const HEALING_QUOTES = [
@@ -139,18 +142,17 @@ const HEALING_QUOTES = [
   '祝你今晚好梦。'
 ]
 
-// 随机昵称库
-const RANDOM_NAMES = ['路过的风', '另一个拾荒者', '同样失眠的灵魂', '深海里的光', '温柔的回响', '云端的寄信人']
-
 // 响应式数据
 const post = ref<PostInfo | null>(null)
 const isHugged = ref<boolean>(false)
 const showEchoPanel = ref<boolean>(false)
 const statusBarHeight = ref(0)
-const echoes = ref<any[]>([
-  { name: '路过的风', content: '所有的乌云都会散去的。', time: '1小时前' },
-  { name: '失眠的灵魂', content: '抱抱你，明天又是新的开始。', time: '30分钟前' }
-])
+const echoes = ref<CommentInfo[]>([])
+const isLoadingEchoes = ref<boolean>(false)
+
+const isAuthor = computed((): boolean => {
+  return post.value != null && userStore.userInfo != null && post.value!.author_id === userStore.userInfo!.user_id
+})
 
 onMounted(() => {
   const sys = uni.getSystemInfoSync()
@@ -161,16 +163,11 @@ onLoad((options) => {
   const id = options['id'] as string
   if (id != null) {
     loadDetail(id)
+    loadEchoes(id)
   }
 })
 
 async function loadDetail(id: string) {
-  const mockItem = MOCK_POSTS.find((it: PostInfo): boolean => it.id == id)
-  if (mockItem != null) {
-    post.value = mockItem
-    isHugged.value = mockItem.is_liked
-    return
-  }
   try {
     const res = await getPostDetail(id)
     if (res != null) {
@@ -182,23 +179,89 @@ async function loadDetail(id: string) {
   }
 }
 
-function sendEcho(content: string) {
-  // 模拟发送回声
-  const newEcho = {
-    name: RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)],
-    content: content,
-    time: '刚刚'
+async function loadEchoes(postId: string) {
+  isLoadingEchoes.value = true
+  try {
+    const res = await listComments(postId)
+    echoes.value = res.list
+  } catch (e) {
+    console.error('加载回声失败', e)
+  } finally {
+    isLoadingEchoes.value = false
   }
-  echoes.value.unshift(newEcho) // 插到最前面
-  showEchoPanel.value = false
+}
+
+async function sendEcho(content: string) {
+  if (post.value == null) return
   
-  // #ifdef APP-PLUS
-  uni.vibrateShort()
-  // #endif
-  uni.showToast({ title: '回声已传达', icon: 'none' })
+  uni.showLoading({ title: '传达回声...' })
+  try {
+    const success = await createComment(post.value!.id, content)
+    if (success) {
+      // 重新加载评论列表
+      await loadEchoes(post.value!.id)
+      showEchoPanel.value = false
+      
+      // #ifdef APP-PLUS
+      uni.vibrateShort()
+      // #endif
+      uni.showToast({ title: '回声已传达', icon: 'none' })
+    }
+  } catch (e) {
+    uni.showToast({ title: '传达失败', icon: 'none' })
+  } finally {
+    uni.hideLoading()
+  }
 }
 
 function goBack() { uni.navigateBack() }
+
+function handleMore() {
+  const itemList = ['分享内容']
+  if (isAuthor.value) {
+    itemList.push('丢弃这段情绪')
+  }
+  
+  uni.showActionSheet({
+    itemList: itemList,
+    success: (res) => {
+      if (res.tapIndex === 0) {
+        uni.showToast({ title: '分享功能开发中', icon: 'none' })
+      } else if (res.tapIndex === 1 && isAuthor.value) {
+        confirmDelete()
+      }
+    }
+  })
+}
+
+async function confirmDelete() {
+  uni.showModal({
+    title: '彻底丢弃？',
+    content: '这段情绪将从深海中永远消失，无法找回。',
+    confirmText: '确定丢弃',
+    confirmColor: '#EF4444',
+    success: async (res) => {
+      if (res.confirm) {
+        uni.showLoading({ title: '正在清理...' })
+        try {
+          const success = await deletePost(post.value!.id)
+          if (success) {
+            uni.showToast({ title: '已消失', icon: 'none' })
+            uni.$emit('refreshPosts')
+            setTimeout(() => {
+              uni.navigateBack()
+            }, 1000)
+          }
+        } catch (e) {
+          uni.showToast({ title: '操作失败', icon: 'none' })
+        } finally {
+          uni.hideLoading()
+        }
+      }
+    }
+  })
+}
+
 function handleHug() {
   if (post.value == null) return
   isHugged.value = !isHugged.value

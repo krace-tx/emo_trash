@@ -1,0 +1,113 @@
+<template>
+  <BasePage>
+    <BaseNavbar title="修改密码" :showBack="true" :placeholder="true" />
+
+    <view class="content">
+      <view class="form-card">
+        <view class="input-item">
+          <text class="label">旧密码</text>
+          <input class="input" v-model="formData.oldPassword" type="password" placeholder="请输入当前使用的密码" />
+        </view>
+
+        <view class="input-item">
+          <text class="label">新密码</text>
+          <input class="input" v-model="formData.newPassword" type="password" placeholder="8-32位字符" />
+        </view>
+
+        <view class="input-item">
+          <text class="label">确认新密码</text>
+          <input class="input" v-model="formData.confirmPassword" type="password" placeholder="请再次输入新密码" />
+        </view>
+      </view>
+
+      <view class="submit-btn" :class="{ 'disabled': !isFormValid }" @click="handleSubmit">
+        <text class="btn-text">确认修改</text>
+      </view>
+    </view>
+  </BasePage>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import BasePage from '@/components/BasePage.uvue'
+import BaseNavbar from '@/components/BaseNavbar.uvue'
+import { changePassword } from '@/api/sso'
+
+const formData = ref({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+
+const isFormValid = computed((): boolean => {
+  return formData.value.oldPassword.length >= 8 && 
+         formData.value.newPassword.length >= 8 && 
+         formData.value.newPassword === formData.value.confirmPassword
+})
+
+async function handleSubmit() {
+  if (!isFormValid.value) return
+  
+  uni.showLoading({ title: '提交中...' })
+  try {
+    const success = await changePassword({
+      old_password: formData.value.oldPassword,
+      new_password: formData.value.newPassword
+    })
+    
+    if (success) {
+      uni.showToast({ title: '密码修改成功', icon: 'success' })
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1500)
+    }
+  } catch (e) {
+    uni.showToast({ title: '修改失败，请检查旧密码', icon: 'none' })
+  } finally {
+    uni.hideLoading()
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.content { padding: 40rpx; }
+
+.form-card {
+  background-color: #FFFFFF;
+  border-radius: 32rpx;
+  padding: 20rpx 40rpx;
+  margin-bottom: 60rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02);
+  
+  .input-item {
+    padding: 30rpx 0;
+    border-bottom: 1rpx solid #F1F5F9;
+    &:last-child { border-bottom: none; }
+    
+    .label { font-size: 24rpx; color: #94A3B8; margin-bottom: 16rpx; display: block; }
+    .input { font-size: 30rpx; color: #1E293B; height: 60rpx; }
+  }
+}
+
+.submit-btn {
+  height: 100rpx;
+  background-color: #6B8BA4;
+  border-radius: 50rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8rpx 24rpx rgba(107, 139, 164, 0.2);
+  
+  &.disabled {
+    background-color: #CBD5E1;
+    box-shadow: none;
+    opacity: 0.8;
+  }
+  
+  .btn-text {
+    color: #FFFFFF;
+    font-size: 32rpx;
+    font-weight: 600;
+  }
+}
+</style>

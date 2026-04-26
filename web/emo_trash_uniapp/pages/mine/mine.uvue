@@ -33,16 +33,16 @@
 
         <!-- 内部统计数据 -->
         <view class="stats-row-integrated">
-          <view class="stat-item">
-            <text class="num">12</text>
+          <view class="stat-item" @click="toMyPosts">
+            <text class="num">{{ userStore.userStats?.post_count || 0 }}</text>
             <text class="label">条情绪</text>
           </view>
-          <view class="stat-item">
-            <text class="num">36</text>
+          <view class="stat-item" @click="toMyHugs">
+            <text class="num">{{ userStore.userStats?.like_count || 0 }}</text>
             <text class="label">人也这样</text>
           </view>
           <view class="stat-item">
-            <text class="num">7</text>
+            <text class="num">{{ userStore.userStats?.join_days || 1 }}</text>
             <text class="label">天</text>
           </view>
         </view>
@@ -51,14 +51,14 @@
       <!-- ② 核心改进：纵向渐变的情感插画卡片 -->
       <view class="comfort-card">
         <view class="comfort-left">
-          <text class="comfort-title">你不是一个人</text>
-          <text class="comfort-sub">今天也有人和你一样</text>
-          <view class="comfort-btn">
+          <text class="comfort-title">{{ userStore.comfortMessage?.title || '你不是一个人' }}</text>
+          <text class="comfort-sub">{{ userStore.comfortMessage?.subtitle || '今天也有人和你一样' }}</text>
+          <view class="comfort-btn" @click="handleComfort">
             <text class="btn-icon">♡</text>
-            <text class="btn-text">给自己一点温柔</text>
+            <text class="btn-text">{{ userStore.comfortMessage?.button_text || '给自己一点温柔' }}</text>
           </view>
         </view>
-        <image class="comfort-illus" src="/static/mine/illustration.png" mode="aspectFit"></image>
+        <image class="comfort-illus" :src="userStore.comfortMessage?.illustration_url || '/static/mine/illustration.png'" mode="aspectFit"></image>
       </view>
 
       <!-- ③ 功能列表 -->
@@ -98,6 +98,19 @@
       </view>
     </view>
 
+    <!-- 🌸 沉浸式治愈动效层 -->
+    <view v-if="showHealing" class="healing-overlay" @click="showHealing = false">
+      <view class="healing-bg"></view>
+      <view class="healing-content">
+        <view class="heart-box">
+          <text class="heart-icon">❤️</text>
+          <view class="heart-ring"></view>
+        </view>
+        <text class="healing-text">{{ currentHealingMsg }}</text>
+        <text class="healing-sub">闭上眼，深呼吸 3 秒</text>
+      </view>
+    </view>
+
     <BaseTabBar />
   </BasePage>
 </template>
@@ -110,13 +123,49 @@ import { useUserStore } from '@/stores/user'
 import { onShow } from '@dcloudio/uni-app'
 
 const userStore = useUserStore()
+const showHealing = ref(false)
+const currentHealingMsg = ref('')
+
+const HEALING_MESSAGES = [
+  "辛苦了，你已经做得很好了。",
+  "允许一切发生，你只需要是你自己。",
+  "这一刻，请只温柔地对待自己。",
+  "所有的乌云，都只是暂时的路过。",
+  "你值得这世间所有的柔软。",
+  "晚安，好梦会准时到达。"
+]
 
 onShow(() => {
   uni.setStorageSync('current_tab_path', '/pages/mine/mine')
+  userStore.fetchUserStats()
+  userStore.fetchComfortMessage()
 })
 
 function toEditProfile() {
   uni.navigateTo({ url: '/pages_user/edit-profile/index' })
+}
+
+function toMyPosts() {
+  // 跳转到我发布的帖子列表页 (待创建)
+  uni.navigateTo({ url: '/pages_user/my-posts/index' })
+}
+
+function toMyStarred() {
+  // 跳转到收藏列表页 (待创建)
+  uni.navigateTo({ url: '/pages_user/my-starred/index' })
+}
+
+function toMyHugs() {
+  uni.navigateTo({ url: '/pages_user/my-hugs/index' })
+}
+
+function handleComfort() {
+  currentHealingMsg.value = HEALING_MESSAGES[Math.floor(Math.random() * HEALING_MESSAGES.length)]
+  showHealing.value = true
+  
+  // #ifdef APP-PLUS
+  uni.vibrateShort({ type: 'medium' })
+  // #endif
 }
 
 function toSettings() {
@@ -288,6 +337,9 @@ function toLetterPage() {
       border: 1rpx solid #94A3B8;
       border-radius: 30rpx;
       padding: 8rpx 24rpx;
+      
+      /* 🌸 呼吸感交互 */
+      animation: breath 3s infinite ease-in-out;
 
       .btn-icon { font-size: 22rpx; color: #64748B; margin-right: 8rpx; }
       .btn-text { font-size: 22rpx; color: #64748B; }
@@ -355,6 +407,96 @@ function toLetterPage() {
     }
 
     .arrow { font-size: 32rpx; color: #CBD5E1; font-weight: 300; }
+  }
+}
+
+/* ================= 🌸 治愈动效样式 ================= */
+@keyframes breath {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(107, 139, 164, 0.1); }
+  50% { transform: scale(1.04); box-shadow: 0 0 24rpx 4rpx rgba(107, 139, 164, 0.15); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(107, 139, 164, 0.1); }
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.3); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.3); }
+  70% { transform: scale(1); }
+}
+
+@keyframes ringExpand {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.healing-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .healing-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(254, 226, 226, 0.9) 0%, rgba(255, 255, 255, 0.96) 100%);
+    backdrop-filter: blur(20rpx);
+    -webkit-backdrop-filter: blur(20rpx);
+  }
+  
+  .healing-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60rpx;
+    width: 80%;
+    
+    .heart-box {
+      position: relative;
+      width: 200rpx;
+      height: 200rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 60rpx;
+      
+      .heart-icon {
+        font-size: 100rpx;
+        z-index: 2;
+        animation: heartBeat 1.5s infinite ease-in-out;
+      }
+      
+      .heart-ring {
+        position: absolute;
+        width: 100rpx;
+        height: 100rpx;
+        border: 4rpx solid #FECACA;
+        border-radius: 50%;
+        animation: ringExpand 2s infinite;
+      }
+    }
+    
+    .healing-text {
+      font-size: 38rpx;
+      color: #334155;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 32rpx;
+      font-family: "Source Han Serif SC", serif;
+      letter-spacing: 2rpx;
+    }
+    
+    .healing-sub {
+      font-size: 24rpx;
+      color: #94A3B8;
+      letter-spacing: 4rpx;
+      font-weight: 300;
+    }
   }
 }
 </style>

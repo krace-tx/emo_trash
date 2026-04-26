@@ -1279,6 +1279,796 @@ var _ interface {
 	ErrorName() string
 } = StarPostReqValidationError{}
 
+// Validate checks the field values on CommentInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CommentInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CommentInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CommentInfoMultiError, or
+// nil if none found.
+func (m *CommentInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CommentInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for PostId
+
+	// no validation rules for AuthorId
+
+	// no validation rules for AuthorName
+
+	// no validation rules for AuthorAvatar
+
+	// no validation rules for Content
+
+	// no validation rules for CreatedAt
+
+	if len(errors) > 0 {
+		return CommentInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// CommentInfoMultiError is an error wrapping multiple validation errors
+// returned by CommentInfo.ValidateAll() if the designated constraints aren't met.
+type CommentInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CommentInfoMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CommentInfoMultiError) AllErrors() []error { return m }
+
+// CommentInfoValidationError is the validation error returned by
+// CommentInfo.Validate if the designated constraints aren't met.
+type CommentInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CommentInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CommentInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CommentInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CommentInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CommentInfoValidationError) ErrorName() string { return "CommentInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CommentInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCommentInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CommentInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CommentInfoValidationError{}
+
+// Validate checks the field values on CreateCommentReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CreateCommentReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateCommentReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateCommentReqMultiError, or nil if none found.
+func (m *CreateCommentReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateCommentReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PostId
+
+	// no validation rules for UserId
+
+	if utf8.RuneCountInString(m.GetContent()) < 1 {
+		err := CreateCommentReqValidationError{
+			field:  "Content",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CreateCommentReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateCommentReqMultiError is an error wrapping multiple validation errors
+// returned by CreateCommentReq.ValidateAll() if the designated constraints
+// aren't met.
+type CreateCommentReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateCommentReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateCommentReqMultiError) AllErrors() []error { return m }
+
+// CreateCommentReqValidationError is the validation error returned by
+// CreateCommentReq.Validate if the designated constraints aren't met.
+type CreateCommentReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateCommentReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateCommentReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateCommentReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateCommentReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateCommentReqValidationError) ErrorName() string { return "CreateCommentReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CreateCommentReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateCommentReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateCommentReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateCommentReqValidationError{}
+
+// Validate checks the field values on DeleteCommentReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DeleteCommentReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteCommentReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteCommentReqMultiError, or nil if none found.
+func (m *DeleteCommentReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteCommentReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return DeleteCommentReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteCommentReqMultiError is an error wrapping multiple validation errors
+// returned by DeleteCommentReq.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteCommentReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteCommentReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteCommentReqMultiError) AllErrors() []error { return m }
+
+// DeleteCommentReqValidationError is the validation error returned by
+// DeleteCommentReq.Validate if the designated constraints aren't met.
+type DeleteCommentReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteCommentReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteCommentReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteCommentReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteCommentReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteCommentReqValidationError) ErrorName() string { return "DeleteCommentReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DeleteCommentReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteCommentReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteCommentReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteCommentReqValidationError{}
+
+// Validate checks the field values on ListCommentsReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ListCommentsReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListCommentsReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListCommentsReqMultiError, or nil if none found.
+func (m *ListCommentsReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListCommentsReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PostId
+
+	// no validation rules for Cursor
+
+	// no validation rules for PageSize
+
+	if len(errors) > 0 {
+		return ListCommentsReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListCommentsReqMultiError is an error wrapping multiple validation errors
+// returned by ListCommentsReq.ValidateAll() if the designated constraints
+// aren't met.
+type ListCommentsReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListCommentsReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListCommentsReqMultiError) AllErrors() []error { return m }
+
+// ListCommentsReqValidationError is the validation error returned by
+// ListCommentsReq.Validate if the designated constraints aren't met.
+type ListCommentsReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListCommentsReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListCommentsReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListCommentsReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListCommentsReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListCommentsReqValidationError) ErrorName() string { return "ListCommentsReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ListCommentsReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListCommentsReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListCommentsReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListCommentsReqValidationError{}
+
+// Validate checks the field values on ListCommentsResp with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ListCommentsResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListCommentsResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListCommentsRespMultiError, or nil if none found.
+func (m *ListCommentsResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListCommentsResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetList() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListCommentsRespValidationError{
+						field:  fmt.Sprintf("List[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListCommentsRespValidationError{
+						field:  fmt.Sprintf("List[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListCommentsRespValidationError{
+					field:  fmt.Sprintf("List[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for NextCursor
+
+	// no validation rules for HasMore
+
+	if len(errors) > 0 {
+		return ListCommentsRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListCommentsRespMultiError is an error wrapping multiple validation errors
+// returned by ListCommentsResp.ValidateAll() if the designated constraints
+// aren't met.
+type ListCommentsRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListCommentsRespMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListCommentsRespMultiError) AllErrors() []error { return m }
+
+// ListCommentsRespValidationError is the validation error returned by
+// ListCommentsResp.Validate if the designated constraints aren't met.
+type ListCommentsRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListCommentsRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListCommentsRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListCommentsRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListCommentsRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListCommentsRespValidationError) ErrorName() string { return "ListCommentsRespValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ListCommentsRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListCommentsResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListCommentsRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListCommentsRespValidationError{}
+
+// Validate checks the field values on ListMyPostsReq with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ListMyPostsReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListMyPostsReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ListMyPostsReqMultiError,
+// or nil if none found.
+func (m *ListMyPostsReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListMyPostsReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	// no validation rules for Cursor
+
+	// no validation rules for PageSize
+
+	if len(errors) > 0 {
+		return ListMyPostsReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListMyPostsReqMultiError is an error wrapping multiple validation errors
+// returned by ListMyPostsReq.ValidateAll() if the designated constraints
+// aren't met.
+type ListMyPostsReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListMyPostsReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListMyPostsReqMultiError) AllErrors() []error { return m }
+
+// ListMyPostsReqValidationError is the validation error returned by
+// ListMyPostsReq.Validate if the designated constraints aren't met.
+type ListMyPostsReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListMyPostsReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListMyPostsReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListMyPostsReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListMyPostsReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListMyPostsReqValidationError) ErrorName() string { return "ListMyPostsReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ListMyPostsReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListMyPostsReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListMyPostsReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListMyPostsReqValidationError{}
+
+// Validate checks the field values on ListStarredPostsReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListStarredPostsReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListStarredPostsReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListStarredPostsReqMultiError, or nil if none found.
+func (m *ListStarredPostsReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListStarredPostsReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	// no validation rules for Cursor
+
+	// no validation rules for PageSize
+
+	if len(errors) > 0 {
+		return ListStarredPostsReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListStarredPostsReqMultiError is an error wrapping multiple validation
+// errors returned by ListStarredPostsReq.ValidateAll() if the designated
+// constraints aren't met.
+type ListStarredPostsReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListStarredPostsReqMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListStarredPostsReqMultiError) AllErrors() []error { return m }
+
+// ListStarredPostsReqValidationError is the validation error returned by
+// ListStarredPostsReq.Validate if the designated constraints aren't met.
+type ListStarredPostsReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListStarredPostsReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListStarredPostsReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListStarredPostsReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListStarredPostsReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListStarredPostsReqValidationError) ErrorName() string {
+	return "ListStarredPostsReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListStarredPostsReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListStarredPostsReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListStarredPostsReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListStarredPostsReqValidationError{}
+
 // Validate checks the field values on CommonResp with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

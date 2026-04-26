@@ -19,13 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Post_CreatePost_FullMethodName    = "/post.post/CreatePost"
-	Post_UpdatePost_FullMethodName    = "/post.post/UpdatePost"
-	Post_DeletePost_FullMethodName    = "/post.post/DeletePost"
-	Post_GetPostDetail_FullMethodName = "/post.post/GetPostDetail"
-	Post_ListPosts_FullMethodName     = "/post.post/ListPosts"
-	Post_LikePost_FullMethodName      = "/post.post/LikePost"
-	Post_StarPost_FullMethodName      = "/post.post/StarPost"
+	Post_CreatePost_FullMethodName       = "/post.post/CreatePost"
+	Post_UpdatePost_FullMethodName       = "/post.post/UpdatePost"
+	Post_DeletePost_FullMethodName       = "/post.post/DeletePost"
+	Post_GetPostDetail_FullMethodName    = "/post.post/GetPostDetail"
+	Post_ListPosts_FullMethodName        = "/post.post/ListPosts"
+	Post_LikePost_FullMethodName         = "/post.post/LikePost"
+	Post_StarPost_FullMethodName         = "/post.post/StarPost"
+	Post_CreateComment_FullMethodName    = "/post.post/CreateComment"
+	Post_DeleteComment_FullMethodName    = "/post.post/DeleteComment"
+	Post_ListComments_FullMethodName     = "/post.post/ListComments"
+	Post_ListMyPosts_FullMethodName      = "/post.post/ListMyPosts"
+	Post_ListStarredPosts_FullMethodName = "/post.post/ListStarredPosts"
 )
 
 // PostClient is the client API for Post service.
@@ -46,6 +51,16 @@ type PostClient interface {
 	LikePost(ctx context.Context, in *LikePostReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 收藏/取消收藏
 	StarPost(ctx context.Context, in *StarPostReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 创建评论
+	CreateComment(ctx context.Context, in *CreateCommentReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 删除评论
+	DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 评论列表
+	ListComments(ctx context.Context, in *ListCommentsReq, opts ...grpc.CallOption) (*ListCommentsResp, error)
+	// 我发布的帖子列表
+	ListMyPosts(ctx context.Context, in *ListMyPostsReq, opts ...grpc.CallOption) (*ListPostsResp, error)
+	// 我收藏的帖子列表
+	ListStarredPosts(ctx context.Context, in *ListStarredPostsReq, opts ...grpc.CallOption) (*ListPostsResp, error)
 }
 
 type postClient struct {
@@ -126,6 +141,56 @@ func (c *postClient) StarPost(ctx context.Context, in *StarPostReq, opts ...grpc
 	return out, nil
 }
 
+func (c *postClient) CreateComment(ctx context.Context, in *CreateCommentReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Post_CreateComment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postClient) DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Post_DeleteComment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postClient) ListComments(ctx context.Context, in *ListCommentsReq, opts ...grpc.CallOption) (*ListCommentsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCommentsResp)
+	err := c.cc.Invoke(ctx, Post_ListComments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postClient) ListMyPosts(ctx context.Context, in *ListMyPostsReq, opts ...grpc.CallOption) (*ListPostsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPostsResp)
+	err := c.cc.Invoke(ctx, Post_ListMyPosts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postClient) ListStarredPosts(ctx context.Context, in *ListStarredPostsReq, opts ...grpc.CallOption) (*ListPostsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPostsResp)
+	err := c.cc.Invoke(ctx, Post_ListStarredPosts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostServer is the server API for Post service.
 // All implementations must embed UnimplementedPostServer
 // for forward compatibility.
@@ -144,6 +209,16 @@ type PostServer interface {
 	LikePost(context.Context, *LikePostReq) (*CommonResp, error)
 	// 收藏/取消收藏
 	StarPost(context.Context, *StarPostReq) (*CommonResp, error)
+	// 创建评论
+	CreateComment(context.Context, *CreateCommentReq) (*CommonResp, error)
+	// 删除评论
+	DeleteComment(context.Context, *DeleteCommentReq) (*CommonResp, error)
+	// 评论列表
+	ListComments(context.Context, *ListCommentsReq) (*ListCommentsResp, error)
+	// 我发布的帖子列表
+	ListMyPosts(context.Context, *ListMyPostsReq) (*ListPostsResp, error)
+	// 我收藏的帖子列表
+	ListStarredPosts(context.Context, *ListStarredPostsReq) (*ListPostsResp, error)
 	mustEmbedUnimplementedPostServer()
 }
 
@@ -174,6 +249,21 @@ func (UnimplementedPostServer) LikePost(context.Context, *LikePostReq) (*CommonR
 }
 func (UnimplementedPostServer) StarPost(context.Context, *StarPostReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method StarPost not implemented")
+}
+func (UnimplementedPostServer) CreateComment(context.Context, *CreateCommentReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateComment not implemented")
+}
+func (UnimplementedPostServer) DeleteComment(context.Context, *DeleteCommentReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteComment not implemented")
+}
+func (UnimplementedPostServer) ListComments(context.Context, *ListCommentsReq) (*ListCommentsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListComments not implemented")
+}
+func (UnimplementedPostServer) ListMyPosts(context.Context, *ListMyPostsReq) (*ListPostsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMyPosts not implemented")
+}
+func (UnimplementedPostServer) ListStarredPosts(context.Context, *ListStarredPostsReq) (*ListPostsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListStarredPosts not implemented")
 }
 func (UnimplementedPostServer) mustEmbedUnimplementedPostServer() {}
 func (UnimplementedPostServer) testEmbeddedByValue()              {}
@@ -322,6 +412,96 @@ func _Post_StarPost_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Post_CreateComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCommentReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServer).CreateComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Post_CreateComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServer).CreateComment(ctx, req.(*CreateCommentReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Post_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCommentReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServer).DeleteComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Post_DeleteComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServer).DeleteComment(ctx, req.(*DeleteCommentReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Post_ListComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCommentsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServer).ListComments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Post_ListComments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServer).ListComments(ctx, req.(*ListCommentsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Post_ListMyPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMyPostsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServer).ListMyPosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Post_ListMyPosts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServer).ListMyPosts(ctx, req.(*ListMyPostsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Post_ListStarredPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListStarredPostsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServer).ListStarredPosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Post_ListStarredPosts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServer).ListStarredPosts(ctx, req.(*ListStarredPostsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Post_ServiceDesc is the grpc.ServiceDesc for Post service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -356,6 +536,26 @@ var Post_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StarPost",
 			Handler:    _Post_StarPost_Handler,
+		},
+		{
+			MethodName: "CreateComment",
+			Handler:    _Post_CreateComment_Handler,
+		},
+		{
+			MethodName: "DeleteComment",
+			Handler:    _Post_DeleteComment_Handler,
+		},
+		{
+			MethodName: "ListComments",
+			Handler:    _Post_ListComments_Handler,
+		},
+		{
+			MethodName: "ListMyPosts",
+			Handler:    _Post_ListMyPosts_Handler,
+		},
+		{
+			MethodName: "ListStarredPosts",
+			Handler:    _Post_ListStarredPosts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

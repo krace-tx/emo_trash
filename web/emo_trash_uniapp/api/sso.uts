@@ -133,3 +133,77 @@ export function updateUserInfo(data: any): Promise<boolean> {
     data
   })
 }
+
+/**
+ * 用户统计数据
+ */
+export type UserStats = {
+  post_count: number
+  like_count: number
+  join_days: number
+}
+
+/**
+ * 获取用户统计数据
+ */
+export function getUserStats(): Promise<UserStats> {
+  return request<UserStats>({
+    url: '/sso/v1/user/stats',
+    method: 'GET'
+  })
+}
+
+/**
+ * 治愈文案数据
+ */
+export type ComfortMessage = {
+  title: string
+  subtitle: string
+  button_text: string
+  illustration_url: string
+}
+
+/**
+ * 获取每日治愈文案
+ */
+export function getComfortMessage(): Promise<ComfortMessage> {
+  return request<ComfortMessage>({
+    url: '/sso/v1/common/comfort',
+    method: 'GET'
+  })
+}
+
+/**
+ * 上传媒体文件
+ * @param filePath 本地文件路径
+ * @param usage 用途: avatar|post
+ */
+export function uploadMedia(filePath: string, usage: string): Promise<string> {
+  const userStore = useUserStore()
+  return new Promise((resolve, reject) => {
+    uni.uploadFile({
+      url: 'http://localhost:8888/sso/v1/common/upload', 
+      filePath: filePath,
+      name: 'file',
+      formData: { usage: usage },
+      header: {
+        'Authorization': `Bearer ${userStore.token || ''}`
+      },
+      success: (res) => {
+        if (res.statusCode === 200) {
+          const data = JSON.parse(res.data) as any
+          if (data.code === 0 && data.data != null) {
+            resolve(data.data.url as string)
+          } else {
+            reject(new Error(data.message || '上传失败'))
+          }
+        } else {
+          reject(new Error('上传失败'))
+        }
+      },
+      fail: (err) => {
+        reject(err)
+      }
+    })
+  })
+}

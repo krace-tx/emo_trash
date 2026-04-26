@@ -27,6 +27,25 @@ service post {
 
   // 收藏/取消收藏
   rpc StarPost(StarPostReq) returns (CommonResp);
+
+  // --- 回声 (评论) 相关 ---
+
+  // 创建评论
+  rpc CreateComment(CreateCommentReq) returns (CommonResp);
+
+  // 删除评论
+  rpc DeleteComment(DeleteCommentReq) returns (CommonResp);
+
+  // 评论列表
+  rpc ListComments(ListCommentsReq) returns (ListCommentsResp);
+
+  // --- 互动列表相关 ---
+
+  // 我发布的帖子列表
+  rpc ListMyPosts(ListMyPostsReq) returns (ListPostsResp);
+
+  // 我收藏的帖子列表
+  rpc ListStarredPosts(ListStarredPostsReq) returns (ListPostsResp);
 }
 
 // ============ 消息定义 ============
@@ -149,6 +168,82 @@ message StarPostReq {
   string id = 1;
   // @inject_tag: json:"user_id"
   string user_id = 2;
+}
+
+// --- 回声 (评论) 消息 ---
+
+message CommentInfo {
+  // @inject_tag: json:"id"
+  string id = 1;
+  // @inject_tag: json:"post_id"
+  string post_id = 2;
+  // @inject_tag: json:"author_id"
+  string author_id = 3;
+  // @inject_tag: json:"author_name"
+  string author_name = 4;
+  // @inject_tag: json:"author_avatar"
+  string author_avatar = 5;
+  // @inject_tag: json:"content"
+  string content = 6;
+  // @inject_tag: json:"created_at"
+  int64 created_at = 7;
+}
+
+message CreateCommentReq {
+  // @inject_tag: json:"post_id"
+  string post_id = 1;
+  // @inject_tag: json:"user_id"
+  string user_id = 2;
+  // @inject_tag: json:"content"
+  string content = 3 [
+    (validate.rules).string.min_len = 1,
+    (validate.error_msg) = "回声内容不能为空"
+  ];
+}
+
+message DeleteCommentReq {
+  // @inject_tag: json:"id"
+  string id = 1;
+  // @inject_tag: json:"user_id"
+  string user_id = 2;
+}
+
+message ListCommentsReq {
+  // @inject_tag: json:"post_id"
+  string post_id = 1;
+  // @inject_tag: json:"cursor"
+  string cursor = 2;
+  // @inject_tag: json:"page_size"
+  int32 page_size = 3;
+}
+
+message ListCommentsResp {
+  // @inject_tag: json:"list"
+  repeated CommentInfo list = 1;
+  // @inject_tag: json:"next_cursor"
+  string next_cursor = 2;
+  // @inject_tag: json:"has_more"
+  bool has_more = 3;
+}
+
+// --- 互动列表消息 ---
+
+message ListMyPostsReq {
+  // @inject_tag: json:"user_id"
+  string user_id = 1;
+  // @inject_tag: json:"cursor"
+  string cursor = 2;
+  // @inject_tag: json:"page_size"
+  int32 page_size = 3;
+}
+
+message ListStarredPostsReq {
+  // @inject_tag: json:"user_id"
+  string user_id = 1;
+  // @inject_tag: json:"cursor"
+  string cursor = 2;
+  // @inject_tag: json:"page_size"
+  int32 page_size = 3;
 }
 
 message CommonResp {
