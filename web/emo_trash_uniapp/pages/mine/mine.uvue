@@ -1,67 +1,102 @@
 <template>
   <BasePage>
+    <!-- 透明导航栏 -->
     <BaseNavbar :placeholder="true" bgColor="transparent">
-      <template #default>
-        <view class="nav-logo-wrapper">
-          <image class="nav-logo" src="/static/logo.png" mode="aspectFit"></image>
+      <template #right>
+        <view class="nav-setting" @click="toSettings">
+          <view class="setting-icon-box">
+            <view class="setting-line"></view>
+            <view class="setting-line short"></view>
+            <view class="setting-line"></view>
+          </view>
         </view>
       </template>
     </BaseNavbar>
 
     <view class="content">
-      <!-- 用户基础信息卡片 -->
-      <view class="profile-header">
-        <view class="avatar-wrapper">
-          <image class="avatar" :src="userStore.userInfo?.avatar || '/static/logo.png'" mode="aspectFill"></image>
+      <!-- ① 核心改进：带纵向渐变的主面板 -->
+      <view class="main-profile-card">
+        <!-- 用户信息组 -->
+        <view class="user-info-group">
+          <view class="avatar-wrapper">
+            <image class="avatar" :src="userStore.userInfo?.avatar || '/static/logo.png'" mode="aspectFill"></image>
+          </view>
+          <view class="text-info">
+            <view class="name-row">
+              <text class="nickname">{{ userStore.userInfo?.nickname || '还好' }}</text>
+              <text class="email-tag">{{ userStore.userInfo?.email || 'emo_trash@user.com' }}</text>
+            </view>
+            <text class="bio">{{ userStore.userInfo?.bio || '潜入深海，寄存情绪。' }}</text>
+          </view>
         </view>
-        <view class="user-info">
-          <text class="nickname">{{ userStore.userInfo?.nickname || '未登录' }}</text>
-          <text class="bio">{{ userStore.userInfo?.bio || '潜入深海，寄存情绪。' }}</text>
+
+        <!-- 内部统计数据 -->
+        <view class="stats-row-integrated">
+          <view class="stat-item">
+            <text class="num">12</text>
+            <text class="label">条情绪</text>
+          </view>
+          <view class="stat-item">
+            <text class="num">36</text>
+            <text class="label">人也这样</text>
+          </view>
+          <view class="stat-item">
+            <text class="num">7</text>
+            <text class="label">天</text>
+          </view>
         </view>
       </view>
 
-      <!-- 统计数据 -->
-      <view class="stats-row">
-        <view class="stat-item">
-          <text class="num">0</text>
-          <text class="label">情绪</text>
+      <!-- ② 核心改进：纵向渐变的情感插画卡片 -->
+      <view class="comfort-card">
+        <view class="comfort-left">
+          <text class="comfort-title">你不是一个人</text>
+          <text class="comfort-sub">今天也有人和你一样</text>
+          <view class="comfort-btn">
+            <text class="btn-icon">♡</text>
+            <text class="btn-text">给自己一点温柔</text>
+          </view>
         </view>
-        <view class="stat-item">
-          <text class="num">0</text>
-          <text class="label">获赞</text>
-        </view>
-        <view class="stat-item">
-          <text class="num">0</text>
-          <text class="label">关注</text>
-        </view>
+        <image class="comfort-illus" src="/static/mine/illustration.png" mode="aspectFit"></image>
       </view>
 
-      <!-- 功能列表 -->
+      <!-- ③ 功能列表 -->
       <view class="menu-list">
         <view class="menu-item" @click="toEditProfile">
           <view class="item-left">
-            <text class="item-icon">✎</text>
-            <text class="item-text">编辑资料</text>
+            <view class="icon-box"><text class="item-icon">✎</text></view>
+            <view class="text-group">
+              <text class="item-title">修改我的状态</text>
+              <text class="item-desc">记录此刻的心情</text>
+            </view>
           </view>
           <text class="arrow">›</text>
         </view>
+
         <view class="menu-item">
           <view class="item-left">
-            <text class="item-icon">★</text>
-            <text class="item-text">我的收藏</text>
+            <view class="icon-box"><text class="item-icon">☆</text></view>
+            <view class="text-group">
+              <text class="item-title">我收藏的情绪</text>
+              <text class="item-desc">那些触动过你的瞬间</text>
+            </view>
           </view>
           <text class="arrow">›</text>
         </view>
-        <view class="menu-item" @click="handleLogout">
+
+        <view class="menu-item" @click="toLetterPage">
           <view class="item-left">
-            <text class="item-icon">✕</text>
-            <text class="item-text">退出登录</text>
+            <view class="icon-box"><text class="item-icon">✉</text></view>
+            <view class="text-group">
+              <text class="item-title">给拾荒者的一封信</text>
+              <text class="item-desc">关于这个树洞的初衷</text>
+            </view>
           </view>
           <text class="arrow">›</text>
         </view>
       </view>
     </view>
-    
+
     <BaseTabBar />
   </BasePage>
 </template>
@@ -71,6 +106,7 @@ import BasePage from '@/components/BasePage.uvue'
 import BaseNavbar from '@/components/BaseNavbar.uvue'
 import BaseTabBar from '@/components/BaseTabBar.uvue'
 import { useUserStore } from '@/stores/user'
+import { onShow } from '@dcloudio/uni-app'
 
 const userStore = useUserStore()
 
@@ -82,139 +118,242 @@ function toEditProfile() {
   uni.navigateTo({ url: '/pages_user/edit-profile/index' })
 }
 
-function handleLogout() {
-  userStore.logout()
-  uni.reLaunch({ url: '/pages/auth/login/index' })
+function toSettings() {
+  uni.navigateTo({ url: '/pages_user/settings/index' })
+}
+
+function toLetterPage() {
+  uni.navigateTo({ url: '/pages_user/letter/index' })
 }
 </script>
 
 <style lang="scss" scoped>
-.nav-logo-wrapper {
+.nav-setting {
+  padding: 0 32rpx;
   display: flex;
-  justify-content: center;
   align-items: center;
-  width: 100%;
-  .nav-logo {
-    width: 240rpx;
-    height: 60rpx;
+  justify-content: flex-end;
+  height: 100%;
+  
+  .setting-icon-box {
+    width: 40rpx;
+    height: 40rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    
+    .setting-line {
+      width: 36rpx;
+      height: 3rpx;
+      background-color: #475569;
+      margin: 4rpx 0;
+      border-radius: 2rpx;
+      
+      &.short {
+        width: 24rpx;
+      }
+    }
   }
 }
 
 .content {
-  padding: 40rpx 48rpx;
-  padding-bottom: 160rpx;
+  padding: 0rpx 40rpx 160rpx 40rpx;
 }
 
-.profile-header {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 60rpx;
-  
-  .avatar-wrapper {
-    width: 140rpx;
-    height: 140rpx;
-    border-radius: 50%;
-    border: 4rpx solid #FFFFFF;
-    box-shadow: 0 8rpx 24rpx rgba(107, 139, 164, 0.1);
-    overflow: hidden;
-    margin-right: 32rpx;
-    background-color: #FFFFFF;
-    .avatar {
-      width: 100%;
-      height: 100%;
+/* ================= 渐变美化后的主卡片 ================= */
+.main-profile-card {
+  /* 优化：纵向细致渐变，增加材质感 */
+  background: linear-gradient(to bottom, #FFFFFF 0%, #F9FBFF 100%);
+  border-radius: 40rpx;
+  padding: 50rpx 40rpx 40rpx;
+  margin-top: 40rpx; 
+  margin-bottom: 40rpx;
+  box-shadow: 0 12rpx 40rpx rgba(107, 139, 164, 0.08);
+
+  .user-info-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 50rpx;
+
+    .avatar-wrapper {
+      width: 120rpx;
+      height: 120rpx;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 30rpx;
+      flex-shrink: 0;
+      background-color: #F8FAFC;
+      border: 1rpx solid #F1F5F9;
+
+      .avatar { width: 100%; height: 100%; }
+    }
+
+    .text-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      .name-row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 12rpx;
+
+        .nickname {
+          font-size: 40rpx;
+          font-weight: 600;
+          color: #1E293B;
+          margin-bottom: 4rpx;
+        }
+
+        .email-tag {
+          font-size: 22rpx;
+          color: #94A3B8;
+          font-weight: 300;
+        }
+      }
+
+      .bio {
+        font-size: 26rpx;
+        color: #64748B;
+        line-height: 1.4;
+      }
     }
   }
-  
-  .user-info {
-    flex: 1;
-    .nickname {
-      font-size: 40rpx;
-      font-weight: 600;
-      color: #334155;
-      display: block;
-      margin-bottom: 12rpx;
-    }
-    .bio {
-      font-size: 24rpx;
-      color: #707070;
-      display: block;
-      font-weight: 300;
+
+  .stats-row-integrated {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-top: 40rpx;
+    border-top: 1rpx solid #F1F5F9;
+
+    .stat-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .num {
+        font-size: 38rpx;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 6rpx;
+        font-family: "Georgia", serif;
+      }
+      .label {
+        font-size: 22rpx;
+        color: #94A3B8;
+      }
     }
   }
 }
 
-.stats-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  background-color: #FFFFFF;
-  padding: 40rpx 0;
+/* ================= 纵向渐变美化后的共鸣卡片 ================= */
+.comfort-card {
+  /* 优化：改为纵向渐变，更加深邃柔和 */
+  background: linear-gradient(to bottom, #F1F5F9 0%, #E2E8F0 100%);
   border-radius: 32rpx;
-  box-shadow: 0 8rpx 32rpx rgba(107, 139, 164, 0.05);
-  margin-bottom: 60rpx;
-  
-  .stat-item {
+  padding: 40rpx;
+  margin-bottom: 40rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(107, 139, 164, 0.03);
+
+  .comfort-left {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    .num {
+    align-items: flex-start;
+
+    .comfort-title {
       font-size: 36rpx;
       font-weight: 600;
       color: #334155;
       margin-bottom: 8rpx;
+      font-family: "Source Han Serif SC", serif;
     }
-    .label {
-      font-size: 22rpx;
-      color: #A3A3A3;
-      font-weight: 300;
+    .comfort-sub {
+      font-size: 24rpx;
+      color: #64748B;
+      margin-bottom: 24rpx;
     }
+    .comfort-btn {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border: 1rpx solid #94A3B8;
+      border-radius: 30rpx;
+      padding: 8rpx 24rpx;
+
+      .btn-icon { font-size: 22rpx; color: #64748B; margin-right: 8rpx; }
+      .btn-text { font-size: 22rpx; color: #64748B; }
+    }
+  }
+
+  .comfort-illus {
+    width: 200rpx;
+    height: 200rpx;
+    opacity: 0.85;
   }
 }
 
+/* ================= 功能列表 ================= */
 .menu-list {
   background-color: #FFFFFF;
   border-radius: 32rpx;
-  box-shadow: 0 8rpx 32rpx rgba(107, 139, 164, 0.05);
+  box-shadow: 0 8rpx 32rpx rgba(107, 139, 164, 0.04);
   overflow: hidden;
-  
+
   .menu-item {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 32rpx 40rpx;
-    border-bottom: 1rpx solid #F7F8FA;
-    
-    &:last-child {
-      border-bottom: none;
-    }
-    
-    &:active {
-      background-color: #F9FAFB;
-    }
-    
+    padding: 36rpx 40rpx;
+    border-bottom: 1rpx solid #F8FAFC;
+
+    &:last-child { border-bottom: none; }
+    &:active { background-color: #F8FAFC; }
+
     .item-left {
       display: flex;
       flex-direction: row;
       align-items: center;
-      .item-icon {
-        font-size: 32rpx;
-        color: #6B8BA4;
+
+      .icon-box {
+        width: 72rpx;
+        height: 72rpx;
+        border-radius: 50%;
+        background-color: #F1F5F9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         margin-right: 24rpx;
+
+        .item-icon { font-size: 32rpx; color: #64748B; }
       }
-      .item-text {
-        font-size: 28rpx;
-        color: #4A4A4A;
-        font-weight: 400;
+
+      .text-group {
+        display: flex;
+        flex-direction: column;
+
+        .item-title {
+          font-size: 30rpx;
+          color: #334155;
+          font-weight: 500;
+          margin-bottom: 4rpx;
+        }
+        .item-desc {
+          font-size: 22rpx;
+          color: #94A3B8;
+        }
       }
     }
-    
-    .arrow {
-      font-size: 32rpx;
-      color: #D0D0D0;
-      font-weight: 200;
-    }
+
+    .arrow { font-size: 32rpx; color: #CBD5E1; font-weight: 300; }
   }
 }
 </style>

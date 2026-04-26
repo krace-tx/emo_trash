@@ -1,0 +1,216 @@
+<template>
+  <view class="settings-page">
+    <BaseNavbar title="设置" :showBack="true" bgColor="#F7F8FA" />
+
+    <scroll-view scroll-y class="scroll-view">
+      <!-- 第一组：账号与安全 -->
+      <view class="setting-group">
+        <view class="cell" @click="notDeveloped">
+          <text class="cell-title">账号与绑定设置</text>
+          <view class="cell-right">
+            <text class="cell-value">138****1234</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+        <view class="cell" @click="notDeveloped">
+          <text class="cell-title">修改密码</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+
+      <!-- 第二组：隐私与偏好 -->
+      <view class="setting-group">
+        <view class="cell" @click="notDeveloped">
+          <text class="cell-title">主题风格</text>
+          <view class="cell-right">
+            <text class="cell-value">跟随系统</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+        <view class="cell" @click="notDeveloped">
+          <text class="cell-title">隐私设置</text>
+          <text class="arrow">›</text>
+        </view>
+        <view class="cell" @click="notDeveloped">
+          <text class="cell-title">消息通知</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+
+      <!-- 第三组：通用与清理 -->
+      <view class="setting-group">
+        <view class="cell" @click="handleClearCache">
+          <text class="cell-title">清除本地缓存</text>
+          <view class="cell-right">
+            <text class="cell-value">{{ cacheSize }} MB</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+        <view class="cell" @click="notDeveloped">
+          <text class="cell-title">意见反馈</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+
+      <!-- 第四组：关于 -->
+      <view class="setting-group">
+        <view class="cell" @click="notDeveloped">
+          <text class="cell-title">关于 Emo Trash</text>
+          <view class="cell-right">
+            <text class="cell-value">Version 1.0.0</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 退出登录独立区块 -->
+      <view class="setting-group logout-group" @click="handleLogout">
+        <text class="logout-text">退出登录</text>
+      </view>
+
+      <view class="footer-tips">
+        <view class="tips-line"></view>
+        <text class="tips-text">遇见你，很高兴</text>
+        <view class="tips-line"></view>
+      </view>
+
+      <view style="height: 60rpx;"></view>
+    </scroll-view>
+  </view>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import BaseNavbar from '@/components/BaseNavbar.uvue'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+const cacheSize = ref((Math.random() * 20 + 5).toFixed(1))
+
+function notDeveloped() {
+  uni.showToast({
+    title: '功能开发中',
+    icon: 'none'
+  })
+}
+
+function handleClearCache() {
+  uni.showLoading({ title: '清理中...' })
+  setTimeout(() => {
+    uni.hideLoading()
+    cacheSize.value = '0.0'
+    uni.showToast({ title: '清理成功', icon: 'success' })
+  }, 1200)
+}
+
+function handleLogout() {
+  uni.showModal({
+    title: '提示',
+    content: '确定要退出登录吗？',
+    success: (res) => {
+      if (res.confirm) {
+        userStore.logout()
+        uni.reLaunch({ url: '/pages/auth/login/index' })
+      }
+    }
+  })
+}
+</script>
+
+<style lang="scss" scoped>
+.settings-page {
+  flex: 1;
+  background-color: #F7F8FA;
+  height: 100vh;
+}
+
+.scroll-view {
+  flex: 1;
+  padding-top: 20rpx;
+}
+
+.setting-group {
+  margin: 24rpx 32rpx;
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.cell {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 36rpx;
+  border-bottom: 1rpx solid #F1F5F9;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:active {
+    background-color: #F9FAFB;
+  }
+  
+  .cell-title {
+    font-size: 28rpx;
+    color: #334155;
+  }
+  
+  .cell-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    
+    .cell-value {
+      font-size: 24rpx;
+      color: #94A3B8;
+      margin-right: 12rpx;
+    }
+    
+    .arrow {
+      font-size: 32rpx;
+      color: #CBD5E1;
+      font-weight: 300;
+      line-height: 1;
+    }
+  }
+}
+
+.logout-group {
+  margin-top: 48rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32rpx 0;
+  
+  .logout-text {
+    font-size: 30rpx;
+    color: #EF4444;
+    font-weight: 500;
+  }
+}
+
+.footer-tips {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 80rpx 80rpx 40rpx;
+  
+  .tips-line {
+    flex: 1;
+    height: 1rpx;
+    background-color: #E2E8F0;
+    opacity: 0.6;
+  }
+  
+  .tips-text {
+    font-size: 20rpx;
+    color: #94A3B8;
+    margin: 0 30rpx;
+    letter-spacing: 4rpx;
+    font-weight: 300;
+  }
+}
+</style>

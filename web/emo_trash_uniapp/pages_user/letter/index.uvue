@@ -1,0 +1,100 @@
+<template>
+  <BasePage>
+    <BaseNavbar title="致拾荒者" :showBack="true" bgColor="transparent" />
+
+    <scroll-view scroll-y class="letter-scroll">
+      <view class="letter-container">
+        <text class="letter-title">致来到这里的你</text>
+        
+        <view class="letter-body">
+          <text class="paragraph">亲爱的拾荒者，你好：</text>
+          
+          <text class="paragraph">欢迎来到这片深海。</text>
+          
+          <text class="paragraph">做这个 App 的初衷，是因为我发现，现代人的崩溃总是静悄悄的。白天我们在人群中情绪稳定，扮演着合格的成年人；但到了深夜，那些微小的委屈、难以言说的焦虑、或是毫无来由的失落，总会像潮水一样慢慢漫上来。</text>
+          
+          <text class="paragraph">朋友圈太拥挤，有些话不适合说给熟人听；备忘录太冷冰冰，写下的话连个回音都没有。</text>
+          
+          <text class="paragraph">所以我建了这个“情绪废品站”。</text>
+          
+          <text class="paragraph">在这里，你不必维持坚强，也不用假装积极。你可以把那些不想带到明天的坏情绪、碎碎念，统统丢进这个树洞里。</text>
+          
+          <text class="paragraph">坏情绪就像生活产生的垃圾，不丢掉，是会发臭的。把它们丢在这里，然后拍拍身上的灰尘，继续轻装上阵去面对明天。</text>
+          
+          <text class="paragraph">很高兴你在这里，也希望你，明天能有一点好心情。</text>
+        </view>
+
+        <view class="letter-footer">
+          <text class="author">—— Emo Trash 开发者 留</text>
+          <text class="date">{{ currentDate }}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </BasePage>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import BasePage from '@/components/BasePage.uvue'
+import BaseNavbar from '@/components/BaseNavbar.uvue'
+
+const currentDate = ref(new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }))
+</script>
+
+<style lang="scss" scoped>
+.letter-scroll {
+  flex: 1;
+}
+
+.letter-container {
+  padding: 60rpx 50rpx 120rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.letter-title {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 80rpx;
+  text-align: center;
+  font-family: "Source Han Serif SC", "Songti SC", serif;
+  letter-spacing: 4rpx;
+}
+
+.letter-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.paragraph {
+  font-size: 30rpx;
+  color: #475569;
+  line-height: 1.8;
+  margin-bottom: 40rpx;
+  letter-spacing: 2rpx;
+  font-family: "Source Han Serif SC", "Songti SC", serif;
+  text-align: justify;
+}
+
+.letter-footer {
+  margin-top: 80rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.author {
+  font-size: 28rpx;
+  color: #334155;
+  font-weight: 500;
+  margin-bottom: 12rpx;
+  font-family: "Source Han Serif SC", "Songti SC", serif;
+}
+
+.date {
+  font-size: 24rpx;
+  color: #94A3B8;
+  font-family: "Source Han Serif SC", "Songti SC", serif;
+}
+</style>
