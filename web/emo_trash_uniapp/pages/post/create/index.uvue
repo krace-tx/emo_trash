@@ -1,103 +1,154 @@
 <template>
   <view class="publish-page">
-    <!-- ① 艺术化顶部导航栏 -->
+
+    <!-- ① 顶部导航栏 -->
     <view class="custom-nav">
       <view class="nav-left" @click="goBack">
-        <text class="back-arrow">←</text>
+        <view class="back-circle">
+          <text class="back-arrow">←</text>
+        </view>
       </view>
       <view class="nav-middle">
-        <image src="/static/post/title.png" mode="aspectFit" class="nav-title-img"></image>
+        <image
+          src="/static/post/title.png"
+          mode="aspectFit"
+          class="nav-title-img"
+          @error="onTitleImgError"
+          v-if="!titleImgError"
+        ></image>
+        <view class="nav-title-text" v-else>
+          <text class="title-word">EMO</text>
+          <text class="title-word title-word--light">TRASH</text>
+        </view>
       </view>
       <view class="nav-right">
-        <button 
-          class="publish-btn" 
-          :class="{ active: canPublish }" 
+        <button
+          class="publish-btn"
+          :class="{ active: canPublish }"
           :disabled="!canPublish"
           @click="submitPost"
         >
-          Publish
+          <text class="btn-text">发布</text>
         </button>
       </view>
     </view>
 
     <scroll-view scroll-y class="editor-scroll">
-      <!-- ② 用户信息区 (着陆感) -->
-      <view class="user-header">
-        <image class="user-avatar" :src="userStore.userInfo?.avatar || '/static/logo.png'" mode="aspectFill"></image>
-        <text class="user-id">@{{ userStore.userInfo?.nickname || 'MindTraveler' }}</text>
-        <!-- 背景点缀线条可通过 CSS 或背景图模拟 -->
-        <view class="deco-lines"></view>
-      </view>
+
+      <!-- ② 用户信息区 (左右分流重构) -->
+
 
       <view class="editor-container">
-        <!-- ③ 标题输入 (细边框) -->
-        <view class="title-input-wrapper">
-          <input 
-            class="title-input" 
-            v-model="formData.title" 
-            placeholder="Title..." 
-            placeholder-class="ph-color"
-            maxlength="30"
-          />
-        </view>
-        
-        <!-- 正文输入 -->
-        <textarea 
-          class="content-input" 
-          v-model="formData.content" 
-          placeholder="Write down the thoughts you don't want to take away..." 
-          placeholder-class="ph-color"
-          :maxlength="-1" 
-          auto-height
-          :focus="true"
-        ></textarea>
 
-        <!-- 错误提示 -->
-        <view class="error-tip" :style="{ opacity: showEmptyTip ? 1 : 0 }">
-          <text class="error-text">* 内容不能为空 / Content cannot be empty</text>
+        <!-- ③ 标题输入框 -->
+        <view class="section-box">
+          <view class="box-header">
+            <text class="label-no">01</text>
+            <text class="label-text">标题</text>
+          </view>
+          <view class="input-wrapper">
+            <input
+              class="title-input"
+              v-model="formData.title"
+              placeholder="给此刻的心情取个名字..."
+              placeholder-class="ph-color"
+              maxlength="30"
+            />
+          </view>
         </view>
 
-        <!-- ④ 九宫格媒体区 -->
-        <view class="media-section">
-          <view class="section-title">Attachments</view>
-          <view class="image-grid">
-            <view class="image-box upload-box" @click="chooseImage" v-if="localImages.length < 9">
-              <text class="plus-icon">+</text>
-            </view>
-            <view class="image-box" v-for="(img, index) in localImages" :key="index">
-              <image :src="img" mode="aspectFill" class="preview-img" @click="previewImage(index)"></image>
-              <view class="delete-btn" @click.stop="removeImage(index)">✕</view>
-              <!-- 模拟上传进度环 (仅为演示) -->
-              <view class="upload-progress" v-if="index === 0 && isPublishing">
-                <view class="progress-ring"></view>
-              </view>
+        <!-- ④ 正文输入框 -->
+        <view class="section-box">
+          <view class="box-header">
+            <text class="label-no">02</text>
+            <text class="label-text">正文</text>
+          </view>
+          <view class="input-wrapper content-wrapper">
+            <textarea
+              class="content-input"
+              v-model="formData.content"
+              placeholder="写下那些不想带走的碎碎念..."
+              placeholder-class="ph-color"
+              :maxlength="-1"
+              auto-height
+              :focus="true"
+            ></textarea>
+            
+            <view class="char-count-row">
+              <text class="char-count">{{ formData.content.length }} 字</text>
             </view>
           </view>
         </view>
+
+        <!-- 错误提示 -->
+        <view class="error-tip" :style="{ opacity: showEmptyTip ? 1 : 0 }">
+          <text class="error-dot">●</text>
+          <text class="error-text">内容不能为空</text>
+        </view>
+
+        <!-- ⑤ 媒体区 -->
+        <view class="section-box no-border">
+          <view class="box-header">
+            <text class="label-no">03</text>
+            <text class="label-text">附件 / 图片</text>
+            <text class="media-count">{{ localImages.length }} / 9</text>
+          </view>
+          <view class="image-grid">
+            <view class="image-box upload-box" @click="chooseImage" v-if="localImages.length < 9">
+              <view class="plus-inner">
+                <text class="plus-icon">+</text>
+                <text class="plus-sub">添加</text>
+              </view>
+            </view>
+            <view class="image-box" v-for="(img, index) in localImages" :key="index">
+              <image :src="img" mode="aspectFill" class="preview-img" @click="previewImage(index)"></image>
+              <view class="delete-btn" @click.stop="removeImage(index)">
+                <text class="delete-icon">✕</text>
+              </view>
+              <view class="img-index">{{ index + 1 }}</view>
+            </view>
+          </view>
+        </view>
+
       </view>
     </scroll-view>
 
-    <!-- ⑤ 底部快捷工具栏 -->
+    <!-- ⑥ 底部工具栏 -->
     <view class="bottom-toolbar">
-      <view class="toolbar-left">
-        <view class="tool-btn" @click="chooseImageFrom('camera')">
-          <text class="tool-icon">📷</text>
+      <view class="toolbar-inner">
+        <view class="tool-group">
+          <view class="tool-btn" @click="chooseImageFrom('camera')">
+            <view class="icon-camera">
+              <view class="camera-body"></view>
+              <view class="camera-lens"></view>
+              <view class="camera-top"></view>
+            </view>
+          </view>
+          <view class="tool-btn" @click="chooseImageFrom('album')">
+            <view class="icon-gallery">
+              <view class="gallery-back"></view>
+              <view class="gallery-front"></view>
+            </view>
+          </view>
         </view>
-        <view class="tool-btn" @click="chooseImageFrom('album')">
-          <text class="tool-icon">🖼️</text>
-        </view>
-        <view class="divider"></view>
-        <view class="anonymous-box">
-          <text class="anon-label">Post Anonymously</text>
-          <switch 
-            :checked="formData.is_anonymous" 
-            @change="onAnonymousChange" 
+
+        <view class="toolbar-divider"></view>
+
+        <view class="anonymous-row">
+          <view class="anon-info">
+            <text class="anon-label">匿名寄存情绪</text>
+            <text class="anon-desc">不留下任何真实痕迹</text>
+          </view>
+          <switch
+            :checked="formData.is_anonymous"
+            @change="onAnonymousChange"
             color="#86929B"
-            style="transform: scale(0.7);"
+            style="transform: scale(0.75);"
           />
         </view>
       </view>
     </view>
+
   </view>
 </template>
 
@@ -107,9 +158,10 @@ import { createPost } from '@/api/post'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
-const isPublishing = ref(false)
+const isPublishing = ref<boolean>(false)
+const localImages = ref<string[]>([])
+const titleImgError = ref<boolean>(false)
 
-// 表单数据
 const formData = ref({
   title: '',
   content: '',
@@ -117,36 +169,47 @@ const formData = ref({
   is_anonymous: false
 })
 
-// 本地预览图
-const localImages = ref<string[]>([])
+const displayName = computed((): string => {
+  const info = userStore.userInfo
+  if (info == null) return '思绪旅行者'
+  if (info.nickname != null && info.nickname.length > 0) return info.nickname
+  if (info.email != null && info.email.indexOf('@') != -1) return info.email.split('@')[0]
+  return '思绪旅行者'
+})
 
-// 是否显示空内容提示
+const userInitial = computed((): string => {
+  return displayName.value.length > 0 ? displayName.value.charAt(0).toUpperCase() : '?'
+})
+
 const showEmptyTip = computed((): boolean => {
   return formData.value.content.trim().length === 0 && formData.value.title.length > 0
 })
 
-// 是否可以发布
 const canPublish = computed((): boolean => {
   return formData.value.content.trim().length > 0
 })
 
-function goBack() {
-  uni.navigateBack()
+function goBack() { 
+  uni.navigateBack() 
 }
 
-function onAnonymousChange(e: any) {
-  formData.value.is_anonymous = (e.detail.value as boolean)
+function onTitleImgError() {
+  titleImgError.value = true
 }
 
-function chooseImage() {
-  chooseImageFrom('all')
+function onAnonymousChange(e: any) { 
+  formData.value.is_anonymous = (e.detail.value as boolean) 
+}
+
+function chooseImage() { 
+  chooseImageFrom('all') 
 }
 
 function chooseImageFrom(type: string) {
   let sourceType = ['album', 'camera']
   if (type === 'camera') sourceType = ['camera']
   if (type === 'album') sourceType = ['album']
-
+  
   uni.chooseImage({
     count: 9 - localImages.value.length,
     sizeType: ['compressed'],
@@ -159,290 +222,212 @@ function chooseImageFrom(type: string) {
   })
 }
 
-function previewImage(current: number) {
-  uni.previewImage({
-    urls: localImages.value,
-    current: current
-  })
+function previewImage(current: number) { 
+  uni.previewImage({ urls: localImages.value, current }) 
 }
 
-function removeImage(index: number) {
-  localImages.value.splice(index, 1)
+function removeImage(index: number) { 
+  localImages.value.splice(index, 1) 
 }
 
 async function submitPost() {
   if (!canPublish.value) return
-  
   isPublishing.value = true
-  uni.showLoading({ title: 'Packing emotions...' })
-
+  uni.showLoading({ title: '正在打包情绪...' })
+  
   try {
-    await createPost({
+    const res = await createPost({
       title: formData.value.title,
       content: formData.value.content,
-      images: [] as string[], 
+      images: [] as string[],
       is_anonymous: formData.value.is_anonymous
     })
-
-    uni.hideLoading()
-    uni.showToast({ title: 'Emotions dropped.', icon: 'success' })
-    uni.$emit('refreshPosts')
     
-    setTimeout(() => {
-      uni.navigateBack()
-    }, 1200)
-
+    uni.hideLoading()
+    if (res != null) {
+      uni.showToast({ title: '情绪已丢弃', icon: 'success' })
+      uni.$emit('refreshPosts')
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1200)
+    }
   } catch (e) {
     isPublishing.value = false
     uni.hideLoading()
-    uni.showToast({ title: 'Failed to drop', icon: 'none' })
+    uni.showToast({ title: '发送失败，请重试', icon: 'none' })
   }
 }
 </script>
 
 <style lang="scss" scoped>
+$bg:          #F9F5EE;
+$surface:     #FFFFFF;
+$ink-dark:    #1C1917;
+$ink-mid:     #44403C;
+$ink-light:   #78716C;
+$ink-muted:   #A8A29E;
+$border:      #E7E0D8;
+$accent:      #3D3530;
+$accent-warm: #8B6F5E;
+$error:       #C0392B;
+$radius-sm:   8rpx;
+
 .publish-page {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #FDFAF3; /* 温暖纸张底色 */
+  background-color: $bg;
 }
 
-/* 艺术化导航栏 */
 .custom-nav {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
-  padding: 100rpx 32rpx 20rpx;
-  background-color: rgba(253, 250, 243, 0.8);
-  backdrop-filter: blur(4px);
-  
-  .back-arrow {
-    font-size: 44rpx;
-    color: #475569;
-    font-weight: 300;
-  }
-  
-  .nav-middle {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    .nav-title-img {
-      width: 240rpx;
-      height: 60rpx;
-    }
-  }
-  
-  .publish-btn {
-    height: 56rpx;
-    line-height: 56rpx;
-    padding: 0 32rpx;
-    background-color: #E2E8F0;
-    color: #94A3B8;
-    font-size: 24rpx;
-    border-radius: 12rpx;
-    margin: 0;
-    border: none;
-    font-weight: 600;
-    
-    &::after { border: none; }
-    
-    &.active {
-      background-color: #86929B;
-      color: #FFFFFF;
-    }
-  }
+  justify-content: space-between;
+  padding: 100rpx 36rpx 24rpx;
+  background-color: rgba(249, 245, 238, 0.95);
+  z-index: 10;
 }
 
-.editor-scroll {
-  flex: 1;
+.back-circle {
+  width: 68rpx; height: 68rpx; border-radius: 50%;
+  border: 1.5rpx solid #C5BEB5; background-color: $surface;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
 }
+.back-arrow { font-size: 36rpx; color: $ink-dark; }
 
-/* 用户头 */
-.user-header {
-  padding: 40rpx 40rpx 20rpx;
+.nav-middle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: row;
   align-items: center;
-  position: relative;
+  justify-content: center;
+  height: 60rpx;
   
-  .user-avatar {
-    width: 64rpx;
-    height: 64rpx;
-    border-radius: 50%;
-    border: 1rpx solid #E2E8F0;
-    background-color: #FFF;
+  .nav-title-img {
+    width: 350rpx;
+    height: 120rpx;
+    /* 混合模式：保持与背景的融合感 */
+    mix-blend-mode: multiply;
+    /* 色差强化方案：提升饱和度 + 微调色相 + 优化对比，使色彩更加鲜活明显 */
+    filter: brightness(0.9) contrast(1.15) saturate(1.4) hue-rotate(1deg);
+    /* 略微降低透明度损失，增强色彩存在感，同时仍保留背景纹理呼吸感 */
+    opacity: 0.9;
   }
   
-  .user-id {
-    margin-left: 16rpx;
-    font-size: 24rpx;
-    color: #64748B;
-    font-weight: 500;
-    letter-spacing: 1rpx;
-  }
-  
-  /* 装饰线条 */
-  .deco-lines {
-    position: absolute;
-    right: 40rpx;
-    top: 20rpx;
-    width: 100rpx;
-    height: 100rpx;
-    border-right: 1rpx solid #E2E8F0;
-    border-top: 1rpx solid #E2E8F0;
-    opacity: 0.5;
+  .nav-title-text {
+    display: flex; 
+    flex-direction: row; 
+    align-items: baseline; 
+    gap: 8rpx;
+    .title-word { font-size: 30rpx; font-weight: 700; color: $ink-dark; letter-spacing: 4rpx; }
+    .title-word--light { font-weight: 300; color: $ink-light; }
   }
 }
 
-.editor-container {
-  padding: 20rpx 40rpx 100rpx;
-}
-
-.title-input-wrapper {
-  margin-bottom: 32rpx;
-  .title-input {
-    font-size: 36rpx;
-    color: #1E293B;
-    padding: 16rpx 24rpx;
-    border: 1rpx solid #E2E8F0;
-    border-radius: 12rpx;
-    background-color: rgba(255,255,255,0.3);
+.publish-btn {
+  height: 60rpx; line-height: 60rpx; padding: 0 36rpx;
+  background-color: transparent; border: 1.5rpx solid #C5BEB5; border-radius: 30rpx;
+  .btn-text { font-size: 24rpx; color: $ink-muted; font-weight: 600; }
+  &.active {
+    background-color: $accent; border-color: $accent;
+    .btn-text { color: #FFF; }
   }
 }
 
-.content-input {
-  width: 100%;
-  min-height: 400rpx;
-  font-size: 32rpx;
-  line-height: 1.8;
-  color: #334155;
-  margin-bottom: 20rpx;
-  font-family: "Georgia", serif;
+/* ================= 编辑区域 ================= */
+.editor-container { padding: 20rpx 36rpx 160rpx; }
+
+.section-box {
+  margin-bottom: 40rpx;
+  .box-header {
+    display: flex; flex-direction: row; align-items: center; margin-bottom: 16rpx;
+    .label-no { font-size: 20rpx; color: $ink-muted; font-weight: 800; margin-right: 12rpx; }
+    .label-text { font-size: 22rpx; color: $ink-light; font-weight: 600; text-transform: uppercase; letter-spacing: 2rpx; }
+    .media-count { margin-left: auto; font-size: 18rpx; color: $ink-muted; }
+  }
 }
+
+.input-wrapper {
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 1.5rpx solid $border;
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  transition: all 0.3s ease;
+  .title-input { font-size: 34rpx; color: $ink-dark; font-weight: 600; width: 100%; background: transparent; }
+}
+
+.content-wrapper {
+  min-height: 400rpx; display: flex; flex-direction: column;
+  .content-input { flex: 1; font-size: 30rpx; line-height: 1.8; color: $ink-mid; width: 100%; background: transparent; }
+  .char-count-row { display: flex; justify-content: flex-end; margin-top: 20rpx; .char-count { font-size: 18rpx; color: $ink-muted; } }
+}
+
+.no-border .input-wrapper { border: none; background: transparent; padding: 0; }
+.ph-color { color: #C9C0B8; font-weight: 300; }
 
 .error-tip {
-  margin-bottom: 40rpx;
-  transition: opacity 0.3s;
-  .error-text {
-    font-size: 22rpx;
-    color: #E57373;
-    font-style: italic;
-  }
+  display: flex; flex-direction: row; align-items: center; margin: -20rpx 0 40rpx 10rpx; transition: opacity 0.3s;
+  .error-dot { font-size: 14rpx; color: $error; margin-right: 10rpx; }
+  .error-text { font-size: 20rpx; color: $error; font-style: italic; }
 }
 
-.ph-color {
-  color: #CBD5E1;
-  font-weight: 300;
-}
-
-/* 媒体区块 */
-.media-section {
-  .section-title {
-    font-size: 24rpx;
-    color: #94A3B8;
-    margin-bottom: 24rpx;
-    text-transform: uppercase;
-    letter-spacing: 2rpx;
-  }
-}
-
-.image-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 16rpx;
-}
-
+.image-grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 14rpx; }
 .image-box {
-  width: 212rpx;
-  height: 212rpx;
-  border-radius: 12rpx;
-  position: relative;
-  background-color: #F8FAFC;
-  overflow: hidden;
-  
+  width: 216rpx; height: 216rpx; border-radius: 16rpx; position: relative; overflow: hidden; background-color: $surface;
   .preview-img { width: 100%; height: 100%; }
-  
   .delete-btn {
-    position: absolute;
-    top: 8rpx;
-    right: 8rpx;
-    width: 36rpx;
-    height: 36rpx;
-    background-color: rgba(0, 0, 0, 0.3);
-    color: #FFFFFF;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 18rpx;
-    z-index: 10;
+    position: absolute; top: 10rpx; right: 10rpx; width: 36rpx; height: 36rpx;
+    background-color: rgba(0,0,0,0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    .delete-icon { font-size: 16rpx; color: #FFF; }
   }
 }
-
 .upload-box {
-  border: 2rpx dashed #CBD5E1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .plus-icon { font-size: 50rpx; color: #94A3B8; font-weight: 200; }
+  border: 2rpx dashed $border; background-color: rgba(255,255,255,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center;
+  .plus-icon { font-size: 48rpx; color: $ink-muted; font-weight: 200; }
+  .plus-sub { font-size: 18rpx; color: $ink-muted; margin-top: 4rpx; }
 }
 
-/* 进度环模拟 */
-.upload-progress {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(255,255,255,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .progress-ring {
-    width: 40rpx;
-    height: 40rpx;
-    border: 3rpx solid #86929B;
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: rotate 1s linear infinite;
-  }
-}
-
-@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* 底部快捷工具 */
 .bottom-toolbar {
-  background-color: #FDFAF3;
-  padding: 20rpx 40rpx 60rpx;
-  border-top: 1rpx solid #F1F5F9;
-  
-  .toolbar-left {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    
-    .tool-btn {
-      padding: 10rpx 20rpx;
-      margin-right: 10rpx;
-      .tool-icon { font-size: 40rpx; }
-      &:active { opacity: 0.6; }
-    }
-    
-    .divider {
-      width: 1rpx;
-      height: 40rpx;
-      background-color: #E2E8F0;
-      margin: 0 20rpx;
-    }
-    
-    .anonymous-box {
-      flex: 1;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      .anon-label { font-size: 24rpx; color: #86929B; font-weight: 500; }
-    }
+  position: fixed; bottom: 0; left: 0; right: 0; background-color: rgba(249, 245, 238, 0.98);
+  border-top: 1rpx solid $border; padding: 20rpx 40rpx calc(20rpx + env(safe-area-inset-bottom));
+}
+.toolbar-inner { display: flex; flex-direction: row; align-items: center; }
+.tool-btn {
+  width: 80rpx; height: 80rpx; display: flex; align-items: center; justify-content: center;
+}
+
+.icon-camera {
+  width: 44rpx; height: 32rpx; position: relative;
+  .camera-body { width: 100%; height: 100%; border: 3rpx solid $ink-mid; border-radius: 6rpx; }
+  .camera-lens { 
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 14rpx; height: 14rpx; border: 3rpx solid $ink-mid; border-radius: 50%;
   }
+  .camera-top {
+    position: absolute; top: -6rpx; left: 10rpx; width: 12rpx; height: 4rpx;
+    background-color: $ink-mid; border-radius: 2rpx 2rpx 0 0;
+  }
+}
+
+.icon-gallery {
+  width: 40rpx; height: 36rpx; position: relative;
+  .gallery-back {
+    position: absolute; right: 0; top: 0; width: 32rpx; height: 28rpx;
+    border: 3rpx solid $ink-light; border-radius: 4rpx; background-color: $bg;
+  }
+  .gallery-front {
+    position: absolute; left: 0; bottom: 0; width: 32rpx; height: 28rpx;
+    border: 3rpx solid $ink-mid; border-radius: 4rpx; background-color: $surface;
+  }
+}
+
+.toolbar-divider { width: 1rpx; height: 40rpx; background-color: $border; margin: 0 30rpx; }
+.anonymous-row { flex: 1; display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+  .anon-label { font-size: 24rpx; color: $ink-mid; font-weight: 600; }
+  .anon-desc { font-size: 18rpx; color: $ink-muted; margin-top: 2rpx; }
 }
 </style>
