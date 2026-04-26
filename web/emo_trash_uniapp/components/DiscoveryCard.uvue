@@ -1,21 +1,19 @@
 <template>
   <view class="card-container" @click="onClick">
-    <!-- 上层主内容：左文右图 -->
     <view class="card-main">
-      <view class="text-content">
+      <view class="text-content" :class="{ 'full-width': !hasImage }">
         <text class="title">{{ post.title || '无题' }}</text>
         <text class="excerpt">{{ post.content || '把不想带走的情绪丢在这里...' }}</text>
       </view>
-      
-      <image 
-        v-if="post.images && post.images.length > 0" 
-        class="cover-image" 
-        :src="post.images[0]" 
+
+      <image
+        v-if="hasImage"
+        class="cover-image"
+        :src="post.images[0]"
         mode="aspectFill"
       ></image>
     </view>
 
-    <!-- 下层互动区 -->
     <view class="card-footer">
       <view class="footer-left">
         <view class="icon-bubble">
@@ -24,7 +22,7 @@
         </view>
         <text class="likes-text">{{ post.like_count || 0 }}人也这样</text>
       </view>
-      
+
       <view class="footer-right">
         <text class="time-text">{{ formatTime(post.created_at) }}</text>
         <view class="more-btn">
@@ -36,6 +34,8 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   post: {
     type: Object,
@@ -45,12 +45,13 @@ const props = defineProps({
 
 const emit = defineEmits(['click'])
 
+const hasImage = computed(() => props.post.images && props.post.images.length > 0)
+
 function onClick() {
   emit('click', props.post.id)
 }
 
-function formatTime(timestamp: number): string {
-  // 简易时间格式化，实际可接入更复杂的工具函数
+function formatTime(timestamp) {
   const now = Date.now()
   const diff = (now - timestamp) / 1000
   if (diff < 60) return '刚刚'
@@ -62,33 +63,43 @@ function formatTime(timestamp: number): string {
 
 <style lang="scss" scoped>
 .card-container {
-  background-color: #FFFFFF;
+  background-color: var(--card-bg, rgba(252, 251, 252, 1));
+  backdrop-filter: blur(16rpx);
+  -webkit-backdrop-filter: blur(16rpx);
   border-radius: 32rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.4);
   padding: 36rpx 32rpx 28rpx 32rpx;
   margin: 0 32rpx 24rpx 32rpx;
   box-shadow: 0 8rpx 32rpx rgba(107, 139, 164, 0.04);
   display: flex;
   flex-direction: column;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-main {
   display: flex;
   flex-direction: row;
+  /* 如果文字很少，让图片和文字居中对齐更好看 */
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 28rpx;
 }
 
 .text-content {
-  flex: 1;
+  flex: 1; /* 核心：吃掉所有剩余空间 */
   display: flex;
   flex-direction: column;
-  margin-right: 24rpx;
+  margin-right: 32rpx; /* 给右边图片留出固定的呼吸空间 */
+
+  &.full-width {
+    margin-right: 0;
+  }
 }
 
 .title {
   font-size: 32rpx;
   font-weight: 600;
-  color: #334155; /* 深灰蓝色 */
+  color: #334155;
   line-height: 1.4;
   margin-bottom: 14rpx;
   display: -webkit-box;
@@ -99,7 +110,7 @@ function formatTime(timestamp: number): string {
 
 .excerpt {
   font-size: 26rpx;
-  color: #707070; /* 中灰色 */
+  color: #707070;
   line-height: 1.6;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -108,13 +119,15 @@ function formatTime(timestamp: number): string {
 }
 
 .cover-image {
-  width: 200rpx;
-  height: 130rpx;
+  /* 核心优化：给定绝对尺寸，绝不拉伸变形 */
+  width: 220rpx;
+  height: 140rpx;
   border-radius: 16rpx;
   background-color: #F8F9F9;
-  flex-shrink: 0;
+  flex-shrink: 0; /* 核心：告诉浏览器无论左边字多长，都不准把我的图片挤压变窄 */
 }
 
+/* 底部样式维持不变 */
 .card-footer {
   display: flex;
   flex-direction: row;
@@ -130,49 +143,13 @@ function formatTime(timestamp: number): string {
 }
 
 .icon-bubble {
-  width: 24rpx;
-  height: 20rpx;
-  margin-right: 10rpx;
-  position: relative;
-  .bubble-rect {
-    width: 100%;
-    height: 16rpx;
-    border: 2rpx solid #6B8BA4;
-    border-radius: 4rpx;
-  }
-  .bubble-tip {
-    position: absolute;
-    bottom: -2rpx;
-    left: 4rpx;
-    width: 6rpx;
-    height: 6rpx;
-    border-left: 2rpx solid #6B8BA4;
-    border-bottom: 2rpx solid #6B8BA4;
-    background-color: #FFF;
-    transform: rotate(45deg);
-  }
+  width: 24rpx; height: 20rpx; margin-right: 10rpx; position: relative;
+  .bubble-rect { width: 100%; height: 16rpx; border: 2rpx solid #6B8BA4; border-radius: 4rpx; }
+  .bubble-tip { position: absolute; bottom: -2rpx; left: 4rpx; width: 6rpx; height: 6rpx; border-left: 2rpx solid #6B8BA4; border-bottom: 2rpx solid #6B8BA4; background-color: #FFF; transform: rotate(45deg); }
 }
 
-.likes-text {
-  font-size: 22rpx;
-  font-weight: 500;
-}
-
-.footer-right {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  color: #BDBDBD;
-}
-
-.time-text {
-  font-size: 22rpx;
-  margin-right: 16rpx;
-}
-
-.icon-more {
-  font-size: 32rpx;
-  font-weight: 700;
-  line-height: 1;
-}
+.likes-text { font-size: 22rpx; font-weight: 500; }
+.footer-right { display: flex; flex-direction: row; align-items: center; color: #BDBDBD; }
+.time-text { font-size: 22rpx; margin-right: 16rpx; }
+.icon-more { font-size: 32rpx; font-weight: 700; line-height: 1; }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <view class="tabbar-container">
+  <view class="tabbar-container" :class="uiStore.isNightMode ? 'theme-night' : 'theme-day'">
     <view class="tabbar-inner">
       <!-- 发现 -->
       <view class="tab-item" @click="handleTabClick('/pages/index/index')">
@@ -45,9 +45,7 @@ function syncCurrentPath() {
   const pages = getCurrentPages()
   if (pages.length > 0) {
     let route = pages[pages.length - 1].route
-    if (!route.startsWith('/')) {
-      route = '/' + route
-    }
+    if (!route.startsWith('/')) route = '/' + route
     uiStore.setActiveTab(route)
   }
 }
@@ -57,9 +55,7 @@ function handleTabClick(url: string) {
     uiStore.setActiveTab(url)
     uni.reLaunch({
       url: url,
-      fail: (err) => {
-        console.error('页面跳转失败:', err)
-      }
+      fail: (err) => { console.error('页面跳转失败:', err) }
     })
   }
 }
@@ -73,15 +69,19 @@ function toCreate() {
 </script>
 
 <style lang="scss" scoped>
+/* ================= 主题感知 TabBar 样式 ================= */
+.theme-night { --local-tab-bg: #F0F2F6; }
+.theme-day { --local-tab-bg: #FDFAF3; }
+
 .tabbar-container {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #FDFAF3;
+  bottom: 0; left: 0; right: 0;
+  background-color: var(--local-tab-bg);
   z-index: 999;
   border-top: 1rpx solid rgba(107, 139, 164, 0.06);
   overflow: visible; 
+  /* 关键：同步全局背景色的渐变速度 */
+  transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tabbar-inner {
@@ -100,78 +100,37 @@ function toCreate() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* 扩大点击热区 */
   height: 100%;
   width: 160rpx; 
-  /* 增加点击反馈 */
-  &:active {
-    opacity: 0.7;
-  }
+  &:active { opacity: 0.7; }
 
-  .tab-icon {
-    width: 52rpx;
-    height: 52rpx;
-    margin-bottom: 4rpx;
-    pointer-events: none; /* 确保点击穿透到父容器 */
-  }
-
+  .tab-icon { width: 52rpx; height: 52rpx; margin-bottom: 4rpx; pointer-events: none; }
   .tab-text {
-    font-size: 20rpx;
-    color: #BDBDBD;
-    pointer-events: none;
-
-    &.active {
-      color: #6B8BA4;
-      font-weight: 600;
-    }
+    font-size: 20rpx; color: #BDBDBD; pointer-events: none;
+    &.active { color: #6B8BA4; font-weight: 600; }
   }
 }
 
 .tab-item-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: -46rpx; 
-  z-index: 10;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20rpx; 
+  position: absolute; left: 50%; transform: translateX(-50%); top: -46rpx; 
+  z-index: 10; display: flex; justify-content: center; align-items: center; padding: 20rpx; 
 }
 
 .plus-btn-outer {
   padding: 12rpx;
-  background-color: #FDFAF3;
+  background-color: var(--local-tab-bg);
   border-radius: 50%;
+  /* 确保按钮外圈也同步变色 */
+  transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.plus-btn {
-  width: 112rpx;
-  height: 112rpx;
-  background-color: #6B8BA4;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* 优化阴影：中心弥散，更干净 */
 
+.plus-btn {
+  width: 112rpx; height: 112rpx; background-color: #6B8BA4; border-radius: 50%;
+  display: flex; justify-content: center; align-items: center;
   box-shadow: 0 0 32rpx rgba(107, 139, 164, 0.35);
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-  .plus-icon {
-    color: #FFFFFF;
-    font-size: 72rpx;
-    font-weight: 200;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-
-  &:active {
-    transform: scale(0.85);
-    box-shadow: 0 0 12rpx rgba(107, 139, 164, 0.2);
-  }
+  .plus-icon { color: #FFFFFF; font-size: 72rpx; font-weight: 200; line-height: 1; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  &:active { transform: scale(0.85); box-shadow: 0 0 12rpx rgba(107, 139, 164, 0.2); }
 }
 
 .safe-area-placeholder {

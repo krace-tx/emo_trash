@@ -45,8 +45,8 @@
         <view class="quote-wrapper">
           <text class="bg-quote-mark">“</text>
           <view class="text-group">
-            <text class="quote-main">有时候真的不知道\n为什么会难受</text>
-            <text class="quote-author">—— 某个匿名的人</text>
+            <text class="quote-main">有些情绪像深夜的阵雨，\n找不到落下的原因</text>
+            <text class="quote-author">—— 佚名</text>
           </view>
         </view>
 

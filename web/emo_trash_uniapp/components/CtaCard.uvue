@@ -1,18 +1,18 @@
 <template>
   <view class="quote-card" @click="$emit('click')">
     <view class="quote-content">
-      <!-- 装饰性引号：内缩定位，防止被边距切割 -->
-      <text class="quote-mark mark-left">“</text>
-      
-      <view class="text-group">
-        <text class="main-text">你不是一个人</text>
-        <text class="author">—— 某个匿名的人</text>
-      </view>
+      <view class="quote-inner">
+        <text class="quote-mark mark-left">“</text>
 
-      <text class="quote-mark mark-right">”</text>
+        <view class="text-group">
+          <text class="main-text">起风的时候，\n情绪也跟着失去了方向</text>
+          <text class="author">—— 远方的回声</text>
+        </view>
+
+        <text class="quote-mark mark-right">”</text>
+      </view>
     </view>
 
-    <!-- 插图区：控制比例与高度对齐 -->
     <view class="illustration-wrapper">
       <image class="illustration" src="/static/card/illustration.png" mode="aspectFit"></image>
     </view>
@@ -29,42 +29,50 @@ defineEmits(['click'])
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: #FBFBFB; /* 切换为指定的 FBFBFB */
+  background-color: var(--card-bg, rgba(250, 250, 250, 1));
+  backdrop-filter: blur(16rpx);
+  -webkit-backdrop-filter: blur(16rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.4);
   border-radius: 28rpx;
-  padding: 32rpx 40rpx; /* 紧凑内边距 */
+  padding: 32rpx 40rpx;
   margin: 0 32rpx 24rpx 32rpx;
-  min-height: 180rpx; /* 与插图高度对齐 */
+  min-height: 180rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.02);
-  overflow: visible;
+  overflow: hidden;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .quote-content {
-  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0 40rpx; /* 为内部引号留出安全宽度 */
+  /* 👇 核心修复：阻止内层容器被强行拉伸充满 100% */
+  align-items: flex-start;
+}
+
+
+
+/* 核心修复1：这个内层容器宽度由内容撑开，且作为绝对定位的锚点 */
+.quote-inner {
+  position: relative;
+  display: inline-flex; /* 紧贴内容宽度 */
+  flex-direction: column;
+  padding: 0 40rpx 0 30rpx; /* 为左右悬浮的引号预留出安全空间 */
 }
 
 .quote-mark {
   position: absolute;
-  font-size: 72rpx; /* 适当减小，更显高级精致 */
-  color: #CBD5E1; /* 加深颜色，增加与 FBFBFB 的对比度 */
+  font-size: 72rpx;
+  color: #CBD5E1;
   font-family: Georgia, serif;
   line-height: 1;
   z-index: 0;
 }
 
-.mark-left {
-  top: -10rpx; 
-  left: 0;
-}
-
-.mark-right {
-  bottom: -20rpx;
-  right: 0;
-}
+/* 引号完美挂载在文字两侧 */
+.mark-left { top: -10rpx; left: 0; }
+.mark-right { bottom: -20rpx; right: 0; }
 
 .text-group {
   display: flex;
@@ -79,26 +87,44 @@ defineEmits(['click'])
   font-weight: 600;
   letter-spacing: 4rpx;
   margin-bottom: 8rpx;
-  /* 优先使用思源宋体/衬线体 */
-  font-family: "Source Han Serif SC", "Source Han Serif CN", "Noto Serif CJK SC", "Noto Serif SC", serif;
+  font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+  /* 👇 增加保留空白和换行特性，让 \n 绝对生效 */
+  white-space: pre-wrap;
 }
 
 .author {
   font-size: 20rpx;
-  color: #94A3B8; /* 次级文字颜色 */
+  color: #94A3B8;
   letter-spacing: 1rpx;
   font-weight: 300;
 }
 
+/* ================= 插图融合核心样式 ================= */
 .illustration-wrapper {
-  flex-shrink: 0; 
+  flex-shrink: 0;
+  position: relative;
   display: flex;
   align-items: center;
 }
 
 .illustration {
-  width: 180rpx; 
-  height: 140rpx; /* 与卡片高度基本一致 */
+  width: 220rpx;
+  height: 160rpx;
   opacity: 0.9;
+}
+
+/* 融合遮罩 */
+.blend-mask {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60rpx;
+  background: linear-gradient(
+    to bottom,
+    rgba(250, 250, 250, 0) 0%,
+    var(--card-bg, rgba(250, 250, 250, 1)) 100%
+  );
+  pointer-events: none;
 }
 </style>

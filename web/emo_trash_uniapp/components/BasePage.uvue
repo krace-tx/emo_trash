@@ -1,7 +1,9 @@
 <template>
   <view class="page-base" :class="uiStore.isNightMode ? 'theme-night' : 'theme-day'">
-    <!-- 动态背景层 -->
-    <view class="dynamic-bg"></view>
+    <!-- 夜晚背景图层 -->
+    <view class="bg-layer night-layer" :style="{ opacity: uiStore.isNightMode ? 1 : 0 }"></view>
+    <!-- 白天背景图层 -->
+    <view class="bg-layer day-layer" :style="{ opacity: uiStore.isNightMode ? 0 : 1 }"></view>
     
     <!-- 内容插槽 -->
     <view class="page-content">
@@ -18,31 +20,46 @@ import { uiStore } from '@/stores/ui'
 .page-base {
   min-height: 100vh;
   position: relative;
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
-.dynamic-bg {
+/* ================= 通用背景图层样式 ================= */
+.bg-layer {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 800rpx; /* 顶部背景图高度 */
+  top: 0; left: 0; right: 0;
+  height: 900rpx; /* 增加背景图高度 */
   background-size: 100% auto;
   background-repeat: no-repeat;
   z-index: 0;
-  transition: background-image 0.6s ease;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   
-  /* 渐变遮罩，使背景图自然消融 */
+  /* 优化：消除切割线的超级渐变遮罩 */
   &::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 300rpx;
-    background: linear-gradient(to bottom, transparent, var(--page-bg));
+    bottom: 0; left: 0; right: 0;
+    height: 500rpx; /* 扩大雾化范围 */
+    /* 从透明平滑过渡到页面背景色 */
+    background: linear-gradient(to bottom, 
+      rgba(240, 242, 246, 0) 0%, 
+      rgba(240, 242, 246, 0.4) 40%, 
+      var(--page-bg) 100%
+    );
+    transition: background 0.8s ease;
   }
+}
+
+.night-layer { background-image: url('/static/index/bg-night.png'); }
+.day-layer { background-image: url('/static/index/bg-day.png'); }
+
+/* 专门处理白天模式的遮罩颜色 */
+.theme-day .bg-layer::after {
+  background: linear-gradient(to bottom, 
+    rgba(253, 250, 243, 0) 0%, 
+    rgba(253, 250, 243, 0.4) 40%, 
+    var(--page-bg) 100%
+  );
 }
 
 .page-content {
@@ -51,32 +68,20 @@ import { uiStore } from '@/stores/ui'
   min-height: 100vh;
 }
 
-/* ================= 主题变量定义 ================= */
+/* ================= 主题变量 ================= */
 .theme-night {
   --page-bg: #F0F2F6;
-  --text-main: #334155;
-  --text-sub: #707070;
-  --topbar-bg: rgba(255, 255, 255, 0.12); /* 夜晚模式顶部栏透明度 */
+  --card-bg: rgba(255, 255, 255, 0.75); /* 毛玻璃材质 */
+  --topbar-bg: rgba(240, 242, 246, 0.12);
   --quote-mark-color: rgba(255, 255, 255, 0.3);
-  --glass-bg: rgba(255, 255, 255, 0.15);
-  
   background-color: var(--page-bg);
-  .dynamic-bg {
-    background-image: url('/static/index/bg-night.png');
-  }
 }
 
 .theme-day {
   --page-bg: #FDFAF3;
-  --text-main: #334155;
-  --text-sub: #8A96A8;
-  --topbar-bg: rgba(253, 250, 243, 0.65); /* 清晨模式顶部栏透明度 */
+  --card-bg: rgba(255, 255, 255, 0.8); /* 毛玻璃材质 */
+  --topbar-bg: rgba(253, 250, 243, 0.65);
   --quote-mark-color: rgba(107, 139, 164, 0.12);
-  --glass-bg: rgba(107, 139, 164, 0.08);
-
   background-color: var(--page-bg);
-  .dynamic-bg {
-    background-image: url('/static/index/bg-day.png');
-  }
 }
 </style>
