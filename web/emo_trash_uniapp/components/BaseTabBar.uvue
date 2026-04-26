@@ -64,7 +64,7 @@ function toCreate() {
   // #ifdef APP-PLUS
   uni.vibrateShort()
   // #endif
-  uni.navigateTo({ url: '/pages/post/create' })
+  uni.navigateTo({ url: '/pages/post/create/index' })
 }
 </script>
 

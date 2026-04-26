@@ -1,0 +1,448 @@
+<template>
+  <view class="publish-page">
+    <!-- ① 艺术化顶部导航栏 -->
+    <view class="custom-nav">
+      <view class="nav-left" @click="goBack">
+        <text class="back-arrow">←</text>
+      </view>
+      <view class="nav-middle">
+        <image src="/static/post/title.png" mode="aspectFit" class="nav-title-img"></image>
+      </view>
+      <view class="nav-right">
+        <button 
+          class="publish-btn" 
+          :class="{ active: canPublish }" 
+          :disabled="!canPublish"
+          @click="submitPost"
+        >
+          Publish
+        </button>
+      </view>
+    </view>
+
+    <scroll-view scroll-y class="editor-scroll">
+      <!-- ② 用户信息区 (着陆感) -->
+      <view class="user-header">
+        <image class="user-avatar" :src="userStore.userInfo?.avatar || '/static/logo.png'" mode="aspectFill"></image>
+        <text class="user-id">@{{ userStore.userInfo?.nickname || 'MindTraveler' }}</text>
+        <!-- 背景点缀线条可通过 CSS 或背景图模拟 -->
+        <view class="deco-lines"></view>
+      </view>
+
+      <view class="editor-container">
+        <!-- ③ 标题输入 (细边框) -->
+        <view class="title-input-wrapper">
+          <input 
+            class="title-input" 
+            v-model="formData.title" 
+            placeholder="Title..." 
+            placeholder-class="ph-color"
+            maxlength="30"
+          />
+        </view>
+        
+        <!-- 正文输入 -->
+        <textarea 
+          class="content-input" 
+          v-model="formData.content" 
+          placeholder="Write down the thoughts you don't want to take away..." 
+          placeholder-class="ph-color"
+          :maxlength="-1" 
+          auto-height
+          :focus="true"
+        ></textarea>
+
+        <!-- 错误提示 -->
+        <view class="error-tip" :style="{ opacity: showEmptyTip ? 1 : 0 }">
+          <text class="error-text">* 内容不能为空 / Content cannot be empty</text>
+        </view>
+
+        <!-- ④ 九宫格媒体区 -->
+        <view class="media-section">
+          <view class="section-title">Attachments</view>
+          <view class="image-grid">
+            <view class="image-box upload-box" @click="chooseImage" v-if="localImages.length < 9">
+              <text class="plus-icon">+</text>
+            </view>
+            <view class="image-box" v-for="(img, index) in localImages" :key="index">
+              <image :src="img" mode="aspectFill" class="preview-img" @click="previewImage(index)"></image>
+              <view class="delete-btn" @click.stop="removeImage(index)">✕</view>
+              <!-- 模拟上传进度环 (仅为演示) -->
+              <view class="upload-progress" v-if="index === 0 && isPublishing">
+                <view class="progress-ring"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- ⑤ 底部快捷工具栏 -->
+    <view class="bottom-toolbar">
+      <view class="toolbar-left">
+        <view class="tool-btn" @click="chooseImageFrom('camera')">
+          <text class="tool-icon">📷</text>
+        </view>
+        <view class="tool-btn" @click="chooseImageFrom('album')">
+          <text class="tool-icon">🖼️</text>
+        </view>
+        <view class="divider"></view>
+        <view class="anonymous-box">
+          <text class="anon-label">Post Anonymously</text>
+          <switch 
+            :checked="formData.is_anonymous" 
+            @change="onAnonymousChange" 
+            color="#86929B"
+            style="transform: scale(0.7);"
+          />
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { createPost } from '@/api/post'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+const isPublishing = ref(false)
+
+// 表单数据
+const formData = ref({
+  title: '',
+  content: '',
+  images: [] as string[],
+  is_anonymous: false
+})
+
+// 本地预览图
+const localImages = ref<string[]>([])
+
+// 是否显示空内容提示
+const showEmptyTip = computed((): boolean => {
+  return formData.value.content.trim().length === 0 && formData.value.title.length > 0
+})
+
+// 是否可以发布
+const canPublish = computed((): boolean => {
+  return formData.value.content.trim().length > 0
+})
+
+function goBack() {
+  uni.navigateBack()
+}
+
+function onAnonymousChange(e: any) {
+  formData.value.is_anonymous = (e.detail.value as boolean)
+}
+
+function chooseImage() {
+  chooseImageFrom('all')
+}
+
+function chooseImageFrom(type: string) {
+  let sourceType = ['album', 'camera']
+  if (type === 'camera') sourceType = ['camera']
+  if (type === 'album') sourceType = ['album']
+
+  uni.chooseImage({
+    count: 9 - localImages.value.length,
+    sizeType: ['compressed'],
+    sourceType: sourceType,
+    success: (res) => {
+      if (res.tempFilePaths != null && res.tempFilePaths.length > 0) {
+        localImages.value = localImages.value.concat(res.tempFilePaths)
+      }
+    }
+  })
+}
+
+function previewImage(current: number) {
+  uni.previewImage({
+    urls: localImages.value,
+    current: current
+  })
+}
+
+function removeImage(index: number) {
+  localImages.value.splice(index, 1)
+}
+
+async function submitPost() {
+  if (!canPublish.value) return
+  
+  isPublishing.value = true
+  uni.showLoading({ title: 'Packing emotions...' })
+
+  try {
+    await createPost({
+      title: formData.value.title,
+      content: formData.value.content,
+      images: [] as string[], 
+      is_anonymous: formData.value.is_anonymous
+    })
+
+    uni.hideLoading()
+    uni.showToast({ title: 'Emotions dropped.', icon: 'success' })
+    uni.$emit('refreshPosts')
+    
+    setTimeout(() => {
+      uni.navigateBack()
+    }, 1200)
+
+  } catch (e) {
+    isPublishing.value = false
+    uni.hideLoading()
+    uni.showToast({ title: 'Failed to drop', icon: 'none' })
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.publish-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #FDFAF3; /* 温暖纸张底色 */
+}
+
+/* 艺术化导航栏 */
+.custom-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 100rpx 32rpx 20rpx;
+  background-color: rgba(253, 250, 243, 0.8);
+  backdrop-filter: blur(4px);
+  
+  .back-arrow {
+    font-size: 44rpx;
+    color: #475569;
+    font-weight: 300;
+  }
+  
+  .nav-middle {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    .nav-title-img {
+      width: 240rpx;
+      height: 60rpx;
+    }
+  }
+  
+  .publish-btn {
+    height: 56rpx;
+    line-height: 56rpx;
+    padding: 0 32rpx;
+    background-color: #E2E8F0;
+    color: #94A3B8;
+    font-size: 24rpx;
+    border-radius: 12rpx;
+    margin: 0;
+    border: none;
+    font-weight: 600;
+    
+    &::after { border: none; }
+    
+    &.active {
+      background-color: #86929B;
+      color: #FFFFFF;
+    }
+  }
+}
+
+.editor-scroll {
+  flex: 1;
+}
+
+/* 用户头 */
+.user-header {
+  padding: 40rpx 40rpx 20rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+  
+  .user-avatar {
+    width: 64rpx;
+    height: 64rpx;
+    border-radius: 50%;
+    border: 1rpx solid #E2E8F0;
+    background-color: #FFF;
+  }
+  
+  .user-id {
+    margin-left: 16rpx;
+    font-size: 24rpx;
+    color: #64748B;
+    font-weight: 500;
+    letter-spacing: 1rpx;
+  }
+  
+  /* 装饰线条 */
+  .deco-lines {
+    position: absolute;
+    right: 40rpx;
+    top: 20rpx;
+    width: 100rpx;
+    height: 100rpx;
+    border-right: 1rpx solid #E2E8F0;
+    border-top: 1rpx solid #E2E8F0;
+    opacity: 0.5;
+  }
+}
+
+.editor-container {
+  padding: 20rpx 40rpx 100rpx;
+}
+
+.title-input-wrapper {
+  margin-bottom: 32rpx;
+  .title-input {
+    font-size: 36rpx;
+    color: #1E293B;
+    padding: 16rpx 24rpx;
+    border: 1rpx solid #E2E8F0;
+    border-radius: 12rpx;
+    background-color: rgba(255,255,255,0.3);
+  }
+}
+
+.content-input {
+  width: 100%;
+  min-height: 400rpx;
+  font-size: 32rpx;
+  line-height: 1.8;
+  color: #334155;
+  margin-bottom: 20rpx;
+  font-family: "Georgia", serif;
+}
+
+.error-tip {
+  margin-bottom: 40rpx;
+  transition: opacity 0.3s;
+  .error-text {
+    font-size: 22rpx;
+    color: #E57373;
+    font-style: italic;
+  }
+}
+
+.ph-color {
+  color: #CBD5E1;
+  font-weight: 300;
+}
+
+/* 媒体区块 */
+.media-section {
+  .section-title {
+    font-size: 24rpx;
+    color: #94A3B8;
+    margin-bottom: 24rpx;
+    text-transform: uppercase;
+    letter-spacing: 2rpx;
+  }
+}
+
+.image-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.image-box {
+  width: 212rpx;
+  height: 212rpx;
+  border-radius: 12rpx;
+  position: relative;
+  background-color: #F8FAFC;
+  overflow: hidden;
+  
+  .preview-img { width: 100%; height: 100%; }
+  
+  .delete-btn {
+    position: absolute;
+    top: 8rpx;
+    right: 8rpx;
+    width: 36rpx;
+    height: 36rpx;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18rpx;
+    z-index: 10;
+  }
+}
+
+.upload-box {
+  border: 2rpx dashed #CBD5E1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .plus-icon { font-size: 50rpx; color: #94A3B8; font-weight: 200; }
+}
+
+/* 进度环模拟 */
+.upload-progress {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255,255,255,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .progress-ring {
+    width: 40rpx;
+    height: 40rpx;
+    border: 3rpx solid #86929B;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate 1s linear infinite;
+  }
+}
+
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* 底部快捷工具 */
+.bottom-toolbar {
+  background-color: #FDFAF3;
+  padding: 20rpx 40rpx 60rpx;
+  border-top: 1rpx solid #F1F5F9;
+  
+  .toolbar-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    
+    .tool-btn {
+      padding: 10rpx 20rpx;
+      margin-right: 10rpx;
+      .tool-icon { font-size: 40rpx; }
+      &:active { opacity: 0.6; }
+    }
+    
+    .divider {
+      width: 1rpx;
+      height: 40rpx;
+      background-color: #E2E8F0;
+      margin: 0 20rpx;
+    }
+    
+    .anonymous-box {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      .anon-label { font-size: 24rpx; color: #86929B; font-weight: 500; }
+    }
+  }
+}
+</style>
